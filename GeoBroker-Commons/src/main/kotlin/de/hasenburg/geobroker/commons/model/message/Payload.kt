@@ -6,6 +6,7 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
+import kotlinx.serialization.json.JsonObject
 import org.apache.logging.log4j.LogManager
 import org.zeromq.ZMsg
 
@@ -13,6 +14,7 @@ private val logger = LogManager.getLogger()
 
 @Serializable
 sealed class Payload {
+
     @Serializable
     @SerialName("CONNECTPayload")
     data class CONNECTPayload(val location: Location?) : Payload()
@@ -52,6 +54,7 @@ sealed class Payload {
     @Serializable
     @SerialName("PUBLISHPayload")
     data class PUBLISHPayload(val topic: Topic, val geofence: Geofence, val content: String) : Payload()
+
 
     @Serializable
     @SerialName("PUBACKPayload")

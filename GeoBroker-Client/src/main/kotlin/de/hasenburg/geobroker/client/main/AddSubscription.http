@@ -1,0 +1,61 @@
+
+
+###
+
+POST http://localhost:9001/sub
+Content-Type: application/json
+
+{
+  "topic": "sieve",
+  "location": {
+    "lat" : 10.0,
+    "lon" : -10.0,
+    "radius": 1.0
+  }
+}
+
+###
+
+POST http://localhost:9001/sub
+Content-Type: application/json
+
+{
+  "topic": "sieve",
+  "location": {
+    "lat" : 0.0,
+    "lon" : 0.0,
+    "radius": 1.0
+  },
+  "rule": {
+    "topic" : "temperature",
+    "operator" : "==",
+    "value" : "5.0"
+  }
+}
+
+###
+
+POST http://localhost:9001/sub
+Content-Type: application/json
+
+{
+  "topic": "test",
+  "location": {
+    "lat" : 0.0,
+    "lon" : 0.0,
+    "radius": 1.0
+  }
+}
+
+###
+POST http://localhost:9001/sub
+Content-Type: application/json
+
+{
+"topic": "read",
+"location": {
+"lat" : 0.0,
+"lon" : 0.0,
+"radius": 2.0
+}
+}

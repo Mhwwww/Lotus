@@ -12,6 +12,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import org.apache.logging.log4j.LogManager
+import org.zeromq.ZMsg
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
@@ -39,7 +40,7 @@ class SimpleClient(ip: String, port: Int, socketHWM: Int = 1000, val identity: S
      */
     fun send(payload: Payload): Boolean {
         val zMsg = payload.toZMsg(clientIdentifier = identity)
-        return spDealer.toSent.offer(zMsg)
+        return spDealer.toSent.trySend(zMsg).isSuccess
     }
 
     /**

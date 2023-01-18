@@ -83,7 +83,7 @@ class SingleGeoBrokerMatchingLogic(private val clientDirectory: ClientDirectory,
 
     override fun processPUBLISH(clientIdentifier: String, payload: PUBLISHPayload, clients: Socket,
                                 brokers: Socket) {
-
+        //ReasonCode类 在commons.model.message文件定义，是个枚举类
         val reasonCode: ReasonCode
         val publisherLocation = clientDirectory.getClientLocation(clientIdentifier)
 
