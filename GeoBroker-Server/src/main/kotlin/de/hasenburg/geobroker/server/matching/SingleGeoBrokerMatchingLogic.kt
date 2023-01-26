@@ -5,7 +5,6 @@ import de.hasenburg.geobroker.commons.model.message.ReasonCode
 import de.hasenburg.geobroker.commons.model.message.toZMsg
 import de.hasenburg.geobroker.server.storage.TopicAndGeofenceMapper
 import de.hasenburg.geobroker.server.storage.client.ClientDirectory
-import kotlinx.serialization.json.Json
 import org.apache.logging.log4j.LogManager
 import org.zeromq.ZMQ.Socket
 import org.zeromq.ZMsg
@@ -83,7 +82,6 @@ class SingleGeoBrokerMatchingLogic(private val clientDirectory: ClientDirectory,
 
     override fun processPUBLISH(clientIdentifier: String, payload: PUBLISHPayload, clients: Socket,
                                 brokers: Socket) {
-        //ReasonCode类 在commons.model.message文件定义，是个枚举类
         val reasonCode: ReasonCode
         val publisherLocation = clientDirectory.getClientLocation(clientIdentifier)
 

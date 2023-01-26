@@ -7,14 +7,13 @@ import de.hasenburg.geobroker.server.main.Configuration
 import de.hasenburg.geobroker.server.storage.client.ClientDirectory
 import org.apache.commons.lang3.tuple.ImmutablePair
 import org.apache.logging.log4j.LogManager
-
-import java.util.*
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
 private val logger = LogManager.getLogger()
 
 /**
+ *
  * The [TopicAndGeofenceMapper] maps provided topics and geofences to subscription ids. Thus, it helps to identify
  * to which clients a published message should be delivered.
  */

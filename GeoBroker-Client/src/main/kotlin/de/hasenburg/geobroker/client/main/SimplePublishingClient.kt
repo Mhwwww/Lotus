@@ -7,7 +7,6 @@ import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.sleepNoLog
-import kotlinx.serialization.SerialName
 import org.apache.logging.log4j.LogManager
 import kotlin.system.exitProcess
 
@@ -24,21 +23,39 @@ fun main() {
 
     // receive one message
     logger.info("Received server answer: {}", client.receive())
+    client.send(Payload.PUBLISHPayload(Topic("/read/2/berlin"),Geofence.circle(location,2.0),"{\n" +
+            "    \"temperature\":35.0,\n" +
+            "    \"speed\":20.0,\n" +
+            "    \"wind\":20.0,\n" +
+            "    \"wet\": 30.0\n" +
+            "  }"))
+
+    logger.info("!!!!!!!!111111111111111: {}", client.receive())
 
 
-    val topics = listOf("test","read","sieve")
+    client.send(Payload.PUBLISHPayload(Topic("/read/1/berlin"),Geofence.circle(location,2.0),"{" +
+            "    \"temperature\" : 35.0," +
+            "    \"speed\" : 25.0," +
+            "    \"wind\":20.0,\n" +
+            "  }"))
+    logger.info("!2222222222222222: {}", client.receive())
+
+
+    val topics = listOf("/read/1/berlin")
 
     for (topic in topics){
         // publish
-        client.send(Payload.PUBLISHPayload(Topic(topic),Geofence.circle(location,2.0),"{" +
-                "    \"temperature\" : 5.0," +
-                "    \"speed\" : 25.0," +
-                "    \"wind\": 3.0" +
+        client.send(Payload.PUBLISHPayload(Topic(topic),Geofence.circle(location,2.0),"{\n" +
+                "    \"temperature\":35.0,\n" +
+                "    \"speed\":20.0,\n" +
+                "    \"wind\":20.0,\n" +
+                "    \"wet\": 50.0\n" +
                 "  }"))
 
         // receive one message
-        logger.info("Received server answer: {}", client.receive())
-        // wait 5 seconds
+        logger.info("3333333333: {}", client.receive())
+
+
         sleepNoLog(5000, 0)
     }
 

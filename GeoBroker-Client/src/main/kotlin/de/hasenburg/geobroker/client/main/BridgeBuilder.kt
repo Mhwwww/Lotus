@@ -6,6 +6,7 @@ import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
+import de.hasenburg.geobroker.server.storage.client.ClientDirectory
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.serialization.kotlinx.json.*
@@ -16,7 +17,9 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.json.JSONObject
@@ -25,9 +28,13 @@ import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.concurrent.thread
 
+
 const val GEOBROKER_HOST = "localhost"
 const val GEOBROKER_PORT = 5559
 const val TINYFAAS_BASE_URL = "http://localhost:80/"
+
+const val SINGLE_LEVEL_WILDCARD: String = "+"
+const val MULTI_LEVEL_WILDCARD: String = "#"
 
 private val logger = LogManager.getLogger()
 
@@ -44,19 +51,21 @@ suspend fun main() {
 
 }
 
-suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence: Geofence, functionName: String) {
-    val client = SimpleClient(GEOBROKER_HOST, GEOBROKER_PORT)
+public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence: Geofence, functionName: String) {
+    //identity: TinyFaaSClient_test_/*/drone/*_(0.0,0.0,2.0)_nanotime
+    val client = SimpleClient(GEOBROKER_HOST, GEOBROKER_PORT, socketHWM = 1000, identity = " TinyFaaSClient_"+ functionName+"_" +topic.topic+"_"+geofence+"_"+System.nanoTime())
+    //val client = SimpleClient(GEOBROKER_HOST, GEOBROKER_PORT)
     client.send(Payload.CONNECTPayload(Location(0.0,0.0)))
     logger.debug("Connect Payload Answer: {}", client.receive())
+
+
     client.send(Payload.SUBSCRIBEPayload(topic, geofence))
     logger.debug("Subscribe Payload Answer: {}", client.receive())
 
+
+
     // Every time client.recieve gets something it should be a PublishPayload()
     // Send out a request to the function everytime this happens
-
-    Runtime.getRuntime().addShutdownHook(Thread {
-        client.tearDownClient()
-    })
 
     while (true) {
         logger.debug("ZMQ Client Topic={} Geofence={} is waiting for a message to send to FunctionName={}", topic, geofence, functionName)
@@ -64,6 +73,10 @@ suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence: Geofence,
         if (message !is Payload.PUBLISHPayload){
             logger.error("Message {} is not a PublishPayload, but it should be!", message)
         } else{
+
+
+
+
             val locJson = JSONObject()
             locJson.put("lat", message.geofence.center.lat)
             locJson.put("lon", message.geofence.center.lon)
@@ -77,12 +90,14 @@ suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence: Geofence,
              * topic: drones
              * location: {lat: 123, lon: 456}
              */
-            logger.debug("ZMQ Client received message and will forward json {} to function {}", jsonToSendToTinyFaaS.toString(), functionName)
+            logger.debug("ZMQ Client{} received message and will forward json {} to function {}", client.identity, jsonToSendToTinyFaaS.toString(), functionName)
             sendReqToTinyFaaS(functionName, jsonToSendToTinyFaaS.toString())
         }
 
     }
-
+    Runtime.getRuntime().addShutdownHook(Thread {
+        client.tearDownClient()
+    })
 }
 
 suspend fun sendReqToTinyFaaS(functionName: String, payload: String, async: Boolean = true, contentType: String = "application/json"): String {
@@ -138,6 +153,21 @@ suspend fun startHttpServer() {
                     val location = Location(lat, lon)
 
                     logger.debug("Received message to connect {} and {}", topic, functionName)
+
+                    val clientDirectory = ClientDirectory()
+                    clientDirectory.addClient(client.identity,location,false)
+                    clientDirectory.updateSubscription(client.identity,topic,Geofence.circle(location,radius))
+
+                    logger.error("the client has {} subscription",clientDirectory.getCurrentClientSubscriptions(client.identity))
+                    logger.error("the subscription is {}",clientDirectory.getSubscription(client.identity,topic))
+
+
+
+
+
+
+
+
 
                     thread {
                         logger.debug("Connecting Topic {} and functionName {}", topic, functionName)

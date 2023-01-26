@@ -88,9 +88,6 @@ fun main() {
                         }
                     }
 
-
-
-
                 val url = URL("http://localhost:80/$fnName")
                 val connection = url.openConnection() as HttpURLConnection
 

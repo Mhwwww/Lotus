@@ -53,13 +53,12 @@ fun main() {
 
                 routing {
                     post("/sub") {
-                        GlobalScope.launch {
-                            zmqJob()
-                            call.respondText("Zeromq job started")
-                        }
+
+
 
                         val rawString = call.receiveText()   //{"topic": "test" }
                         val json = JSONObject(rawString) //Construct a JSONObject from a source JSON text string.
+                        val fnName = json["function"] as String
 
                         //subscription topic
                         val topic = Topic(json["topic"] as String)
@@ -72,6 +71,12 @@ fun main() {
 
                         client.send(Payload.SUBSCRIBEPayload(topic, Geofence.circle(location, radius)))
                         call.respond(HttpStatusCode.OK, "Subsribed to Topic: ${topic.topic}")
+
+                        GlobalScope.launch {
+                            zmqJob(fnName)
+                            call.respondText("Zeromq job started")
+                        }
+
                     }
                 }
             }
@@ -83,7 +88,7 @@ fun main() {
 
 }
 
-suspend fun zmqJob() {
+suspend fun zmqJob(fnName:String) {
     val processManager = ZMQProcessManager()
 
     var shouldContinue = true
@@ -97,8 +102,20 @@ suspend fun zmqJob() {
         } else if (message.content.equals("pleaseshutdownnow")) {
             // Do nothing here
         } else{
-            val fnName = message.topic.topic
-            val json = message.content
+            //val fnName = message.topic.topic
+            //val json = message.content
+
+            val locJson = JSONObject()
+            locJson.put("lat", message.geofence.center.lat)
+            locJson.put("lon", message.geofence.center.lon)
+            val jsonToSendToTinyFaaS = JSONObject()
+            jsonToSendToTinyFaaS.put("topic", message.topic.topic)
+            jsonToSendToTinyFaaS.put("location", locJson)
+            jsonToSendToTinyFaaS.put("message", JSONObject(message.content))
+            logger.error("the message send to tinyFaas is: {}", jsonToSendToTinyFaaS)
+            logger.error(fnName)
+
+
 
             val url = URL("http://localhost:80/$fnName")
             val connection = url.openConnection() as HttpURLConnection
@@ -109,7 +126,7 @@ suspend fun zmqJob() {
 
             val outputStream = DataOutputStream(connection.outputStream)
             withContext(Dispatchers.IO) {
-                outputStream.writeBytes(json)
+                outputStream.writeBytes(jsonToSendToTinyFaaS.toString())
                 outputStream.flush()
                 outputStream.close()
             }

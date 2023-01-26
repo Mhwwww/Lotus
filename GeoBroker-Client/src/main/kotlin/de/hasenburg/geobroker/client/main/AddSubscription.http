@@ -6,7 +6,7 @@ POST http://localhost:9001/sub
 Content-Type: application/json
 
 {
-  "topic": "test",
+  "topic": "/#/drone/+",
   "function": "test",
   "location": {
     "lat" : 0.0,
@@ -20,8 +20,23 @@ POST http://localhost:9001/sub
 Content-Type: application/json
 
 {
-  "topic": "sieve",
+  "topic": "/berlin/plane/2/sieve",
   "function": "sieve",
+  "location": {
+    "lat" : 0.0,
+    "lon" : 0.0,
+    "radius": 2.0
+  }
+}
+
+###
+
+POST http://localhost:9001/sub
+Content-Type: application/json
+
+{
+  "topic": "/berlin/drone/3/read",
+  "function": "read",
   "location": {
     "lat" : 0.0,
     "lon" : 0.0,
