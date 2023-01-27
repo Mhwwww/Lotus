@@ -11,7 +11,7 @@ import java.io.File
 private val logger = LogManager.getLogger()
 private val RADIUS = 2.0//if geofence is circle
 
-data class UserSpecifiedRule(val geofence: Geofence, val topic: Topic, val jsFile: File){
+data class UserSpecifiedRule(val geofence: Geofence, val topic: Topic, val jsFile: File, val env:String){
 
     fun getUserSubscription():JSONObject{
         val locJson = JSONObject()

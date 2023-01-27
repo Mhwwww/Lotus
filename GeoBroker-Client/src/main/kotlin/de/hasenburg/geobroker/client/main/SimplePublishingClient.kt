@@ -33,7 +33,7 @@ fun main() {
     logger.info("!!!!!!!!111111111111111: {}", client.receive())
 
 
-    client.send(Payload.PUBLISHPayload(Topic("/read/1/berlin"),Geofence.circle(location,2.0),"{" +
+    client.send(Payload.PUBLISHPayload(Topic("read"),Geofence.circle(location,2.0),"{" +
             "    \"temperature\" : 35.0," +
             "    \"speed\" : 25.0," +
             "    \"wind\":20.0,\n" +
@@ -54,7 +54,6 @@ fun main() {
 
         // receive one message
         logger.info("3333333333: {}", client.receive())
-
 
         sleepNoLog(5000, 0)
     }

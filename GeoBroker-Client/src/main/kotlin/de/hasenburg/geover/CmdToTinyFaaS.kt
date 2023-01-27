@@ -4,13 +4,14 @@ import java.util.*
 
 val TINYFAAS_UPLOAD_PATH = "/Users/minghe/tinyFaaS/scripts/upload.sh\t"
 val TINYFAAS_DELETE_PATH = "/Users/minghe/tinyFaaS/scripts/delete.sh\t"
+val TINYFAAS_LIST_PATH = "/Users/minghe/tinyFaaS/scripts/list.sh\t"
 
 
-fun cmdUploadTotinyFaaS(path:String, functionName:String, thread: Int) {
+fun cmdUploadTotinyFaaS(path:String, functionName:String, fnEnv:String, thread: Int) {
     val os = System.getProperty("os.name").lowercase(Locale.getDefault())
     println(os)
     if (os.lowercase(Locale.getDefault()).contains("mac")) {
-        val upload: String = TINYFAAS_UPLOAD_PATH + path + "\t" + functionName + "\t" + thread
+        val upload: String = TINYFAAS_UPLOAD_PATH + path + "\t" + functionName + "\t" + fnEnv+ "\t" + thread
         runOnMac(upload)
 
     } else if (os.contains("windows")) {
@@ -33,6 +34,21 @@ fun cmdDeleteFromtinyFaaS(functionName:String) {
     }
 }
 
+fun cmdGetFuncList(): List<String>? {
+    val os = System.getProperty("os.name").lowercase(Locale.getDefault())
+    println(os)
+    if (os.lowercase(Locale.getDefault()).contains("mac")) {
+        val getList = TINYFAAS_LIST_PATH
+        return listOf(runOnMac(getList))
+
+    } else if (os.contains("windows")) {
+
+        val getList = TINYFAAS_LIST_PATH
+        return listOf(runOnMac(getList))
+    }
+    return null
+}
+
 fun runOnWindows(cmd: String) {
     val runtime = Runtime.getRuntime()
     val realCmd = "cmd /c $cmd"
@@ -47,7 +63,7 @@ fun runOnWindows(cmd: String) {
     }
 }
 
-fun runOnMac(cmd: String) {
+fun runOnMac(cmd: String):String {
     val runtime = Runtime.getRuntime()
     try {
         val p = runtime.exec(cmd)
@@ -55,9 +71,15 @@ fun runOnMac(cmd: String) {
 
         val output = String.format("execute cmd : \" %s \" and result is \n\n%s ", cmd, result)
         println(output)
+
+        return result
     } catch (e: IOException) {
-        e.printStackTrace()
+
+        return  e.printStackTrace().toString()
     }
 }
 
 
+fun main(){
+    cmdGetFuncList()
+}
