@@ -8,7 +8,9 @@ import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import org.apache.logging.log4j.LogManager
 import java.io.File
+
 private val logger = LogManager.getLogger()
+val numThread = 1
 
 class RuleManager {
 
@@ -24,7 +26,6 @@ class RuleManager {
         uploadFileToTinyFaaS(rule.jsFile, functionName)
         buildBridgeBetweenTopicAndFunction(rule.topic, rule.geofence, functionName)
         rulesList.add(rule)
-        logger.info(rulesList)
     }
     suspend fun deleteRule(rule: UserSpecifiedRule) {
         var functionName = ""
@@ -40,9 +41,8 @@ class RuleManager {
         rulesList.remove(rule)
     }
     private fun uploadFileToTinyFaaS(file: File, functionName: String) {
-        // - look at the ./scripts/upload.sh script in TinyFaaS
-        // - do the same in Kotlin (Maybe ask chatGPT for some input?)
-        cmdUploadTotinyFaaS(path = file.absolutePath, functionName,1)
+        // TODO: better way to upload function
+        cmdUploadTotinyFaaS(file.absolutePath, functionName, numThread)
     }
     private fun deleteTinyFaaSFunction(functionName: String) {
         cmdDeleteFromtinyFaaS(functionName)

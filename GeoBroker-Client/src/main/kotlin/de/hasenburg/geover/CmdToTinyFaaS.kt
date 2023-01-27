@@ -2,15 +2,19 @@
 import java.io.IOException
 import java.util.*
 
+val TINYFAAS_UPLOAD_PATH = "/Users/minghe/tinyFaaS/scripts/upload.sh\t"
+val TINYFAAS_DELETE_PATH = "/Users/minghe/tinyFaaS/scripts/delete.sh\t"
+
 
 fun cmdUploadTotinyFaaS(path:String, functionName:String, thread: Int) {
     val os = System.getProperty("os.name").lowercase(Locale.getDefault())
     println(os)
     if (os.lowercase(Locale.getDefault()).contains("mac")) {
-        val upload: String = "/Users/minghe/tinyFaaS/scripts/upload.sh\t" + path + "\t" + functionName + "\t" + thread
+        val upload: String = TINYFAAS_UPLOAD_PATH + path + "\t" + functionName + "\t" + thread
         runOnMac(upload)
 
     } else if (os.contains("windows")) {
+        //TODO: cmd on windows and linux
         runOnWindows("dir")
         runOnWindows("git log")
     }
@@ -20,7 +24,7 @@ fun cmdDeleteFromtinyFaaS(functionName:String) {
     val os = System.getProperty("os.name").lowercase(Locale.getDefault())
     println(os)
     if (os.lowercase(Locale.getDefault()).contains("mac")) {
-        val delete = "/Users/minghe/tinyFaaS/scripts/delete.sh "+ functionName
+        val delete = TINYFAAS_DELETE_PATH+ functionName
         runOnMac(delete)
 
     } else if (os.contains("windows")) {
