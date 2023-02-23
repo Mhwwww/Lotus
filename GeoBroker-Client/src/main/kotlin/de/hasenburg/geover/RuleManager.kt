@@ -24,9 +24,11 @@ class RuleManager {
         }
 
         uploadFileToTinyFaaS(rule.jsFile, rule.env, functionName)
-        buildBridgeBetweenTopicAndFunction(rule.topic, rule.geofence, functionName)
+        //send subscription and get new topic set to be subscribed to
+        val topicSet = buildBridgeBetweenTopicAndFunction(rule.topic, rule.geofence, functionName)
         rulesList.add(rule)
     }
+
     suspend fun deleteRule(rule: UserSpecifiedRule) {
         var functionName = ""
         for (i in 0..rule.topic.numberOfLevels-1){
@@ -48,9 +50,12 @@ class RuleManager {
     private fun deleteTinyFaaSFunction(functionName: String) {
         cmdDeleteFromtinyFaaS(functionName)
     }
+
 }
 
 suspend fun main() {
+
+/*
     // Test out the RuleManager
     println("File Path:")
     val fileName = readLine()!!
@@ -64,13 +69,14 @@ suspend fun main() {
     val lon = readLine()!!.toDouble()
     println("radius")
     val radius = readLine()!!.toDouble()
+* */
 
-    val geofence = Geofence.circle(Location(lat, lon),radius)
-    val newRule = UserSpecifiedRule(geofence, topic, File(fileName), env)
+    val topic = Topic("/read/1/berlin")
+    val geofence = Geofence.circle(Location(0.0, 0.0),2.0)
+    val newRule = UserSpecifiedRule(geofence, topic , File("/Users/minghe/tinyFaaS/test/fns/readJSON/"), "nodejs")
 
     val ruleManager = RuleManager()
     ruleManager.createNewRule(newRule)
-    //ruleManager.deleteRule(newRule)
 
      println("Publish something to Topic $topic")
      println("Press Enter to Stop Program:")

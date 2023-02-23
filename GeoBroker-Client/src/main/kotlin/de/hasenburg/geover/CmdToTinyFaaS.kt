@@ -5,6 +5,8 @@ import java.util.*
 val TINYFAAS_UPLOAD_PATH = "/Users/minghe/tinyFaaS/scripts/upload.sh\t"
 val TINYFAAS_DELETE_PATH = "/Users/minghe/tinyFaaS/scripts/delete.sh\t"
 val TINYFAAS_LIST_PATH = "/Users/minghe/tinyFaaS/scripts/list.sh\t"
+val TINYFAAS_LOGS_PATH = "/Users/minghe/tinyFaaS/scripts/logs.sh\t"
+
 
 
 fun cmdUploadTotinyFaaS(path:String, functionName:String, fnEnv:String, thread: Int) {
@@ -32,6 +34,19 @@ fun cmdDeleteFromtinyFaaS(functionName:String) {
         runOnWindows("dir")
         runOnWindows("git log")
     }
+}
+fun cmdGetAllFunctionsLogsFromTinyFaaS(): List<String>? {
+    val os = System.getProperty("os.name").lowercase(Locale.getDefault())
+    println(os)
+    if (os.lowercase(Locale.getDefault()).contains("mac")) {
+        val logs = TINYFAAS_LOGS_PATH
+        runOnMac(logs)
+
+    } else if (os.contains("windows")) {
+        runOnWindows("dir")
+        runOnWindows("git log")
+    }
+    return null
 }
 
 fun cmdGetFuncList(): List<String>? {
@@ -81,5 +96,6 @@ fun runOnMac(cmd: String):String {
 
 
 fun main(){
-    cmdGetFuncList()
+    //cmdGetFuncList()
+    //cmdGetAllFunctionsLogsFromTinyFaaS()
 }

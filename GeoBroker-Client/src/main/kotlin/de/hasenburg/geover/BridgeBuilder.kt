@@ -2,10 +2,12 @@ package de.hasenburg.geobroker.client.main
 
 import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
 import de.hasenburg.geobroker.commons.model.message.Payload
+import de.hasenburg.geobroker.commons.model.message.ReasonCode
 import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
+import de.hasenburg.geobroker.commons.sleepNoLog
 import de.hasenburg.geobroker.server.storage.client.ClientDirectory
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
@@ -48,11 +50,17 @@ suspend fun main() {
 
 }
 
-public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence: Geofence, functionName: String) {
+public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence: Geofence, functionName: String){
     //identity: TinyFaaSClient_test_/*/drone/*_(0.0,0.0,2.0)_nanotime
-    val client = SimpleClient(GEOBROKER_HOST, GEOBROKER_PORT, socketHWM = 1000, identity = " TinyFaaSClient_"+ functionName+"_" +topic.topic+"_"+geofence+"_"+System.nanoTime())
+    //val client = SimpleClient(GEOBROKER_HOST, GEOBROKER_PORT, socketHWM = 1000, identity = " TinyFaaSClient_"+ functionName+"_" +topic.topic+"_"+geofence+"_"+System.nanoTime())
+    var eventNum = 0
+    val newTopicSet = ArrayList<String>()
+
+
+    val client = SimpleClient(GEOBROKER_HOST, GEOBROKER_PORT, socketHWM = 1000, identity = "TinyFaaSClient_"+ functionName+"_" + System.nanoTime())
     client.send(Payload.CONNECTPayload(Location(0.0,0.0)))
     logger.debug("Connect Payload Answer: {}", client.receive())
+
 
     client.send(Payload.SUBSCRIBEPayload(topic, geofence))
     logger.debug("Subscribe Payload Answer: {}", client.receive())
@@ -79,13 +87,62 @@ public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence: Ge
              * location: {lat: 123, lon: 456}
              */
             logger.debug("ZMQ Client{} received message and will forward json {} to function {}", client.identity, jsonToSendToTinyFaaS.toString(), functionName)
-            sendReqToTinyFaaS(functionName, jsonToSendToTinyFaaS.toString())
+            val resultFromTinyFaaS = sendReqToTinyFaaS(functionName, jsonToSendToTinyFaaS.toString())
+            logger.debug("Processed Event original Topic is{}", resultFromTinyFaaS)
+
+            //TODO: set new event topics
+            //TODO: client re-subscribe to the new topic
+            //TODO: re-publish the event with new topics
+
+
+            if (resultFromTinyFaaS != "no matching events for existing rules"){
+                // response messages from tinyfaas are the processed event topics
+                // new topic: original + client id (including funcitonName--original topic)
+
+                var newTopics = ""
+
+                newTopics = resultFromTinyFaaS +"/"+ client.identity + System.nanoTime()
+                //re-sub
+                resubscribe(Topic(newTopics), geofence)
+                logger.debug("Client with funciton name {} wants to subscribe to {}", functionName, newTopics)
+
+                // re-pub the new topics events
+                republish(Topic(newTopics),message.geofence, message.content)
+
+                newTopicSet.add(newTopics)
+                eventNum += 1
+                logger.debug("The republish topic is {}", newTopics)
+
+                println("\nThe Processed Event $eventNum Topic: $newTopics")
+                println("The Event Content is:\n ${message.content}")
+                println("The Topic Set now is: $newTopicSet")
+
+            }
+
         }
 
     }
     Runtime.getRuntime().addShutdownHook(Thread {
         client.tearDownClient()
     })
+}
+
+suspend fun resubscribe(topic: Topic, geofence: Geofence) {
+    client.send(Payload.CONNECTPayload(Location(geofence.center.lat, geofence.center.lon)))
+    logger.info("Connect Payload answer: {}", client.receive())
+
+    client.send(Payload.SUBSCRIBEPayload(topic, geofence))
+    logger.info("The Direct Subscribe Payload Answer: {}", client.receive())
+
+}
+
+
+suspend fun republish(topic: Topic, geofence: Geofence, message: String){
+    client.send(Payload.PUBLISHPayload(topic,geofence,message))
+    logger.debug("The Re-pub Payload Answer: {} ", client.receive())
+    sleepNoLog(1000,0)
+    client.send(Payload.DISCONNECTPayload(ReasonCode.NormalDisconnection))
+    logger.info("The PUBACK Payload Answer: {} ", client.receive())
 }
 
 suspend fun sendReqToTinyFaaS(functionName: String, payload: String, async: Boolean = true, contentType: String = "application/json"): String {
@@ -113,6 +170,7 @@ suspend fun sendReqToTinyFaaS(functionName: String, payload: String, async: Bool
 
     return response
 }
+
 
 suspend fun startHttpServer() {
     runBlocking {

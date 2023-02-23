@@ -6,8 +6,8 @@ POST http://localhost:9001/sub
 Content-Type: application/json
 
 {
-  "topic": "/#/drone/+",
-  "function": "test",
+  "topic": "/read/1/berlin",
+  "function": "read1berlin",
   "location": {
     "lat" : 0.0,
     "lon" : 0.0,
@@ -20,7 +20,7 @@ POST http://localhost:9001/sub
 Content-Type: application/json
 
 {
-  "topic": "/berlin/plane/2/sieve",
+  "topic": "sieve",
   "function": "sieve",
   "location": {
     "lat" : 0.0,
@@ -35,8 +35,8 @@ POST http://localhost:9001/sub
 Content-Type: application/json
 
 {
-  "topic": "/berlin/drone/3/read",
-  "function": "read",
+  "topic": "/TinyFaaSClient_read1berlin_52432051549791/52439417624291",
+  "function": "read1berlin",
   "location": {
     "lat" : 0.0,
     "lon" : 0.0,

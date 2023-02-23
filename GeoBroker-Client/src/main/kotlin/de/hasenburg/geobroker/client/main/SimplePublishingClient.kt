@@ -23,14 +23,23 @@ fun main() {
 
     // receive one message
     logger.info("Received server answer: {}", client.receive())
-    client.send(Payload.PUBLISHPayload(Topic("/read/2/berlin"),Geofence.circle(location,2.0),"{\n" +
+    client.send(Payload.PUBLISHPayload(Topic("/read/1/berlin"),Geofence.circle(location,2.0),"{\n" +
             "    \"temperature\":35.0,\n" +
             "    \"speed\":20.0,\n" +
             "    \"wind\":20.0,\n" +
-            "    \"wet\": 30.0\n" +
+            "    \"wet\": 10.0\n" +
             "  }"))
 
     logger.info("!!!!!!!!111111111111111: {}", client.receive())
+
+    client.send(Payload.PUBLISHPayload(Topic("/read/1/berlin"),Geofence.circle(location,2.0),"{\n" +
+            "    \"temperature\":35.0,\n" +
+            "    \"speed\":20.0,\n" +
+            "    \"wind\":20.0,\n" +
+            "    \"wet\": 60.0\n" +
+            "  }"))
+
+    logger.info("!!!!!!!!999999999999991: {}", client.receive())
 
 
     client.send(Payload.PUBLISHPayload(Topic("read"),Geofence.circle(location,2.0),"{" +
@@ -40,6 +49,12 @@ fun main() {
             "  }"))
     logger.info("!2222222222222222: {}", client.receive())
 
+    client.send(Payload.PUBLISHPayload(Topic("sieve"),Geofence.circle(location,2.0),"{" +
+            "    \"temperature\" : 35.0," +
+            "    \"speed\" : 25.0," +
+            "    \"wind\":20.0,\n" +
+            "  }"))
+    logger.info("!444444444444444444: {}", client.receive())
 
     val topics = listOf("/read/1/berlin")
 
