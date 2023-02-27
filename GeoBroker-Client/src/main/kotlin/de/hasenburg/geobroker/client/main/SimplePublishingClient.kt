@@ -27,7 +27,7 @@ fun main() {
             "    \"temperature\":35.0,\n" +
             "    \"speed\":20.0,\n" +
             "    \"wind\":20.0,\n" +
-            "    \"wet\": 10.0\n" +
+            "    \"wet\": 40.0\n" +
             "  }"))
 
     logger.info("!!!!!!!!111111111111111: {}", client.receive())

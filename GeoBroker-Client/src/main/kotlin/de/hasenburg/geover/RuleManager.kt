@@ -1,11 +1,20 @@
+@file:OptIn(DelicateCoroutinesApi::class)
+
 package de.hasenburg.geover
 
 import cmdDeleteFromtinyFaaS
 import cmdUploadTotinyFaaS
+import de.hasenburg.geobroker.client.main.SimpleClient
 import de.hasenburg.geobroker.client.main.buildBridgeBetweenTopicAndFunction
+import de.hasenburg.geobroker.commons.model.message.Payload
 import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
+import de.hasenburg.geobroker.commons.setLogLevel
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import java.io.File
 
@@ -18,28 +27,23 @@ class RuleManager {
 
     suspend fun createNewRule(rule: UserSpecifiedRule) {
         //function name should be a string without spaces and special symbols
-        var functionName = ""
-        for (i in 0..rule.topic.numberOfLevels-1){
-                functionName += rule.topic.levelSpecifiers[i]
-        }
+        var functionName = rule.getFunctionName()
 
         uploadFileToTinyFaaS(rule.jsFile, rule.env, functionName)
         //send subscription and get new topic set to be subscribed to
-        val topicSet = buildBridgeBetweenTopicAndFunction(rule.topic, rule.geofence, functionName)
+        GlobalScope.launch {
+                buildBridgeBetweenTopicAndFunction(rule.topic, rule.geofence, functionName, rule.matchingTopic)
+        }
         rulesList.add(rule)
     }
 
     suspend fun deleteRule(rule: UserSpecifiedRule) {
-        var functionName = ""
-        for (i in 0..rule.topic.numberOfLevels-1){
-            functionName += rule.topic.levelSpecifiers[i]
-        }
 
         if(!rulesList.contains(rule)){
             println("there is no such function")
         }
 
-        deleteTinyFaaSFunction(functionName)
+        deleteTinyFaaSFunction(rule.getFunctionName())
         rulesList.remove(rule)
     }
 
@@ -54,6 +58,7 @@ class RuleManager {
 }
 
 suspend fun main() {
+    setLogLevel(logger, Level.DEBUG)
 
 /*
     // Test out the RuleManager
@@ -72,13 +77,28 @@ suspend fun main() {
 * */
 
     val topic = Topic("/read/1/berlin")
+    val matchesTopic = Topic("/read/1/berlin/randomHashValueTBD")
     val geofence = Geofence.circle(Location(0.0, 0.0),2.0)
-    val newRule = UserSpecifiedRule(geofence, topic , File("/Users/minghe/tinyFaaS/test/fns/readJSON/"), "nodejs")
+    val newRule = UserSpecifiedRule(geofence, topic , File("/Users/minghe/tinyFaaS/test/fns/readJSON/"), "nodejs", matchesTopic)
 
     val ruleManager = RuleManager()
     ruleManager.createNewRule(newRule)
 
-     println("Publish something to Topic $topic")
-     println("Press Enter to Stop Program:")
+    GlobalScope.launch {
+        val client = SimpleClient("localhost", 5559)
+        client.send(Payload.CONNECTPayload(geofence.center))
+        client.send(Payload.SUBSCRIBEPayload(matchesTopic, geofence))
+        client.receive()
+
+        logger.info("I am a client and I just uploaded my functions and now i am waiting for mathes on {}", matchesTopic)
+        while (true) {
+            val msg = client.receive()
+            logger.info("Client topic={} recd={}", topic, msg)
+        }
+
+    }
+
+     logger.info("Publish something to Topic $topic")
+     logger.info("Press Enter to Stop Program:")
      readLine()
 }

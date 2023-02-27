@@ -1,4 +1,5 @@
 
+import org.apache.logging.log4j.LogManager
 import java.io.IOException
 import java.util.*
 
@@ -8,7 +9,7 @@ val TINYFAAS_LIST_PATH = "/Users/minghe/tinyFaaS/scripts/list.sh\t"
 val TINYFAAS_LOGS_PATH = "/Users/minghe/tinyFaaS/scripts/logs.sh\t"
 
 
-
+private val logger = LogManager.getLogger()
 fun cmdUploadTotinyFaaS(path:String, functionName:String, fnEnv:String, thread: Int) {
     val os = System.getProperty("os.name").lowercase(Locale.getDefault())
     println(os)
@@ -25,7 +26,7 @@ fun cmdUploadTotinyFaaS(path:String, functionName:String, fnEnv:String, thread: 
 
 fun cmdDeleteFromtinyFaaS(functionName:String) {
     val os = System.getProperty("os.name").lowercase(Locale.getDefault())
-    println(os)
+    logger.debug("Operating System is {}", os)
     if (os.lowercase(Locale.getDefault()).contains("mac")) {
         val delete = TINYFAAS_DELETE_PATH+ functionName
         runOnMac(delete)
@@ -37,7 +38,7 @@ fun cmdDeleteFromtinyFaaS(functionName:String) {
 }
 fun cmdGetAllFunctionsLogsFromTinyFaaS(): List<String>? {
     val os = System.getProperty("os.name").lowercase(Locale.getDefault())
-    println(os)
+    logger.debug("Operating System is {}", os)
     if (os.lowercase(Locale.getDefault()).contains("mac")) {
         val logs = TINYFAAS_LOGS_PATH
         runOnMac(logs)
@@ -51,7 +52,7 @@ fun cmdGetAllFunctionsLogsFromTinyFaaS(): List<String>? {
 
 fun cmdGetFuncList(): List<String>? {
     val os = System.getProperty("os.name").lowercase(Locale.getDefault())
-    println(os)
+    logger.debug("Operating System is {}", os)
     if (os.lowercase(Locale.getDefault()).contains("mac")) {
         val getList = TINYFAAS_LIST_PATH
         return listOf(runOnMac(getList))
@@ -72,7 +73,7 @@ fun runOnWindows(cmd: String) {
         val result: String = p.inputStream.bufferedReader().readText()
 
         val output = String.format("execute cmd : %s and result is \n\n%s ", cmd, result)
-        println(output)
+        logger.debug(output)
     } catch (e: IOException) {
         e.printStackTrace()
     }
@@ -85,7 +86,7 @@ fun runOnMac(cmd: String):String {
         val result: String = p.inputStream.bufferedReader().readText()
 
         val output = String.format("execute cmd : \" %s \" and result is \n\n%s ", cmd, result)
-        println(output)
+        logger.debug(output)
 
         return result
     } catch (e: IOException) {

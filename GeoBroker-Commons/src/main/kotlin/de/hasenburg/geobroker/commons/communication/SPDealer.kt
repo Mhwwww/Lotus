@@ -8,12 +8,8 @@ import org.apache.logging.log4j.LogManager
 import org.zeromq.SocketType
 import org.zeromq.ZContext
 import org.zeromq.ZMQ
-import org.zeromq.ZMQ.*
+import org.zeromq.ZMQ.Socket
 import org.zeromq.ZMsg
-import java.lang.RuntimeException
-import java.nio.channels.ClosedChannelException
-import java.nio.channels.ClosedSelectorException
-import kotlin.math.roundToInt
 
 private val logger = LogManager.getLogger()
 
@@ -150,13 +146,13 @@ class SPDealer(val ip: String = "localhost", val port: Int = 5559, val socketHWM
             processingTime += newTime - oldTime
 
             // add utilization roughly every 10 seconds
-            if (pollTime + processingTime >= measurementInterval * 1000000000L) {
+/*            if (pollTime + processingTime >= measurementInterval * 1000000000L) {
                 var utilization = processingTime / (processingTime.toDouble() + pollTime.toDouble() + 0.0)
                 utilization = (utilization * 1000.0).roundToInt() / 10.0
                 logger.debug("Current Utilization is {}%", utilization)
                 pollTime = 0
                 processingTime = 0
-            }
+            }*/
         }
         logger.debug("Job is not active anymore, shutting down.")
     }
