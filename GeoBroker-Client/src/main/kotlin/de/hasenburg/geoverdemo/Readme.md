@@ -2,7 +2,7 @@
 
 ## Setup:
 
-In the file CmdToTinyFaaS, change line 6 to the location of your tinyfaas.
+In the file [`CmdToTinyFaaS`](../geover/CmdToTinyFaaS.kt), change line 6 to the location of your tinyfaas.
 
 ## For all use cases:
 

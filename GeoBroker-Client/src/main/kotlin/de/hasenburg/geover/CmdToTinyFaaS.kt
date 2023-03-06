@@ -2,19 +2,20 @@ package de.hasenburg.geover
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
 
-val TINYFAAS_BASE_PATH = if (System.getProperty("os.name").lowercase().contains("mac")) {
-    "/Users/minghe/tinyFaaS/" // This is hopefully good enough for now...
-} else {
-    "../tinyFaaS/"
-}
-val TINYFAAS_UPLOAD_PATH = "${TINYFAAS_BASE_PATH}scripts/upload.sh\t"
-val TINYFAAS_DELETE_PATH = "${TINYFAAS_BASE_PATH}scripts/delete.sh\t"
-val TINYFAAS_LIST_PATH = "${TINYFAAS_BASE_PATH}scripts/list.sh\t"
-val TINYFAAS_LOGS_PATH = "${TINYFAAS_BASE_PATH}scripts/logs.sh\t"
+// tinyFaaS is a submodule to the main repo
+// seven levels up from this should do
+const val TINYFAAS_BASE_PATH = "./tinyFaaS/"
+
+
+const val TINYFAAS_UPLOAD_PATH = "${TINYFAAS_BASE_PATH}scripts/upload.sh\t"
+const val TINYFAAS_DELETE_PATH = "${TINYFAAS_BASE_PATH}scripts/delete.sh\t"
+const val TINYFAAS_LIST_PATH = "${TINYFAAS_BASE_PATH}scripts/list.sh\t"
+const val TINYFAAS_LOGS_PATH = "${TINYFAAS_BASE_PATH}scripts/logs.sh\t"
 
 
 private val logger = LogManager.getLogger()
 fun cmdUploadToTinyFaaS(path:String, functionName:String, fnEnv:String, thread: Int) {
+
     logger.debug("isUnix: {}", isUnix())
     if (isUnix()) {
         val upload: String = TINYFAAS_UPLOAD_PATH + path + "\t" + functionName + "\t" + fnEnv+ "\t" + thread
@@ -61,7 +62,7 @@ fun cmdGetFuncList(): List<String> {
 }
 
 fun isUnix(): Boolean {
-    return System.getProperty("os.name").lowercase().matches("max|linux".toRegex())
+    return System.getProperty("os.name").lowercase().matches("mac os x|linux".toRegex())
 }
 
 fun runOnWindows(cmd: String): String {
@@ -83,6 +84,8 @@ fun runOnWindows(cmd: String): String {
 fun runOnUnix(cmd: String):String {
     val runtime = Runtime.getRuntime()
     return try {
+        logger.debug("running cmd: {}", cmd)
+
         val p = runtime.exec(cmd)
         val result: String = p.inputStream.bufferedReader().readText()
 
