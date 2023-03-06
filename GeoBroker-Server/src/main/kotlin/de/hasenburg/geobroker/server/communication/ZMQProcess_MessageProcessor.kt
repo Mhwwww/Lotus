@@ -153,7 +153,7 @@ class ZMQProcess_MessageProcessor(private val brokerId: String, private val numb
 
     override fun utilizationCalculated(utilization: Double) {
         util.set(utilization);
-        logger.info("Current Utilization is {}%", utilization)
+        //logger.info("Current Utilization is {}%", utilization)
     }
 
     override fun shutdownCompleted() {

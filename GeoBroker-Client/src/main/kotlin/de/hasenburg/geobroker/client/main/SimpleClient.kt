@@ -10,6 +10,7 @@ import de.hasenburg.geobroker.commons.sleepNoLog
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import org.apache.logging.log4j.LogManager
+import kotlin.random.Random
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
@@ -73,19 +74,19 @@ fun main() {
     val client = SimpleClient("localhost", 5559)
 
     // connect
-    client.send(CONNECTPayload(Location.random()))
+    client.send(CONNECTPayload(Location(0.0,0.0)))
 
     // receive one message
     logger.info("Received server answer: {}", client.receive())
 
     // subscribe
-    client.send(SUBSCRIBEPayload(Topic("test"), Geofence.circle(Location.random(), 2.0)))
+    client.send(SUBSCRIBEPayload(Topic("test"), Geofence.circle(Location(0.0,0.0), 2.0)))
 
     // receive one message
     logger.info("Received server answer: {}", client.receive())
 
     // wait 5 seconds
-    sleepNoLog(5000, 0)
+    sleepNoLog(20000, 0)
 
     // disconnect
     client.send(DISCONNECTPayload(ReasonCode.NormalDisconnection))

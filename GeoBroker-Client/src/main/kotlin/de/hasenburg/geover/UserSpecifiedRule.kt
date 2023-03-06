@@ -12,8 +12,8 @@ import java.security.MessageDigest
 private val logger = LogManager.getLogger()
 private val RADIUS = 2.0//if geofence is circle
 
-data class UserSpecifiedRule(val geofence: Geofence, val topic: Topic, val jsFile: File, val env: String, val matchingTopic: Topic, val createdAt: Long = System.currentTimeMillis()){
-
+data class UserSpecifiedRule(val geofences: List<Geofence>, val topic: Topic, val jsFile: File, val env: String, val matchingTopic: Topic, val createdAt: Long = System.currentTimeMillis()){
+    constructor(geofence: Geofence, topic: Topic, jsFile: File, env: String, matchingTopic: Topic, createdAt: Long = System.currentTimeMillis()): this(listOf(geofence), topic, jsFile, env, matchingTopic, createdAt)
     fun getFunctionName(): String {
         val hasher = MessageDigest.getInstance("MD5")
         return BigInteger(hasher.digest(this.toString().toByteArray())).abs().toString(16).padStart(32, '0')

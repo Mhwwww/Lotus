@@ -2,10 +2,7 @@
 
 package de.hasenburg.geover
 
-import cmdDeleteFromtinyFaaS
-import cmdUploadTotinyFaaS
 import de.hasenburg.geobroker.client.main.SimpleClient
-import de.hasenburg.geobroker.client.main.buildBridgeBetweenTopicAndFunction
 import de.hasenburg.geobroker.commons.model.message.Payload
 import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
@@ -21,18 +18,18 @@ import java.io.File
 private val logger = LogManager.getLogger()
 val numThread = 1
 
-class RuleManager {
+class BridgeManager {
 
     private val rulesList = ArrayList<UserSpecifiedRule>()
 
     suspend fun createNewRule(rule: UserSpecifiedRule) {
         //function name should be a string without spaces and special symbols
-        var functionName = rule.getFunctionName()
+        val functionName = rule.getFunctionName()
 
         uploadFileToTinyFaaS(rule.jsFile, rule.env, functionName)
         //send subscription and get new topic set to be subscribed to
         GlobalScope.launch {
-                buildBridgeBetweenTopicAndFunction(rule.topic, rule.geofence, functionName, rule.matchingTopic)
+                buildBridgeBetweenTopicAndFunction(rule.topic, rule.geofences, functionName, rule.matchingTopic)
         }
         rulesList.add(rule)
     }
@@ -49,10 +46,10 @@ class RuleManager {
 
     private fun uploadFileToTinyFaaS(file: File, env: String, functionName: String) {
         // TODO: better way to upload function
-        cmdUploadTotinyFaaS(file.absolutePath, functionName, env, numThread)
+        cmdUploadToTinyFaaS(file.absolutePath, functionName, env, numThread)
     }
     private fun deleteTinyFaaSFunction(functionName: String) {
-        cmdDeleteFromtinyFaaS(functionName)
+        cmdDeleteFromTinyFaaS(functionName)
     }
 
 }
@@ -81,8 +78,8 @@ suspend fun main() {
     val geofence = Geofence.circle(Location(0.0, 0.0),2.0)
     val newRule = UserSpecifiedRule(geofence, topic , File("/Users/minghe/tinyFaaS/test/fns/readJSON/"), "nodejs", matchesTopic)
 
-    val ruleManager = RuleManager()
-    ruleManager.createNewRule(newRule)
+    val bridgeManager = BridgeManager()
+    bridgeManager.createNewRule(newRule)
 
     GlobalScope.launch {
         val client = SimpleClient("localhost", 5559)

@@ -154,9 +154,9 @@ public class ZMQProcess_BrokerCommunicator extends ZMQProcess {
 
 	@Override
 	protected void utilizationCalculated(double utilization) {
-		logger.info("Current Utilization is {}%", utilization);
+		//logger.info("Current Utilization is {}%", utilization);
 		// let's also print the number of messages sent to other brokers
-		logger.info("Total number of sent messages: {}", numberOfSentMessages);
+		//logger.info("Total number of sent messages: {}", numberOfSentMessages);
 	}
 
 	@Override

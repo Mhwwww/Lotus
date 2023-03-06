@@ -1,16 +1,20 @@
-package de.hasenburg.geobroker.client.main
+package de.hasenburg.geover
 
+import de.hasenburg.geobroker.client.main.SimpleClient
 import de.hasenburg.geobroker.commons.model.message.Payload
 import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import org.apache.logging.log4j.LogManager
 import org.json.JSONObject
 import java.io.DataOutputStream
+import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.random.Random
 
 
 const val GEOBROKER_HOST = "localhost"
@@ -18,7 +22,11 @@ const val GEOBROKER_PORT = 5559
 const val TINYFAAS_BASE_URL = "http://localhost:80/"
 
 private val logger = LogManager.getLogger()
-public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence: Geofence, functionName: String, newTopicIfMatch: Topic) {
+
+public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence:Geofence, functionName: String, newTopicIfMatch: Topic) {
+    return buildBridgeBetweenTopicAndFunction(topic, listOf(geofence), functionName, newTopicIfMatch)
+}
+public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: List<Geofence>, functionName: String, newTopicIfMatch: Topic) {
     //identity: TinyFaaSClient_test_/*/drone/*_(0.0,0.0,2.0)_nanotime
     //val client = SimpleClient(GEOBROKER_HOST, GEOBROKER_PORT, socketHWM = 1000, identity = " TinyFaaSClient_"+ functionName+"_" +topic.topic+"_"+geofence+"_"+System.nanoTime())
     var eventNum = 0
@@ -29,23 +37,29 @@ public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence: Ge
         GEOBROKER_HOST,
         GEOBROKER_PORT,
         socketHWM = 1000,
-        identity = "TinyFaaSClient_" + functionName + "_" + System.nanoTime()
+        identity = "TinyFaaSClient_" + functionName + "_" + System.nanoTime() + "_" + java.util.Random().nextInt()
     )
-    client.send(Payload.CONNECTPayload(Location(0.0, 0.0)))
-    logger.debug("Connect Payload Answer: {}", client.receive())
+    geofences.forEach {
+        client.send(Payload.CONNECTPayload(it.center))
+        logger.debug("ConnAck: {}", client.receive())
+    }
 
 
-    client.send(Payload.SUBSCRIBEPayload(topic, geofence))
-    logger.debug("Subscribe Payload Answer: {}", client.receive())
+    geofences.forEach {
+        logger.debug("Bridge Builder is subscribing to {} at {}", topic, it)
+        client.send(Payload.SUBSCRIBEPayload(topic, it))
+        logger.debug("SubAck: {}", client.receive())
+    }
+
 
     // Every time client.recieve gets something it should be a PublishPayload()
     // Send out a request to the function everytime this happens
     while (true) {
         logger.debug(
-            "ZMQ Client Topic={} Geofence={} is waiting for a message to send to FunctionName={}",
+            "ZMQ Client FunctionName={} Topic={} Geofences={} is waiting for a message to send",
+            functionName,
             topic,
-            geofence,
-            functionName
+            geofences
         )
         val message = client.receive()
         Runtime.getRuntime().addShutdownHook(Thread {
@@ -75,22 +89,17 @@ public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence: Ge
             functionName
         )
         val resultFromTinyFaaS = sendReqToTinyFaaS(functionName, jsonToSendToTinyFaaS.toString())
-        val tinyFaaSJson = JSONObject(resultFromTinyFaaS)
-        logger.debug("Processed Event. Asnwer from TinyFaaS is={}", tinyFaaSJson)
 
-        //TODO: set new event topics
-        //TODO: client re-subscribe to the new topic
-        //TODO: re-publish the event with new topics
+        logger.debug("Processed Event. Asnwer from TinyFaaS is={}", resultFromTinyFaaS)
 
-
-        if (tinyFaaSJson.keySet().size > 0) {
+        if (resultFromTinyFaaS.isNotEmpty()) {
             // response messages from tinyfaas are the processed event topics
             // new topic: original + client id (including funcitonName--original topic)
             logger.debug("We have found a match! Publishing answer from tinyFaaS to {}", newTopicIfMatch)
-            republish(client, newTopicIfMatch, message.geofence, tinyFaaSJson.toString())
+            republish(client, newTopicIfMatch, message.geofence, resultFromTinyFaaS)
             eventNum += 1
 
-            logger.info("\nNumber of processed events: $eventNum")
+            logger.info("Number of processed events: $eventNum")
 
         } else {
             logger.debug("TinyFaaS returned an empty object, so we don't need to forward it to any other topic")
