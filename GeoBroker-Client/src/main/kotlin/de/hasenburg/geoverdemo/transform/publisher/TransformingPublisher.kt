@@ -5,6 +5,7 @@ import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
 import de.hasenburg.geobroker.commons.model.message.Payload
 import de.hasenburg.geobroker.commons.model.message.ReasonCode
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
+import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.randomDouble
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geobroker.commons.sleep
@@ -20,12 +21,14 @@ private val logger = LogManager.getLogger()
 fun main() {
     setLogLevel(logger, Level.DEBUG)
     val processManager = ZMQProcessManager()
-    val client = SimpleClient("localhost", 5559, identity = "TransformPublisher_${System.currentTimeMillis()}_${Random.nextInt()}")
+
+    val clients = mutableMapOf<Location, SimpleClient>()
 
     // connect
     locations.forEach {
-        client.send(Payload.CONNECTPayload(it))
-        logger.debug("ConnAck: {}", client.receive())
+        clients[it] = SimpleClient("localhost", 5559, identity = "TransformPublisher_${System.currentTimeMillis()}_${Random.nextInt()}")
+        clients[it]!!.send(Payload.CONNECTPayload(it))
+        logger.debug("ConnAck: {}", clients[it]!!.receive())
         sleep(100,0)
     }
 
@@ -44,19 +47,22 @@ fun main() {
                 }
                 jsonList.put(newElem)
             }
-            val location = Geofence.circle(currLocation,2.0)
+            val location = Geofence.world()
             logger.debug("Publishing at {} topic {}", location, publishTopic)
-            client.send(
+
+            clients[currLocation]!!.send(
                 Payload.PUBLISHPayload(
-                    publishTopic, location,jsonObject.toString()))
-            logger.debug("PubAck: {}", client.receive())
+                    publishTopic, Geofence.world(), jsonObject.toString()))
+            logger.debug("PubAck: {}", clients[currLocation]!!.receive())
             sleep(100, 0)
         }
     }
 
-    client.send(Payload.DISCONNECTPayload(ReasonCode.NormalDisconnection))
+    locations.forEach {
+        clients[it]!!.send(Payload.DISCONNECTPayload(ReasonCode.NormalDisconnection))
+        clients[it]!!.tearDownClient()
+    }
 
-    client.tearDownClient()
     processManager.tearDown(3000)
     exitProcess(0)
 }

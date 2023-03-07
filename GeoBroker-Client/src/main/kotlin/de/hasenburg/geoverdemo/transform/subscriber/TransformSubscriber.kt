@@ -11,9 +11,7 @@ import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
 import de.hasenburg.geoverdemo.transform.common.*
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -50,8 +48,8 @@ class TransformSubscriber(private val loc: Location, private val topic: Topic) {
     }
 }
 
-@OptIn(DelicateCoroutinesApi::class)
-suspend fun main() {
+//@OptIn(DelicateCoroutinesApi::class)
+suspend fun main() = runBlocking {
     setLogLevel(logger, Level.DEBUG)
     // Geofence.circle(Location(0.0,0.0), 350.0)
     val newRule = UserSpecifiedRule(locations.map { Geofence.circle(it, 2.0) }, publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/transform/subscriber/jsonToCsv/"), "nodejs", subscriberTopic)
@@ -62,7 +60,7 @@ suspend fun main() {
 
     val subscribers = mutableListOf<TransformSubscriber>()
     locations.forEach{
-        GlobalScope.launch {
+        launch(CoroutineName(it.toString())) {
             val newS = TransformSubscriber(it, subscriberTopic)
             subscribers.add(newS)
             newS.run()

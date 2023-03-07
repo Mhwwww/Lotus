@@ -75,6 +75,7 @@ class SingleNoGeoMatchingLogic(private val clientDirectory: ClientDirectory,
 
         if (subscribed != null) {
             // if already subscribed -> done
+            logger.debug("Client {} is already subscribed to topic {}", clientIdentifier, payload.topic)
             reasonCode = ReasonCode.Success
         } else {
             // create subscription

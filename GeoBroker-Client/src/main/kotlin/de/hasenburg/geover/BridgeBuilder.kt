@@ -32,24 +32,24 @@ public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: L
     var eventNum = 0
     val newTopicSet = ArrayList<String>()
 
-
     val client = SimpleClient(
         GEOBROKER_HOST,
         GEOBROKER_PORT,
         socketHWM = 1000,
-        identity = "TinyFaaSClient_" + functionName + "_" + System.nanoTime() + "_" + java.util.Random().nextInt()
-    )
-    geofences.forEach {
-        client.send(Payload.CONNECTPayload(it.center))
-        logger.debug("ConnAck: {}", client.receive())
-    }
+//        identity = "TinyFaaSClient_" + functionName + "_" + System.nanoTime() + "_" + java.util.Random().nextInt()
+        identity = "TinyFaaSClient_$functionName"
+        )
+
+    // the geofences are useless at the moment
+    var geofence = Geofence.world()
+
+    client.send(Payload.CONNECTPayload(geofence.center))
+    logger.debug("ConnAck: {}", client.receive())
 
 
-    geofences.forEach {
-        logger.debug("Bridge Builder is subscribing to {} at {}", topic, it)
-        client.send(Payload.SUBSCRIBEPayload(topic, it))
-        logger.debug("SubAck: {}", client.receive())
-    }
+    logger.debug("Bridge Builder is subscribing to {} at {}", topic, geofence.center)
+    client.send(Payload.SUBSCRIBEPayload(topic, geofence))
+    logger.debug("SubAck: {}", client.receive())
 
 
     // Every time client.recieve gets something it should be a PublishPayload()
@@ -66,7 +66,11 @@ public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: L
             client.tearDownClient()
         })
         if (message !is Payload.PUBLISHPayload) {
-            logger.debug("Message {} is not a PublishPayload, but it should be! Its probably a PubAckPayload from pusblishing something to a mathing topic", message)
+            if (message !is Payload.PUBACKPayload) {
+                logger.error("Message {} is not a PublishPayload, but its also not a PubACKPayload", message)
+                continue
+            }
+            logger.debug("Message {} is a PubACKPayload", message)
             continue
         }
         val locJson = JSONObject()

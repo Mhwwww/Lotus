@@ -62,7 +62,7 @@ suspend fun main() = runBlocking {
 
     val subscribers = mutableListOf<CbfSubscriber>()
     locations.forEach{
-        launch {
+        launch(CoroutineName(it.toString())) {
             val newS = CbfSubscriber(it, matchingTopic)
             subscribers.add(newS)
             newS.run()

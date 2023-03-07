@@ -23,12 +23,12 @@ fun main() {
     val processManager = ZMQProcessManager()
 
     // make a map of locations to clients
-    val client = SimpleClient("localhost", 5559, identity = "CbfPublisher_${System.currentTimeMillis()}_${Random.nextInt()}")
-
+    val clients = mutableMapOf<Location, SimpleClient>()
     // connect
     locations.forEach {
-        client.send(Payload.CONNECTPayload(it))
-        logger.debug("ConnAck: {}", client.receive())
+        clients[it] = SimpleClient("localhost", 5559, identity = "CbfPublisher_${System.currentTimeMillis()}_${Random.nextInt()}")
+        clients[it]!!.send(Payload.CONNECTPayload(it))
+        logger.debug("ConnAck: {}", clients[it]!!.receive())
         sleep(100,0)
     }
 
@@ -46,20 +46,23 @@ fun main() {
                 put("wet", 60)
             }
 
-            val location = Geofence.circle(currLocation,2.0)
+//            val location = Geofence.circle(currLocation,2.0)
+            val location = Geofence.world()
             logger.debug("Publishing at {} topic {}", location, publishTopic)
-            client.send(
+            clients[currLocation]!!.send(
                 Payload.PUBLISHPayload(
                     publishTopic, location, newElem.toString()))
-            logger.debug("PubAck: {}", client.receive())
+            logger.debug("PubAck: {}", clients[currLocation]!!.receive())
             sleep(100, 0)
 
         }
     }
 
-    client.send(Payload.DISCONNECTPayload(ReasonCode.NormalDisconnection))
+    locations.forEach {
+        clients[it]!!.send(Payload.DISCONNECTPayload(ReasonCode.NormalDisconnection))
 
-    client.tearDownClient()
+        clients[it]!!.tearDownClient()
+    }
 
     processManager.tearDown(3000)
     exitProcess(0)

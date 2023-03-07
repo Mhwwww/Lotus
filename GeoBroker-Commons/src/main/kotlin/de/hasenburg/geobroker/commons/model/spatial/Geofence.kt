@@ -36,11 +36,13 @@ class Geofence(@Serializable(with = ShapeWKTSerializer::class) @SerialName("wkt"
      * Returns false if not or [location] == null.
      */
     fun contains(location: Location?): Boolean {
-        return if (location != null) {
-            shape.relate(location.point) == SpatialRelation.CONTAINS
-        } else {
-            false
+        if (location == null) {
+            return false
         }
+
+        val result = shape.relate(location.point) == SpatialRelation.CONTAINS
+        logger.debug("Checking if {} contains {} - result: {}", this, location, result)
+        return result
     }
 
     /**
@@ -105,6 +107,27 @@ class Geofence(@Serializable(with = ShapeWKTSerializer::class) @SerialName("wkt"
             val reader = GEO.formats.wktReader as CustomWKTReader
             return Geofence(reader.parse(wkt) as Shape)
         }
+
+        // unfortunately this does not work
+//
+//        fun fromGeofenceList(geofences: List<Geofence>): Geofence {
+//
+//            if (geofences.isEmpty()) {
+//                throw RuntimeShapeException("Cannot create a geofence from an empty list")
+//            }
+//            if (geofences.size == 1) {
+//                return geofences[0]
+//            }
+//
+//            val shapes = ArrayList<Shape>()
+//            for (geofence in geofences) {
+//                shapes.add(geofence.shape)
+//            }
+//
+//            val union = GEO.shapeFactory.multiShape(shapes)
+//
+//            return Geofence(union)
+//        }
 
         /**
          * Creates a new geofence based on the supplied locations
