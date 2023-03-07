@@ -8,15 +8,15 @@ import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
+import de.hasenburg.geobroker.commons.sleep
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
 import de.hasenburg.geoverdemo.cbf.common.*
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import java.io.File
+import kotlin.random.Random
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
@@ -27,7 +27,9 @@ class CbfSubscriber(private val loc: Location, private val topic: Topic) {
         logger.debug("Subscribing to {} at {}", topic, loc)
 
         val processManager = ZMQProcessManager()
-        val client = SimpleClient("localhost", 5559, identity = " CbfSub_${topic.topic}_${loc.point}_${System.currentTimeMillis()}")
+        val client = SimpleClient("localhost", 5559, identity = " CbfSub_${topic.topic}_${loc.point}_${Random.nextInt()}")
+
+        logger.debug("sending connect with client id ${client.identity}")
 
         client.send(Payload.CONNECTPayload(loc))
         logger.debug("ConnAck: {}", client.receive())
@@ -50,7 +52,7 @@ class CbfSubscriber(private val loc: Location, private val topic: Topic) {
 }
 
 @OptIn(DelicateCoroutinesApi::class)
-suspend fun main() {
+suspend fun main() = runBlocking {
     setLogLevel(logger, Level.DEBUG)
     // Geofence.circle(Location(0.0,0.0), 350.0)
     val newRule = UserSpecifiedRule(locations.map { Geofence.circle(it, 2.0) }, publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/cbf/subscriber/readJSON/"), "nodejs", matchingTopic)
@@ -58,13 +60,13 @@ suspend fun main() {
     val bridgeManager = BridgeManager()
     bridgeManager.createNewRule(newRule)
 
-
     val subscribers = mutableListOf<CbfSubscriber>()
     locations.forEach{
-        GlobalScope.launch {
+        launch {
             val newS = CbfSubscriber(it, matchingTopic)
             subscribers.add(newS)
             newS.run()
+            sleep(100, 0)
         }
     }
 

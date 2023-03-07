@@ -44,10 +44,11 @@ fun main() {
                 }
                 jsonList.put(newElem)
             }
-
+            val location = Geofence.circle(currLocation,2.0)
+            logger.debug("Publishing at {} topic {}", location, publishTopic)
             client.send(
                 Payload.PUBLISHPayload(
-                    publishTopic, Geofence.circle(currLocation,2.0),jsonObject.toString()))
+                    publishTopic, location,jsonObject.toString()))
             logger.debug("PubAck: {}", client.receive())
             sleep(100, 0)
         }
