@@ -145,11 +145,34 @@ fun publishMessageToLocalClients(publisherLocation: Location, publishPayload: Pa
     val subscriptionIdResults =
             topicAndGeofenceMapper.getSubscriptionIds(publishPayload.topic, publisherLocation, clientDirectory)
 
+    logger.debug("Found {} subscriptions for topic {}", subscriptionIdResults.size, publishPayload.topic)
 
     // only keep subscription if subscriber location is insider message geofence
-    val subscriptionIds = subscriptionIdResults.filter { subId ->
-        publishPayload.geofence.contains(clientDirectory.getClientLocation(subId.left))
+    // or tinyfaas is the subscriber, which is at 0.0
+//    val subscriptionIds = subscriptionIdResults.filter { subId ->
+//        || clientDirectory.getClientLocation(subId.left) == Location(0.0, 0.0)
+//    }
+//
+    val subscriptionIds =  mutableListOf<ImmutablePair<String, Int>>()
+
+    for (subId in subscriptionIdResults) {
+        val clientLocation = clientDirectory.getClientLocation(subId.left)
+        logger.debug("checking if client with location {} is subscriber for message with location {}", clientLocation, publishPayload.geofence)
+        if (clientLocation == Location(0.0, 0.0)) {
+            logger.debug("client is at location 0.0, 0.0, bypassing check")
+            subscriptionIds.add(subId)
+            continue
+        }
+        val contains = publishPayload.geofence.contains(clientDirectory.getClientLocation(subId.left))
+
+        logger.debug("check: {}", contains)
+        if (contains) {
+            subscriptionIds.add(subId)
+        }
     }
+
+    // skip the filtering because tinyfaas is at 0.0
+    // val subscriptionIds = subscriptionIdResults
 
     // publish message to remaining subscribers
     for (subscriptionId in subscriptionIds) {

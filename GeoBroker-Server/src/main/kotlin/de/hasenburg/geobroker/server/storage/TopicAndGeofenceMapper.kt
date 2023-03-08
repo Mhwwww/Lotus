@@ -82,9 +82,32 @@ class TopicAndGeofenceMapper(configuration: Configuration) {
      */
     fun getSubscriptionIds(topic: Topic, publisherLocation: Location,
                            clientDirectory: ClientDirectory): List<ImmutablePair<String, Int>> {
-        return getPotentialSubscriptionIds(topic, publisherLocation).filter { subId ->
-            clientDirectory.getSubscription(subId.left, topic)?.geofence?.contains(publisherLocation) ?: false
+        // if it's a tinyfaas publisher, location is 0.0, 0.0
+        val potentialSubscriptionIds = getPotentialSubscriptionIds(topic, publisherLocation)
+
+        logger.debug("found {} potential subscriptions for topic {} and location {}",
+            potentialSubscriptionIds.size, topic, publisherLocation)
+
+        val filtered = mutableListOf<ImmutablePair<String, Int>>()
+
+        for (subId in potentialSubscriptionIds) {
+            val subscription = clientDirectory.getSubscription(subId.left, topic)
+            logger.debug("checking subscription {} for topic {} and location {}", subId, topic, publisherLocation)
+            if (publisherLocation == Location(0.0, 0.0)) {
+                logger.debug("publisher location is 0.0, 0.0, bypassing filter")
+                filtered.add(subId)
+                continue
+            }
+            val contains = subscription?.geofence?.contains(publisherLocation)
+            logger.debug("subscription {} contains publisher location: {}", subId, contains)
+            if (contains!!) {
+                logger.debug("adding")
+                filtered.add(subId)
+                continue
+            }
         }
+
+        return filtered
     }
 
     /**

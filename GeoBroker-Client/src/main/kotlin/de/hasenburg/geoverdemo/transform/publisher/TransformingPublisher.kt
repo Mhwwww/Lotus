@@ -19,7 +19,7 @@ import kotlin.random.Random
 
 private val logger = LogManager.getLogger()
 fun main() {
-    setLogLevel(logger, Level.DEBUG)
+//    setLogLevel(logger, Level.DEBUG)
     val processManager = ZMQProcessManager()
 
     val clients = mutableMapOf<Location, SimpleClient>()
@@ -32,6 +32,7 @@ fun main() {
         sleep(100,0)
     }
 
+    var i = 0
     repeat(numberOfRepeats) {
         locations.forEach{ currLocation ->
             val jsonObject = JSONObject()
@@ -47,14 +48,18 @@ fun main() {
                 }
                 jsonList.put(newElem)
             }
-            val location = Geofence.world()
+
+//            val location = Geofence.world()
+            val location = Geofence.circle(currLocation,2.0)
             logger.debug("Publishing at {} topic {}", location, publishTopic)
 
+            jsonObject.put("timeSent", System.nanoTime())
             clients[currLocation]!!.send(
                 Payload.PUBLISHPayload(
-                    publishTopic, Geofence.world(), jsonObject.toString()))
+                    publishTopic, location, jsonObject.toString()))
             logger.debug("PubAck: {}", clients[currLocation]!!.receive())
             sleep(100, 0)
+            logger.info("Sent message ${++i}")
         }
     }
 

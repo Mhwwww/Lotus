@@ -19,7 +19,8 @@ import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
 fun main() {
-    setLogLevel(logger, Level.DEBUG)
+//    setLogLevel(logger, Level.DEBUG)
+
     val processManager = ZMQProcessManager()
 
     // make a map of locations to clients
@@ -32,6 +33,7 @@ fun main() {
         sleep(100,0)
     }
 
+    var i = 0
     repeat(numberOfRepeats) {
         locations.forEach{ currLocation ->
 //            val temperature = 35 //randomDouble(0.0, 60.0)
@@ -40,20 +42,22 @@ fun main() {
 //            val wet = 60 // randomDouble(0.0, 60.0)
 
             val newElem = JSONObject().apply {
-                put("temperature", 35)
-                put("speed", 15)
-                put("wind", 0)
-                put("wet", 60)
+                put("temperature", randomDouble(0.0, 60.0))
+                put("speed", 40)//randomDouble(0.0, 60.0))
+                put("wind", 40)//randomDouble(0.0, 60.0))
+                put("wet", randomDouble(0.0, 60.0))
             }
 
-//            val location = Geofence.circle(currLocation,2.0)
-            val location = Geofence.world()
+            val location = Geofence.circle(currLocation,2.0)
+//            val location = Geofence.world()
             logger.debug("Publishing at {} topic {}", location, publishTopic)
+            newElem.put("timeSent", System.nanoTime())
             clients[currLocation]!!.send(
                 Payload.PUBLISHPayload(
                     publishTopic, location, newElem.toString()))
             logger.debug("PubAck: {}", clients[currLocation]!!.receive())
             sleep(100, 0)
+            logger.info("Sent message ${++i}")
 
         }
     }

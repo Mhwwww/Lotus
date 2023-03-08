@@ -1,5 +1,5 @@
 .DS_Store
-.idea/
+#.idea/
 *.iml
 target/
 benchmarking_results/
@@ -10,3 +10,4 @@ test-log.xml
 configuration.toml
 wasReceived.txt
 wasSent.txt
+.mypy_cache/

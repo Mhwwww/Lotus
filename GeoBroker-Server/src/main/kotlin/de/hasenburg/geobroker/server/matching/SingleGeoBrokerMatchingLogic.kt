@@ -3,6 +3,7 @@ package de.hasenburg.geobroker.server.matching
 import de.hasenburg.geobroker.commons.model.message.Payload.*
 import de.hasenburg.geobroker.commons.model.message.ReasonCode
 import de.hasenburg.geobroker.commons.model.message.toZMsg
+import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.server.storage.TopicAndGeofenceMapper
 import de.hasenburg.geobroker.server.storage.client.ClientDirectory
 import org.apache.logging.log4j.LogManager
@@ -83,12 +84,16 @@ class SingleGeoBrokerMatchingLogic(private val clientDirectory: ClientDirectory,
     override fun processPUBLISH(clientIdentifier: String, payload: PUBLISHPayload, clients: Socket,
                                 brokers: Socket) {
         val reasonCode: ReasonCode
-        val publisherLocation = clientDirectory.getClientLocation(clientIdentifier)
+        var publisherLocation = clientDirectory.getClientLocation(clientIdentifier)
 
         reasonCode = if (publisherLocation == null) { // null if client is not connected
             logger.debug("Client {} is not connected", clientIdentifier)
             ReasonCode.NotConnectedOrNoLocation
         } else {
+            if (publisherLocation == Location(0.0,0.0)) {
+                publisherLocation = payload.geofence.center
+            }
+
             publishMessageToLocalClients(publisherLocation,
                     payload,
                     clientDirectory,

@@ -20,7 +20,7 @@ private val logger = LogManager.getLogger()
 
 val alphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 fun main() {
-    setLogLevel(logger, Level.DEBUG)
+//    setLogLevel(logger, Level.DEBUG)
     val processManager = ZMQProcessManager()
 
     // make a map of locations to clients
@@ -35,6 +35,7 @@ fun main() {
         sleep(100,0)
     }
 
+    var i = 0
     repeat(numberOfRepeats) {
         locations.forEach{ currLocation ->
             val jsonObject = JSONObject()
@@ -43,12 +44,15 @@ fun main() {
                 jsonObject.put(List(12) { alphabet.random() }.joinToString(""), randomInt(10000))
             }
 
+            jsonObject.put("timeSent", System.nanoTime())
 
+            val location = Geofence.circle(currLocation,2.0)
             clients[currLocation]!!.send(
                 Payload.PUBLISHPayload(
-                    publishTopic, Geofence.world(), jsonObject.toString()))
+                    publishTopic, location, jsonObject.toString()))
             logger.debug("PubAck: {}", clients[currLocation]!!.receive())
             sleep(100, 0)
+            logger.info("Sent message ${++i}")
         }
     }
 

@@ -19,7 +19,7 @@ private val logger = LogManager.getLogger()
  */
 fun main(args: Array<String>) {
 
-    setLogLevel(logger, Level.DEBUG)
+//    setLogLevel(logger, Level.DEBUG)
 
     // read in configuration
     val configuration: Configuration = if (args.isNotEmpty()) {

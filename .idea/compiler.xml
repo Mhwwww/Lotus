@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="GeoBroker-Commons" />
+        <module name="GeoBroker-Server" />
+        <module name="jeromq" />
+        <module name="GeoBroker-Client" />
+        <module name="spatial4j" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>

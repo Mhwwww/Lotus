@@ -77,6 +77,16 @@ class Location(@Serializable(with = PointWKTSerializer::class) @SerialName("wkt"
         }
 
         /**
+         * Creates a safe random location that does not trigger all the GeoBroker bugs.
+         *
+         */
+        fun safeRandom(random: Random = Random.Default): Location {
+            // there have been rounding errors
+            return Location(min((random.nextDouble() * -160.0) + 80.0, 80.0),
+                min((random.nextDouble() * -320.0) + 160.0, 160.0))
+        }
+
+        /**
          * Creates a random location that is inside the given Geofence.
          *
          * @param geofence - may not be a geofence that crosses any datelines!!
@@ -117,6 +127,8 @@ class Location(@Serializable(with = PointWKTSerializer::class) @SerialName("wkt"
         other as Location
 
         if (point.lat != other.point.lat) return false
+
+        // lol does this work?
 
         return true
     }

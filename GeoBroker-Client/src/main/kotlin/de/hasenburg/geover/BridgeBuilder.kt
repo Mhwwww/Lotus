@@ -59,7 +59,7 @@ public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: L
             "ZMQ Client FunctionName={} Topic={} Geofences={} is waiting for a message to send",
             functionName,
             topic,
-            geofences
+            geofence
         )
         val message = client.receive()
         Runtime.getRuntime().addShutdownHook(Thread {
@@ -140,13 +140,17 @@ suspend fun sendReqToTinyFaaS(
     connection.doOutput = true
     connection.setRequestProperty("Content-Type", contentType)
 
+//    logger.debug("Sending request to TinyFaaS f {} with payload {}", functionName, payload)
+
     val outputStream = DataOutputStream(connection.outputStream)
-    withContext(Dispatchers.IO) {
+
         outputStream.writeBytes(payload)
         outputStream.flush()
         outputStream.close()
-    }
+
     val responseCode = connection.responseCode
+
+//    logger.debug("Response code from TinyFaaS: {}", responseCode)
 
     val inputStream = connection.inputStream
     val response = inputStream.bufferedReader().use { it.readText() }
@@ -154,6 +158,8 @@ suspend fun sendReqToTinyFaaS(
     if (responseCode != 200) {
         logger.error("Response code is not 200! It's {}. Response: {}", responseCode, response)
     }
+
+//    logger.debug("Response from TinyFaaS: {}", response)
 
     return response
 }
