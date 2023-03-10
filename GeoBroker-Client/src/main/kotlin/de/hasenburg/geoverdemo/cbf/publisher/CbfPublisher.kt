@@ -43,8 +43,8 @@ fun main() {
 
             val newElem = JSONObject().apply {
                 put("temperature", randomDouble(0.0, 60.0))
-                put("speed", 40)//randomDouble(0.0, 60.0))
-                put("wind", 40)//randomDouble(0.0, 60.0))
+                put("speed", randomDouble(0.0, 60.0))
+                put("wind", randomDouble(0.0, 60.0))
                 put("wet", randomDouble(0.0, 60.0))
             }
 
