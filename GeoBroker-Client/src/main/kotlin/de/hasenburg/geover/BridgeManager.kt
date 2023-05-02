@@ -75,6 +75,7 @@ suspend fun main() {
 
     val topic = Topic("/read/1/berlin")
     val matchesTopic = Topic("/read/1/berlin/randomHashValueTBD")
+    //val warningTopic = Topic(topic.topic + "/warnings")
     val geofence = Geofence.circle(Location(0.0, 0.0),2.0)
     val newRule = UserSpecifiedRule(geofence, topic , File("./tinyFaaS/test/fns/readJSON/"), "nodejs", matchesTopic)
 

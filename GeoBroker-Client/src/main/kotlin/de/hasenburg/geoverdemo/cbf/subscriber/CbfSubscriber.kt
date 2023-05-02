@@ -8,19 +8,17 @@ import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
-import de.hasenburg.geobroker.commons.sleep
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
-import de.hasenburg.geoverdemo.cbf.common.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.Semaphore
+import de.hasenburg.geoverdemo.cbf.common.locations
+import de.hasenburg.geoverdemo.cbf.common.matchingTopic
+import de.hasenburg.geoverdemo.cbf.common.publishTopic
+import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.json.JSONObject
 import java.io.File
 import kotlin.concurrent.thread
-import kotlin.random.Random
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
@@ -30,7 +28,7 @@ class CbfSubscriber(private val loc: Location, private val topic: Topic, private
     private lateinit var client: SimpleClient
     private lateinit var processManager: ZMQProcessManager
     fun prepare() {
-//        setLogLevel(this.logger, Level.DEBUG)
+       setLogLevel(this.logger, Level.DEBUG)
 
         logger.debug("{}: Subscribing to {} at {}", name, topic, loc)
 
@@ -75,7 +73,7 @@ class CbfSubscriber(private val loc: Location, private val topic: Topic, private
     }
 }
 fun main() = runBlocking {
-//    setLogLevel(logger, Level.DEBUG)
+    setLogLevel(logger, Level.DEBUG)
     // Geofence.circle(Location(0.0,0.0), 350.0)
     val newRule = UserSpecifiedRule(locations.map { Geofence.circle(it, 2.0) }, publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/cbf/subscriber/filter/"), "nodejs", matchingTopic)
 

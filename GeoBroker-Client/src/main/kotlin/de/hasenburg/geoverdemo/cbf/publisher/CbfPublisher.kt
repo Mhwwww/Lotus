@@ -9,8 +9,9 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.randomDouble
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geobroker.commons.sleep
-import de.hasenburg.geobroker.server.storage.client.Client
-import de.hasenburg.geoverdemo.cbf.common.*
+import de.hasenburg.geoverdemo.cbf.common.locations
+import de.hasenburg.geoverdemo.cbf.common.numberOfRepeats
+import de.hasenburg.geoverdemo.cbf.common.publishTopic
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.json.JSONObject
@@ -19,7 +20,7 @@ import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
 fun main() {
-//    setLogLevel(logger, Level.DEBUG)
+    setLogLevel(logger, Level.DEBUG)
 
     val processManager = ZMQProcessManager()
 

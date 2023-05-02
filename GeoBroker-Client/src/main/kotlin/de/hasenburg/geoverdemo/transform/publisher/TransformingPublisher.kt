@@ -9,17 +9,19 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.randomDouble
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geobroker.commons.sleep
-import de.hasenburg.geoverdemo.transform.common.*
+import de.hasenburg.geoverdemo.transform.common.locations
+import de.hasenburg.geoverdemo.transform.common.numberOfRepeats
+import de.hasenburg.geoverdemo.transform.common.publishTopic
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.json.JSONArray
-import kotlin.system.exitProcess
 import org.json.JSONObject
 import kotlin.random.Random
+import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
 fun main() {
-//    setLogLevel(logger, Level.DEBUG)
+    setLogLevel(logger, Level.DEBUG)
     val processManager = ZMQProcessManager()
 
     val clients = mutableMapOf<Location, SimpleClient>()

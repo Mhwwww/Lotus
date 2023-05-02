@@ -1,0 +1,81 @@
+POST http://localhost:80/3bdd8602eb9fb24db6f15285acd488eb
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":1.0,"lat":1.0},
+  "message":{
+    "temperature":50.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+<> 2023-05-01T235546.200.txt
+
+###
+
+POST http://localhost:80/4ccd9e27d9a886183998ef5f4b5da314
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":1.0,"lat":1.0},
+  "message":{
+    "temperature":50.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+<> 2023-05-01T234312.200.txt
+
+###
+
+POST http://localhost:80/4ccd9e27d9a886183998ef5f4b5da314
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":1.0,"lat":1.0},
+  "message":{
+    "temperature":50.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+<> 2023-05-01T234251.200.txt
+
+###
+
+POST http://localhost:80/read
+Content-Type: application/json
+
+{
+  "topic":"read",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "temperature":55.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+###
+
+POST http://localhost:8080/process
+Content-Type: application/json
+
+{
+"input": "Hello, world!"
+}
+
+<> 2023-04-24T001059.200.json
+
+###
+

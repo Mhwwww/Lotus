@@ -4,7 +4,7 @@ import java.io.IOException
 
 // tinyFaaS is a submodule to the main repo
 // seven levels up from this should do
-const val TINYFAAS_BASE_PATH = "./tinyFaaS/"
+const val TINYFAAS_BASE_PATH = "/Users/minghe/tinyFaaS/"
 
 
 const val TINYFAAS_UPLOAD_PATH = "${TINYFAAS_BASE_PATH}scripts/upload.sh\t"

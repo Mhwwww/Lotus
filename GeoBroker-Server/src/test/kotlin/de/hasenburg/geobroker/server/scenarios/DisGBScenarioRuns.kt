@@ -1,7 +1,6 @@
 package de.hasenburg.geobroker.server.scenarios
 
 import de.hasenburg.geobroker.client.main.SimpleClient
-import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
 import de.hasenburg.geobroker.commons.model.message.Payload.*
 import de.hasenburg.geobroker.commons.model.message.ReasonCode
 import de.hasenburg.geobroker.commons.model.message.Topic
@@ -20,7 +19,6 @@ import org.apache.logging.log4j.LogManager
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 private var logger = LogManager.getLogger()

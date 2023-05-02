@@ -8,7 +8,6 @@ import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.sleepNoLog
 import org.apache.logging.log4j.LogManager
-import kotlin.random.Random
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
@@ -25,7 +24,7 @@ fun main() {
     // receive one message
     logger.info("Received server answer: {}", client.receive())
 
-    client.send(Payload.PUBLISHPayload(Topic("test"),Geofence.circle(Location(0.0,0.0),2.0),"{\n" +
+    client.send(Payload.PUBLISHPayload(Topic("warnings"),Geofence.circle(Location(0.0,0.0),2.0),"{\n" +
             "    \"temperature\":35.0,\n" +
             "    \"speed\":20.0,\n" +
             "    \"wind\":20.0,\n" +

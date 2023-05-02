@@ -1,0 +1,25 @@
+[
+  {
+    "topic": "temperature",
+    "operator": "<",
+    "constraints": 35.0
+  },
+  {
+    "topic": "speed",
+    "operator":"<",
+    "constraints": 40.0
+  },
+
+  {
+    "topic": "wind",
+    "operator":"<=",
+    "constraints": 30.0
+  },
+
+  {
+    "topic": "wet",
+    "operator":"<",
+    "constraints": 50.0
+  }
+
+]

@@ -16,3 +16,4 @@ Subscribes to events everywhere, forwards them all to the function, republishes 
 E.g., all subscribers have the same ruleset (for this demonstration at least)
 
 Because the rules filter out 3/4 of all messages, the edge devices have 75% less load. But this can be changed (by changing the rules.json file or by changing the random distribution of values in CbfPublisher.kt)
+

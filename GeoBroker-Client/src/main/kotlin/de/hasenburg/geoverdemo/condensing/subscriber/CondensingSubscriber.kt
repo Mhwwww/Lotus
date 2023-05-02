@@ -8,11 +8,12 @@ import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
-import de.hasenburg.geobroker.commons.sleep
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
-import de.hasenburg.geoverdemo.condensing.common.*
-import kotlinx.coroutines.*
+import de.hasenburg.geoverdemo.condensing.common.locations
+import de.hasenburg.geoverdemo.condensing.common.publishTopic
+import de.hasenburg.geoverdemo.condensing.common.subscriberTopic
+import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.json.JSONObject
@@ -28,7 +29,7 @@ class CondensingSubscriber(private val loc: Location, private val topic: Topic, 
     private lateinit var client: SimpleClient
     private lateinit var processManager: ZMQProcessManager
     fun prepare() {
-//        setLogLevel(this.logger, Level.DEBUG)
+        setLogLevel(this.logger, Level.DEBUG)
 
         logger.debug("{}: Subscribing to {} at {}", name, topic, loc)
 
@@ -74,7 +75,7 @@ class CondensingSubscriber(private val loc: Location, private val topic: Topic, 
     }
 }
 fun main() = runBlocking {
-//    setLogLevel(logger, Level.DEBUG)
+   setLogLevel(logger, Level.DEBUG)
     // Geofence.circle(Location(0.0,0.0), 350.0)
     val newRule = UserSpecifiedRule(locations.map { Geofence.circle(it, 2.0) }, publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/condensing/subscriber/condense/"), "nodejs", subscriberTopic)
 

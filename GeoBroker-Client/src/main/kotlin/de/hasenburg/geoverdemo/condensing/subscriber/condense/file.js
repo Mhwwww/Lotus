@@ -4,6 +4,11 @@ module.exports = (req,res)=>{
         "importantKey": inJson["importantKey"],
         "timeSent": inJson["timeSent"],
     }))
+    //console.log(inJson)
+/*    console.log(JSON.stringify({
+        "importantKey": inJson["importantKey"],
+        "timeSent": inJson["timeSent"],
+    }))*/
     res.end()
 
 }

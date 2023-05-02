@@ -1,6 +1,7 @@
 module.exports = (req,res)=>{
     console.time("all")
     let inJson = req.body["message"]["list"]
+    console.log("input Json",inJson)
 
     // remove the "timeSent" field
     let timeSent = req.body["message"]["timeSent"]
@@ -15,6 +16,7 @@ module.exports = (req,res)=>{
 
     let outJson = {"rawCsv": csvString, "timeSent": timeSent}
     res.write(JSON.stringify(outJson))
+    console.log(JSON.stringify(outJson))
     res.end()
     console.timeEnd("all")
 }

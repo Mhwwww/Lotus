@@ -17,16 +17,20 @@ data class Configuration(
         val port: Int = 5559,
         val granularity: Int = 1,
         val messageProcessors: Int = 1,
+        //val messageProcessors: Int = 2,
         val logConfFile: File? = null,
         val prometheusPort: Int = -1,
 
         // server mode - general
         val mode: Mode = Mode.single,
+        //val mode: Mode = Mode.disgb_subscriberMatching,
 
         // server mode - disgb
         // TODO replace with File similarly to logConfFile field
         val brokerAreaFilePath: String = "defaultBrokerAreas.json",
+       //val brokerAreaFilePath: String = "/Users/minghe/geobroker/GeoBroker-Server/src/main/resources/brokerAreas_template.json",
         val brokerCommunicators: Int = 1
+       // val brokerCommunicators: Int = 3
 )
 
 @Suppress("EnumEntryName")

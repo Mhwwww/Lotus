@@ -43,3 +43,28 @@ Content-Type: application/json
     "radius": 2.0
   }
 }
+
+###
+POST http://localhost:8082/subscribe
+Content-Type: application/json
+
+{
+  "topic": "abc",
+  "geofence": "read1berlin"
+}
+
+###
+POST http://localhost:8080/process
+Content-Type: application/json
+
+{
+"input": "Hello, world!"
+}
+
+###
+POST http://localhost:8082/
+Content-Type: application/json
+
+{
+  "topic": "warning"
+}

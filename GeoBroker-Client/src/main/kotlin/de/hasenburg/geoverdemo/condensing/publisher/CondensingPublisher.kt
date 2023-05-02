@@ -9,18 +9,21 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.randomInt
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geobroker.commons.sleep
-import de.hasenburg.geoverdemo.condensing.common.*
+import de.hasenburg.geoverdemo.condensing.common.locations
+import de.hasenburg.geoverdemo.condensing.common.numberOfRepeats
+import de.hasenburg.geoverdemo.condensing.common.numberOfUnnecessaryJson
+import de.hasenburg.geoverdemo.condensing.common.publishTopic
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
-import kotlin.system.exitProcess
 import org.json.JSONObject
 import kotlin.random.Random
+import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
 
 val alphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 fun main() {
-//    setLogLevel(logger, Level.DEBUG)
+    setLogLevel(logger, Level.DEBUG)
     val processManager = ZMQProcessManager()
 
     // make a map of locations to clients

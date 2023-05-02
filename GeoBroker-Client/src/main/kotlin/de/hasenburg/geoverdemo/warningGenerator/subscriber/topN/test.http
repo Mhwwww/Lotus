@@ -1,0 +1,14 @@
+POST http://localhost:80/3bdd8602eb9fb24db6f15285acd488eb
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":1.0,"lat":1.0},
+  "message":{
+    "temperature":50.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+

@@ -1,12 +1,10 @@
 package de.hasenburg.geobroker.server.main
 
-import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geobroker.server.main.server.*
 import de.hasenburg.geobroker.server.main.server.other.SingleNoGeoServerLogic
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.HTTPServer
 import io.prometheus.client.hotspot.DefaultExports
-import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
 
