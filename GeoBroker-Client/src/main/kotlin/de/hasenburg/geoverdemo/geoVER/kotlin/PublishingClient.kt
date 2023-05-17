@@ -33,8 +33,7 @@ fun main() {
 
     var i = 0
     repeat (30){
-       //TODO: sent different content events in same location
-        locations = Location(Random.nextDouble(0.0,2.5),Random.nextDouble(0.0,2.5))
+        locations = Location(Random.nextDouble(0.0,1.4),Random.nextDouble(0.0,1.4))
         val newElem = JSONObject().apply {
             put("temperature", randomDouble(0.0, 60.0))
             put("speed", randomDouble(0.0, 60.0))
@@ -42,7 +41,9 @@ fun main() {
             put("wet", randomDouble(0.0, 60.0))
         }
        logger.error("Publishing at {} topic {}", locations, publishTopic)
-       newElem.put("timeSent", System.nanoTime())
+        newElem.put("timeSent", System.nanoTime())
+        //newElem.put("priority", false)
+
        client.send(Payload.PUBLISHPayload(
            publishTopic, Geofence.circle(locations,2.0), newElem.toString()))
 

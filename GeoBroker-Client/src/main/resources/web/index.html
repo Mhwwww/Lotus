@@ -1,36 +1,48 @@
-<!--input subscription & rules-->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>Input Form</title>
 </head>
 <body>
 <div class="event">
-    <h1>Subscription</h1>
+    <h2>Subscription</h2>
     <form>
-        <div class="form-group">
+        <div class="Connection">
             <label for="event-topic">Topic</label>
             <input type="text" id="event-topic" required>
         </div>
-        <!--maybe location info-->
-        <div class="form-group">
-            <label for="event-geofence">GeoFence</label>
-            <input type="text" id="event-geofence" required>
+        <div class="Connection">
+            <label for="repub-topic">Target Topic</label>
+            <input type="text" id="repub-topic" required>
+        </div>
+        <br />
+
+        <h2>Geofence</h2>
+        <div class="Connection">
+            <label for="event-lat">Latitude</label>
+            <input type="text" id="event-lat" required>
+        </div>
+        <div class="Connection">
+            <label for="event-lon">Longitude</label>
+            <input type="text" id="event-lon" required>
+        </div>
+        <div class="Connection">
+            <label for="event-rad">Radius</label>
+            <input type="text" id="event-rad" required>
         </div>
 
+        <br />
+        <br />
         <button id="apply-subscription">Apply Subscription</button>
-
     </form>
 
     <br />
     <ul id="event-list"></ul>
 </div>
 <br />
-<!--End Subscription-->
 
 <div class="rule">
     <h1>Rules</h1>
@@ -52,12 +64,10 @@
             </select>
         </div>
 
-
         <div class="form-group">
             <label for="rule-constraints">Constraints</label>
             <input type="number" id="rule-constraints" required>
         </div>
-
 
         <button id="add-rule">Add Rule</button>
         <button id="save-rules">Save Rules</button>
@@ -66,17 +76,24 @@
     <ul id="rule-list"></ul>
 </div>
 
-<div class="event">
-    <br />
-    <button id="show-warning">Show Warnings</button>
 
+<div class="event">
+    <div class="Connection">
+        <br />
+        <button class="result" id="show-warning">Show Warnings</button>
+    </div>
+
+    <div class="Connection">
+        <br />
+        <button class="result" id="show-information">Show Information</button>
+    </div>
 </div>
 
 
 
 <script src="https://unpkg.com/vue@next"></script>
-<script src="event.js"></script>
-<script src="rule.js"></script>
+<script src="js/event.js"></script>
+<script src="js/rule.js"></script>
 
 </body>
 </html>

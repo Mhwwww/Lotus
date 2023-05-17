@@ -33,24 +33,22 @@ private val logger = LogManager.getLogger()
 
 var locations = Location(0.0,0.0)
 var publishTopic = Topic("")
-val matchingTopic = Topic("warnings")
+var matchingTopic = Topic("")
 
 var constraints = 0.0
 
 @Serializable
-data class InputEvent(val topic: String, val geofence: String)
+data class InputEvent(val topic: String, val repubTopic: String, val lat: String, val lon: String, val rad: String)
 @Serializable
 data class ErrorResponseEvent(val message: String)
 @Serializable
 data class OutputEvent(val output: String)
-
 @Serializable
 data class InputRule(val topic: String, val operator: String, val constraints: String)
 @Serializable
 data class ErrorResponseRule(val message: String)
 @Serializable
 data class OutputRule(val output: String)
-
 @Serializable
 data class Rule(val topic: String, val operator: String, val constraints: String)
 
@@ -73,7 +71,8 @@ fun main() {
 
             anyHost()
         }
-        //TODO
+        //TODO: seperate routing part to ./plugin/Routing.kt
+        
         //install(WebSockets)
         routing {
             //static page for localhost:8081/index.html
@@ -119,6 +118,14 @@ fun main() {
                 }
             }
 
+            // show warnings
+            options("/showInfo") {
+                call.respond(HttpStatusCode.OK)
+            }
+            post("/showInfo") {
+                call.respond("testing")
+            }
+
             //add rule
             options("/addRule") {
                 call.respond(HttpStatusCode.OK)
@@ -159,31 +166,26 @@ fun main() {
                     while (ruleArray.length() > 0) {
                         ruleArray.remove(0)
                     }
-
                 } catch (e: Exception) {
                     val errorMessage = e.message ?: "Unknown error"
                     call.respond(status = HttpStatusCode.BadRequest, ErrorResponseRule(errorMessage))
                 }
-
             }
             //get the events from 'warnings' topic
             get("/warningMessage"){
                 call.respond(warningArray.toString())
             }
-
         }
     }
     server.start(wait = true)
 }
-
 fun processInput(inputEvent: InputEvent): String {
     return try {
-        "Received Subscription is: Topic: ${inputEvent.topic}, Geofence: ${inputEvent.geofence}"
+        "Received Subscription is: Topic: ${inputEvent.topic}, Latitude: ${inputEvent.lat}, Lontitude: ${inputEvent.lon}, Radius: ${inputEvent.rad}"
     } catch (e: Exception) {
         "Error occurred on server"
     }
 }
-
 fun processInputRule(inputRule: InputRule): String {
     return try {
         "Received Rule is: Topic: ${inputRule.topic}, Operator: ${inputRule.operator}, Constraints: ${inputRule.constraints}"
@@ -194,9 +196,10 @@ fun processInputRule(inputRule: InputRule): String {
 
 fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
     publishTopic = Topic(inputEvent.topic)
-    locations = Location(inputEvent.geofence.toDouble(), inputEvent.geofence.toDouble())
+    matchingTopic = Topic(inputEvent.repubTopic)
+    locations = Location(inputEvent.lat.toDouble(), inputEvent.lon.toDouble())
     logger.info(publishTopic)
     logger.info(locations)
     //Using the rule-based filtering function
-    return UserSpecifiedRule(Geofence.circle(locations,2.0), publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"), "nodejs", matchingTopic)
+    return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"), "nodejs", matchingTopic)
 }

@@ -1,15 +1,41 @@
-<!--show events that match topic and rules-->
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Warning List</title>
+    <meta charset="UTF-8">
+    <title>Left and Right Content</title>
+    <style>
+        .container {
+            display: flex;
+
+        }
+
+        .left {
+            width: 30%;
+
+        }
+
+        .right {
+            width: 70%;
+
+        }
+    </style>
 </head>
 <body>
-<div id="app"></div>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="processed.js"></script>
+<div class="container">
+    <div class="left" id="left-app">
+
+        <subscription-info></subscription-info>
+
+    </div>
+    <div class="right" id="right-app">
+
+        <warning-list></warning-list>
+        <button @click="reloadPage()">Reload</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script src="js/clientInput.js"></script>
+<script src="js/processed.js"></script>
 </body>
 </html>

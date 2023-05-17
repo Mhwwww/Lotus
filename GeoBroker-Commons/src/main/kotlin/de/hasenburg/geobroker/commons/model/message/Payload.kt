@@ -5,8 +5,6 @@ import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
-import kotlinx.serialization.json.JsonObject
 import org.apache.logging.log4j.LogManager
 import org.zeromq.ZMsg
 
@@ -53,7 +51,8 @@ sealed class Payload {
 
     @Serializable
     @SerialName("PUBLISHPayload")
-    data class PUBLISHPayload(val topic: Topic, val geofence: Geofence, val content: String) : Payload()
+    //change val content to var content to add priority in the message.content.
+    data class PUBLISHPayload(val topic: Topic, val geofence: Geofence, var content: String) : Payload()
 
 
     @Serializable

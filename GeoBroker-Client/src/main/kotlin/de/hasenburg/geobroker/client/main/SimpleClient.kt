@@ -10,7 +10,6 @@ import de.hasenburg.geobroker.commons.sleepNoLog
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import org.apache.logging.log4j.LogManager
-import kotlin.random.Random
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
@@ -41,8 +40,6 @@ class SimpleClient(ip: String, port: Int, socketHWM: Int = 1000, val identity: S
         return spDealer.toSent.trySend(zMsg).isSuccess
     }
 
-
-
     /**
      * Receives a message from the broker, blocks until a message was received.
      * Then, it returns the [Payload] of the message.
@@ -66,7 +63,6 @@ class SimpleClient(ip: String, port: Int, socketHWM: Int = 1000, val identity: S
             }
         }
     }
-
 }
 
 fun main() {
