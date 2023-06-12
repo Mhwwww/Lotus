@@ -14,7 +14,6 @@ private val logger = LogManager.getLogger()
 private val location = Location(0.0,0.0)
 
 fun main() {
-
     val processManager = ZMQProcessManager()
     val client = SimpleClient("localhost", 5559)
 

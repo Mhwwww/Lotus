@@ -156,6 +156,14 @@
             <artifactId>ktor-serialization-kotlinx-xml-jvm</artifactId>
             <version>${ktor_version}</version>
         </dependency>
+
+<!--https://central.sonatype.com/artifact/com.tinkerforge/tinkerforge/2.1.32-->
+        <dependency>
+            <groupId>com.tinkerforge</groupId>
+            <artifactId>tinkerforge</artifactId>
+            <version>2.1.32</version>
+        </dependency>
+
     </dependencies>
 
 

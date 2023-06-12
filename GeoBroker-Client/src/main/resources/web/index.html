@@ -35,27 +35,22 @@
         </div>
 
         <br />
-        <br />
-        <button id="apply-subscription">Apply Subscription</button>
     </form>
 
-    <br />
     <ul id="event-list"></ul>
 </div>
-<br />
 
 <div class="rule">
     <h1>Rules</h1>
     <form>
-        <div class="form-group">
+        <div class="Connection">
             <label for="rule-topic">Topic</label>
             <input type="text" id="rule-topic" required>
         </div>
-
-        <div class="form-group">
+        <div class="Connection">
             <label for="operator-select">Operator</label>
             <select id="operator-select">
-                <option disabled selected>Please select an operator</option>
+                <option disabled selected>Select an operator</option>
                 <option value="="> = </option>
                 <option value=">"> > </option>
                 <option value="<"> < </option>
@@ -64,30 +59,33 @@
             </select>
         </div>
 
-        <div class="form-group">
+        <div class="Connection">
             <label for="rule-constraints">Constraints</label>
             <input type="number" id="rule-constraints" required>
         </div>
+        <div>
 
         <button id="add-rule">Add Rule</button>
-        <button id="save-rules">Save Rules</button>
+            <br>
+            <br>
+            <ul id="rule-list"></ul>
+            <br>
+            <br>
+            <button id="save-rules">Save Rules</button>
+</div>
+
     </form>
-    <br />
-    <ul id="rule-list"></ul>
+
+
 </div>
 
 
 <div class="event">
     <div class="Connection">
-        <br />
-        <button class="result" id="show-warning">Show Warnings</button>
-    </div>
-
-    <div class="Connection">
-        <br />
-        <button class="result" id="show-information">Show Information</button>
+        <button class="show-warning" id="show-warning">Show Warnings</button>
     </div>
 </div>
+
 
 
 

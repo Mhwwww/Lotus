@@ -54,7 +54,7 @@ input[type="number"], select {
 }
 
 button {
-  background-color: #a59f9f;
+  background-color: rgba(128, 128, 128, 0.85);
   border: none;
   border-radius: 4px;
   color: #fff;
@@ -69,18 +69,15 @@ button:hover {
 }
 
 .result {
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 10px;
-  padding: 10px 20px;
+  background-color: #147027E0;
+  padding: 4px 15px;
 }
+.warning {
+   padding: 4px 15px;
+ }
 
 .result:hover{
-  background-color: #147027E0;
+  background-color: #4CAF50;
 }
 
 ul {
@@ -101,3 +98,84 @@ h1 {
   font-size: 24px;
   margin-top: 0;
 }
+/*warning.html*/
+.container {
+  display: flex;
+}
+
+.left {
+  width: 40%;
+}
+
+.right {
+  width: 60%;
+}
+.field {
+  padding-right: 10px; /* Adjust the spacing as needed */
+}
+
+.priority-button {
+  background-color: white;
+  color: red;
+  border: none;
+  padding: 1px 5px;
+}
+.priority-button:hover{
+  background-color: white;
+}
+.show-more-button {
+  background-color: white;
+  color: darkblue;
+  border: none;
+  padding: 1px 5px;
+  font-style: italic ;
+
+}
+
+.show-less-button {
+  background-color: white;
+  color: darkblue;
+  border: none;
+  padding: 1px 5px;
+  font-style: italic ;
+}
+
+.show-less-button:hover{
+  background-color: ghostwhite;
+ }
+.show-more-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  margin-top: 10px;
+}
+.show-more-button:hover{
+  background-color: ghostwhite;
+}
+.warning-row {
+  align-items: center;
+}
+
+.warning-data {
+  text-align: left;
+  vertical-align: top;
+  padding-top: 10px;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 20px;
+}
+.show-warning{
+  background-color: #147027E0;
+}
+
+.show-warning:hover{
+  background-color: #4CAF50;
+}
+
+
+
+
+
+
+

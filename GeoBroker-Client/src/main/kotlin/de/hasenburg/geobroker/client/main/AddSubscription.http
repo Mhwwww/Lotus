@@ -68,3 +68,6 @@ Content-Type: application/json
 {
   "topic": "warning"
 }
+###
+POST http://localhost:8081/warningMessage/201545370162083
+Content-Type: application/json

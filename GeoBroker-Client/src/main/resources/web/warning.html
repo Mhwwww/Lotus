@@ -2,40 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Left and Right Content</title>
-    <style>
-        .container {
-            display: flex;
-
-        }
-
-        .left {
-            width: 30%;
-
-        }
-
-        .right {
-            width: 70%;
-
-        }
-    </style>
+    <title>Warnings</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="container">
     <div class="left" id="left-app">
-
         <subscription-info></subscription-info>
-
     </div>
     <div class="right" id="right-app">
 
-        <warning-list></warning-list>
-        <button @click="reloadPage()">Reload</button>
+            <button @click="reloadPage()" class="warning">Show Warnings</button>
+            <button @click="showInfo()" class="result" >Show information</button>
+
+        <component :is="currentComponent"></component>
+
+<!--        <warning-list></warning-list>-->
+
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 <script src="js/clientInput.js"></script>
 <script src="js/processed.js"></script>
+<script src="js/event.js"></script>
+
+
 </body>
 </html>

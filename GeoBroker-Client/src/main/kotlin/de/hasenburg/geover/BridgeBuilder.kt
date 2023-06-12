@@ -4,7 +4,6 @@ import de.hasenburg.geobroker.client.main.SimpleClient
 import de.hasenburg.geobroker.commons.model.message.Payload
 import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
-import de.hasenburg.geobroker.commons.model.spatial.Location
 import locations
 import org.apache.logging.log4j.LogManager
 import org.json.JSONObject
@@ -44,11 +43,9 @@ public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: L
     client.send(Payload.CONNECTPayload(geofence.center))
     logger.debug("ConnAck: {}", client.receive())
 
-
     logger.debug("Bridge Builder is subscribing to {} at {}", topic, geofence.center)
     client.send(Payload.SUBSCRIBEPayload(topic, geofence))
     logger.debug("SubAck: {}", client.receive())
-
 
     // Every time client.recieve gets something it should be a PublishPayload()
     // Send out a request to the function everytime this happens
@@ -111,17 +108,8 @@ public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: L
     }
 }
 
-suspend fun resubscribe(client: SimpleClient, topic: Topic, geofence: Geofence) {
-    client.send(Payload.CONNECTPayload(Location(geofence.center.lat, geofence.center.lon)))
-    client.send(Payload.SUBSCRIBEPayload(topic, geofence))
-
-}
-
-
 suspend fun republish(client: SimpleClient, topic: Topic, geofence: Geofence, message: String) {
     client.send(Payload.PUBLISHPayload(topic, geofence, message))
-
-
 }
 
 suspend fun sendReqToTinyFaaS(
@@ -136,8 +124,6 @@ suspend fun sendReqToTinyFaaS(
     connection.requestMethod = "POST"
     connection.doOutput = true
     connection.setRequestProperty("Content-Type", contentType)
-
-//    logger.debug("Sending request to TinyFaaS f {} with payload {}", functionName, payload)
 
     val outputStream = DataOutputStream(connection.outputStream)
 
