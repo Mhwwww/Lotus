@@ -40,7 +40,8 @@ showWarningButton.addEventListener('click', (event)=>{
         })
         .then(data => {
             console.log('Response received:', data);
-            return data.json(inputEvent);
+            //return data.json(inputEvent);
+            return data.json();
         })
         .catch(error => {
             console.error('Error occurred:', error);

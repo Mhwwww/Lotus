@@ -1,6 +1,8 @@
 const ruleTopicInput = document.getElementById('rule-topic');
 const ruleOperatorInput = document.getElementById('operator-select');
 const ruleConstraintsInput = document.getElementById('rule-constraints');
+const ruleLinkInput = document.getElementById('link-select');
+
 const ruleList = document.getElementById('rule-list');
 const addRuleButton = document.getElementById('add-rule');
 const saveRulesButton = document.getElementById('save-rules');
@@ -10,18 +12,25 @@ let rules = [];
 addRuleButton.addEventListener('click', (event) => {
     event.preventDefault();
 
-    const rule = {
+    let link = ruleLinkInput.value
+    if (link ==="Select a Link") {
+        link = '';
+    }
+
+  const rule = {
         topic: ruleTopicInput.value,
         operator: ruleOperatorInput.value,
-        constraints: ruleConstraintsInput.value
+        constraints: ruleConstraintsInput.value,
+        link: link,
     };
+
     rules.push(rule);
     renderRules();
 
     ruleTopicInput.value = '';
-    ruleOperatorInput.value = '';
+    ruleOperatorInput.value = 'Select an Operator';
     ruleConstraintsInput.value = '';
-
+    ruleLinkInput.value = 'Select a Link';
 });
 
 saveRulesButton.addEventListener('click', () => {
@@ -32,6 +41,7 @@ saveRulesButton.addEventListener('click', () => {
         headers: {
             "Content-Type": "application/json",
         },
+        body: JSON.stringify(rules)
     }) .then(response => {
         if (!response.ok) {
             throw new Error('!!!!!!!!!!!!!!!!!!!!!!!!');
@@ -39,7 +49,7 @@ saveRulesButton.addEventListener('click', () => {
     })
         .then(data => {
             console.log('Response received:', data);
-            return data.json(inputEvent);
+            return data.json();
         })
         .catch(error => {
             console.error('Error occurred:', error);
@@ -52,7 +62,7 @@ function renderRules() {
     for (const rule of rules) {
         const listItem = document.createElement('li');
         listItem.innerHTML = `
-      <strong>${rule.topic}</strong> ${rule.operator} ${rule.constraints}
+      <strong>${rule.link} ${rule.topic}</strong> ${rule.operator} ${rule.constraints}
     `;
         ruleList.appendChild(listItem);
     }

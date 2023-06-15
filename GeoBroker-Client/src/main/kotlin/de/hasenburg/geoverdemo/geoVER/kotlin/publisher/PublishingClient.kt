@@ -39,14 +39,11 @@ fun main() {
             put("speed", randomDouble(0.0, 60.0))
             put("wind", randomDouble(0.0, 60.0))
             put("wet", randomDouble(0.0, 60.0))
-            //put("timeSent", System.nanoTime())
-            //put("publisher ID", client.identity)
+            put("timeSent", System.nanoTime())
+            put("publisher ID", client.identity)
         }
-        logger.info("Publishing at {} topic {}", locations, publishTopic)
-
-        newElem.put("timeSent", System.nanoTime())
-        newElem.put("publisher ID", client.identity)
-
+        //newElem.put("timeSent", System.nanoTime())
+        //newElem.put("publisher ID", client.identity)
 
         client.send(
             Payload.PUBLISHPayload(
@@ -56,6 +53,8 @@ fun main() {
             )
         )
 
+
+        logger.info("Publishing at {} topic {}", locations, publishTopic)
         logger.debug("PubAck: {}", client!!.receive())
         sleep(100, 0)
 
@@ -64,7 +63,7 @@ fun main() {
 
     }
 
-    sleep(10000, 0)
+    //sleep(10000, 0)
 
     client!!.send(Payload.DISCONNECTPayload(ReasonCode.NormalDisconnection))
     client!!.tearDownClient()

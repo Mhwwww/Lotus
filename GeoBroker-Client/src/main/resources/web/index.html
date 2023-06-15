@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="css/style.css">
     <title>Input Form</title>
 </head>
@@ -18,7 +18,7 @@
             <label for="repub-topic">Target Topic</label>
             <input type="text" id="repub-topic" required>
         </div>
-        <br />
+        <br/>
 
         <h2>Geofence</h2>
         <div class="Connection">
@@ -34,7 +34,7 @@
             <input type="text" id="event-rad" required>
         </div>
 
-        <br />
+        <br/>
     </form>
 
     <ul id="event-list"></ul>
@@ -51,11 +51,11 @@
             <label for="operator-select">Operator</label>
             <select id="operator-select">
                 <option disabled selected>Select an operator</option>
-                <option value="="> = </option>
-                <option value=">"> > </option>
-                <option value="<"> < </option>
-                <option value="<="> <= </option>
-                <option value=">="> >= </option>
+                <option value="="> =</option>
+                <option value=">"> ></option>
+                <option value="<"> <</option>
+                <option value="<="> <=</option>
+                <option value=">="> >=</option>
             </select>
         </div>
 
@@ -63,16 +63,30 @@
             <label for="rule-constraints">Constraints</label>
             <input type="number" id="rule-constraints" required>
         </div>
-        <div>
 
-        <button id="add-rule">Add Rule</button>
+
+
+        <div>
+            <button id="add-rule">Add Rule</button>
+
+
+            <div class="Connection">
+                <label for="link-select"></label>
+                <select id="link-select">
+                    <option disabled selected>Select a Link</option>
+                    <option value="AND"> and</option>
+                    <option value="OR"> or </option>
+                    <option value="NOT"> not </option>
+
+                </select>
+            </div>
             <br>
             <br>
             <ul id="rule-list"></ul>
             <br>
             <br>
             <button id="save-rules">Save Rules</button>
-</div>
+        </div>
 
     </form>
 
@@ -85,8 +99,6 @@
         <button class="show-warning" id="show-warning">Show Warnings</button>
     </div>
 </div>
-
-
 
 
 <script src="https://unpkg.com/vue@next"></script>

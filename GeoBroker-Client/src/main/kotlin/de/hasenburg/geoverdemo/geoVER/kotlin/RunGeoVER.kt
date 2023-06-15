@@ -59,6 +59,8 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
                 //logger.error("The content is {}", message)
                 val timeSent = JSONObject(message.content).getLong("timeSent")
                 logger.info("{}: Time for topic {} difference: {}", name, message.topic, timeReceived - timeSent)
+
+
                 // add priority to message content, and set it to Boolean
                 // if it is "info", set to be 'false', if it is warning, then true
 

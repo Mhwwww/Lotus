@@ -25,7 +25,7 @@ data class InputEvent(val topic: String, val repubTopic: String, val lat: String
 data class ErrorResponseEvent(val message: String)
 
 @Serializable
-data class InputRule(val topic: String, val operator: String, val constraints: String)
+data class InputRule(val topic: String, val operator: String, val constraints: String, val link: String)
 @Serializable
 data class ErrorResponseRule(val message: String)
 
