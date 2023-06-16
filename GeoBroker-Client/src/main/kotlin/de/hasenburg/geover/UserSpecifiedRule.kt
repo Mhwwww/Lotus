@@ -7,7 +7,7 @@ import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
 
-//jsFile--rule.json
+//jsFile--aircraftType.json
 
 private val logger = LogManager.getLogger()
 private val RADIUS = 2.0//if geofence is circle

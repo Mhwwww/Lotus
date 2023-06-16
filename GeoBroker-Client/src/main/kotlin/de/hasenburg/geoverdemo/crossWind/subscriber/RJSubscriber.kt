@@ -1,4 +1,4 @@
-package de.hasenburg.geoverdemo.warningGenerator.subscriber
+package de.hasenburg.geoverdemo.multiRule.subscriber
 
 import de.hasenburg.geobroker.client.main.SimpleClient
 import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
@@ -10,9 +10,9 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
-import de.hasenburg.geoverdemo.warningGenerator.common.locations
-import de.hasenburg.geoverdemo.warningGenerator.common.matchingTopic
-import de.hasenburg.geoverdemo.warningGenerator.common.publishTopic
+import de.hasenburg.geoverdemo.multiRule.common.locations
+import de.hasenburg.geoverdemo.multiRule.common.matchingTopic
+import de.hasenburg.geoverdemo.multiRule.common.publishTopic
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
@@ -22,18 +22,18 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
-class WGSubscriber(private val loc: Location, private val topic: Topic, private val name: String) {
+class RJSubscriber(private val loc: Location, private val topic: Topic, private val name: String) {
     private val logger = LogManager.getLogger()
     private var cancel = false
     private lateinit var client: SimpleClient
     private lateinit var processManager: ZMQProcessManager
     fun prepare() {
-       setLogLevel(this.logger, Level.DEBUG)
+        setLogLevel(this.logger, Level.DEBUG)
 
         logger.debug("{}: Subscribing to {} at {}", name, topic, loc)
 
         this.processManager = ZMQProcessManager()
-        this.client = SimpleClient("localhost", 5559, identity = " WGSub_${name}")
+        this.client = SimpleClient("localhost", 5559, identity = " RuleJsonSub_${name}")
 
         logger.debug("{}: sending connect with client id {}", name,  client.identity)
 
@@ -80,22 +80,22 @@ class WGSubscriber(private val loc: Location, private val topic: Topic, private 
 fun main() = runBlocking {
     setLogLevel(logger, Level.DEBUG)
     // Geofence.circle(Location(0.0,0.0), 350.0)
-    val newRule = UserSpecifiedRule(locations.map { Geofence.circle(it, 2.0) }, publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/warningGenerator/subscriber/topN/"), "nodejs", matchingTopic)
+    val newRule = UserSpecifiedRule(locations.map { Geofence.circle(it, 2.0) }, publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"), "nodejs", matchingTopic)
 
     val bridgeManager = BridgeManager()
     bridgeManager.createNewRule(newRule)
 
-    val subscribers = mutableListOf<WGSubscriber>()
+    val subscribers = mutableListOf<RJSubscriber>()
     var i = 0
 
     // prepare subscribers
     locations.forEach {
-        val newS = WGSubscriber(it, publishTopic, "info_${i}")
+        val newS = RJSubscriber(it, publishTopic, "info_${i}")
         subscribers.add(newS)
         newS.prepare()
 
         // also prepare a subscriber for the matching topic
-        val newS2 = WGSubscriber(it, matchingTopic, "warnings_${i}")
+        val newS2 = RJSubscriber(it, matchingTopic, "warnings_${i}")
         subscribers.add(newS2)
         newS2.prepare()
 

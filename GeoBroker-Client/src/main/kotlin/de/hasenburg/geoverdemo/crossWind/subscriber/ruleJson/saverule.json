@@ -1,0 +1,4 @@
+[
+  {"topic":"aircraft type","operator":"=","constraints":"Boeing","link":""},
+  {"topic":"crosswind","operator":">=","constraints":"40","link":"AND"}
+]

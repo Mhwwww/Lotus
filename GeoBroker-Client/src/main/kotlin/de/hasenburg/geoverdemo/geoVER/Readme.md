@@ -19,7 +19,12 @@
 
 ### Matching Events
 - start PublishingClient.kt(default topic is 'info')
-- press 'Reload' after publishing events to see the 'warnings'
+- press 'Show Warnings' after publishing events to see the 'warnings' 
+- press 'Show Information' after publishing events to see the geo-fence matching events.
+- 
+### Event Priority
+- The default priority of warnings is TRUE, information is FALSE.
+- Warning priority could be changed by clicking, and this warning will be removed from current warning list to info list.
 
 ## Stop Subscriber
 If you press enter twice in the subscriber, it will clean up after itself and destroy the tinyfaas function.

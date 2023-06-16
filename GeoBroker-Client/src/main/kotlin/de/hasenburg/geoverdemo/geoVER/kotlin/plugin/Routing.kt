@@ -72,7 +72,9 @@ fun Application.applyRouting(){
                 val rules: List<InputRule> = call.receive()
                 val json = Json.encodeToString(rules)
 
-                val file = File("./GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/saverule.json")
+                //val file = File("./GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/saverule.json")
+                val file = File("./GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/saverule.json")
+
                 // clear file
                 file.writeText("")
                 file.writeText("$json\n")

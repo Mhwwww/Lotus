@@ -1,4 +1,4 @@
-package de.hasenburg.geoverdemo.warningGenerator.common
+package de.hasenburg.geoverdemo.topN.common
 
 import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Location

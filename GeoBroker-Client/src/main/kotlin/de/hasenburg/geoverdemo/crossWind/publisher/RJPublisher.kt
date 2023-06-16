@@ -1,4 +1,4 @@
-package de.hasenburg.geoverdemo.warningGenerator.publisher
+package de.hasenburg.geoverdemo.multiRule.publisher
 
 import de.hasenburg.geobroker.client.main.SimpleClient
 import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
@@ -9,9 +9,9 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.randomDouble
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geobroker.commons.sleep
-import de.hasenburg.geoverdemo.warningGenerator.common.locations
-import de.hasenburg.geoverdemo.warningGenerator.common.numberOfRepeats
-import de.hasenburg.geoverdemo.warningGenerator.common.publishTopic
+import de.hasenburg.geoverdemo.multiRule.common.locations
+import de.hasenburg.geoverdemo.multiRule.common.numberOfRepeats
+import de.hasenburg.geoverdemo.multiRule.common.publishTopic
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.json.JSONObject
@@ -28,7 +28,7 @@ fun main() {
     val clients = mutableMapOf<Location, SimpleClient>()
     // connect
     locations.forEach {
-        clients[it] = SimpleClient("localhost", 5559, identity = "WGPublisher_${System.currentTimeMillis()}_${Random.nextInt()}")
+        clients[it] = SimpleClient("localhost", 5559, identity = "RJPublisher_${System.currentTimeMillis()}_${Random.nextInt()}")
         clients[it]!!.send(Payload.CONNECTPayload(it))
         logger.debug("ConnAck: {}", clients[it]!!.receive())
         sleep(100,0)

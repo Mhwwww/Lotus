@@ -1,0 +1,49 @@
+[
+  {
+    "type": "CESSNAS150",
+    "topic": "crosswind",
+    "constraints": 15.0
+  },
+  {
+  "type": "CESSNAS C208 CARAVAN",
+  "topic": "crosswind",
+  "constraints": 20.0
+},
+
+  {
+    "type": "CESSNAS 172 SKYHAWK",
+    "topic": "crosswind",
+    "constraints": 15.0
+  },
+  {
+    "type": "Boring767",
+    "topic": "crosswind",
+    "constraints": 40.0
+  },
+  {
+    "type": "Boring757",
+    "topic": "crosswind",
+    "constraints": 40.0
+  },
+  {
+    "type": "Cub Crafters CC11 Carbon Cub",
+    "topic": "crosswind",
+    "constraints": 17.0
+  },
+  {
+    "type": "Malibu Mirage",
+    "topic": "crosswind",
+    "constraints": 17.0
+  },
+  {
+    "type": "Cirrus SR22T G6",
+    "topic": "crosswind",
+    "constraints": 21.0
+  },
+  {
+    "type": "Bombardier CRJ-200",
+    "topic": "crosswind",
+    "constraints": 27.0
+  }
+]
+

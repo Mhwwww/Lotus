@@ -1,9 +1,5 @@
 
-
-import com.tinkerforge.BrickletHumidityV2
-import com.tinkerforge.BrickletTemperature
-import com.tinkerforge.IPConnection
-import com.tinkerforge.TimeoutException
+import com.tinkerforge.*
 import de.hasenburg.geobroker.client.main.SimpleClient
 import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
 import de.hasenburg.geobroker.commons.model.message.Payload
@@ -20,13 +16,14 @@ import org.json.JSONObject
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
+
 private val logger = LogManager.getLogger()
 
 private const val HOST = "localhost"
 private const val PORT = 4223
 private const val UID_TEMPERATURE = "EKx"
 private const val UID_HUMIDITY = "HF1"
-
+private const val UID_OUTDOORWEATHER = "***"
 
 fun main() {
     setLogLevel(logger, Level.DEBUG)
@@ -35,9 +32,11 @@ fun main() {
     // Create device object
     val temp = BrickletTemperature(UID_TEMPERATURE, ipcon)
     val humi = BrickletHumidityV2(UID_HUMIDITY, ipcon)
+    //TODO: test wind use case related bricklet
+
+     val outdoorWeather = BrickletOutdoorWeather(UID_OUTDOORWEATHER, ipcon)
     // Connect to brick daemon
     ipcon.connect(HOST, PORT)
-
 
     //Publisher
     val publishTopic = Topic("info")
@@ -58,6 +57,67 @@ fun main() {
         var humidity:Double
         try {
             temperature = temp.temperature/100.0
+
+            //TODO: test sensor data from outdoor weather bricklet
+            //could also get temperature, humidity from outdoor weather bricklet
+
+/*
+                //var tempOutdoorWeather = outdoorWeather.SensorData().temperature
+                //var humiOutdoorWeather = outdoorWeather.SensorData().humidity
+                outdoorWeather.addStationDataListener(StationDataListener { identifier, temperature, humidity, windSpeed, gustSpeed, rain, windDirection, batteryLow ->
+                println("Identifier (Station): $identifier")
+                println("Humidity (Station): $humidity %RH")
+
+                var tempOutdoorWeatherStation = temperature/10.0
+                println("Temperature (Station): " +tempOutdoorWeatherStation+ " °C")
+                var windSpeedOutdoorWeatherStation = windSpeed/10.0
+                println("Wind Speed (Station): " +windSpeedOutdoorWeatherStation+ " m/s")
+                var gustSpeedOutdoorWeatherStation = windSpeed/10.0
+                println("Gust Speed (Station): " +gustSpeedOutdoorWeatherStation+ " m/s")
+                var rainSpeedOutdoorWeatherStation = rain/10.0
+                println("Rain (Station):"+ rainSpeedOutdoorWeatherStation+ " mm")
+
+                if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_N) {
+                    println("Wind Direction (Station): N")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_NNE) {
+                    println("Wind Direction (Station): NNE")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_NE) {
+                    println("Wind Direction (Station): NE")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_ENE) {
+                    println("Wind Direction (Station): ENE")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_E) {
+                    println("Wind Direction (Station): E")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_ESE) {
+                    println("Wind Direction (Station): ESE")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_SE) {
+                    println("Wind Direction (Station): SE")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_SSE) {
+                    println("Wind Direction (Station): SSE")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_S) {
+                    println("Wind Direction (Station): S")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_SSW) {
+                    println("Wind Direction (Station): SSW")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_SW) {
+                    println("Wind Direction (Station): SW")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_WSW) {
+                    println("Wind Direction (Station): WSW")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_W) {
+                    println("Wind Direction (Station): W")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_WNW) {
+                    println("Wind Direction (Station): WNW")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_NW) {
+                    println("Wind Direction (Station): NW")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_NNW) {
+                    println("Wind Direction (Station): NNW")
+                } else if (windDirection == BrickletOutdoorWeather.WIND_DIRECTION_ERROR) {
+                    println("Wind Direction (Station): Error")
+                }
+                println("Battery Low (Station): $batteryLow")
+                println("")
+            })*/
+
+
+
         }catch (e: TimeoutException){
             temperature = randomDouble(0.0, 60.0)
         }
