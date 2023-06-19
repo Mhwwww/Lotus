@@ -11,6 +11,8 @@ module.exports = (req, res) => {
             let rules = JSON.parse(data);
             let inJson = JSON.parse(JSON.stringify(req.body));
 
+            let reponseJson = req.body["message"]
+
             // crosswind user input related
             let crosswindThreshold = 0.0;
             let aircraftType = "";
@@ -92,7 +94,9 @@ module.exports = (req, res) => {
                     if (crosswind >= crosswindThreshold) {
                         console.log("DO NOT LAND!!!");
                         //send warnings back
-                        res.write(JSON.stringify(inJson));
+                        //res.write(JSON.stringify(inJson));
+                        res.write(JSON.stringify(reponseJson));
+
                     } else {
                         console.log("current crosswind is " + crosswind + "\nYOU CAN LAND");
                         //res.write("YOU CAN LAND at current crosswind: " +crosswind);

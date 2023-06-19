@@ -1,4 +1,4 @@
-package de.hasenburg.geoverdemo.multiRule.common
+package de.hasenburg.geoverdemo.crossWind.common
 
 import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Location

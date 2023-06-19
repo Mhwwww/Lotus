@@ -1,4 +1,4 @@
-package de.hasenburg.geoverdemo.multiRule.subscriber
+package de.hasenburg.geoverdemo.crossWind.subscriber
 
 import de.hasenburg.geobroker.client.main.SimpleClient
 import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
@@ -22,7 +22,7 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
-class RJSubscriber(private val loc: Location, private val topic: Topic, private val name: String) {
+class CWSubscriber(private val loc: Location, private val topic: Topic, private val name: String) {
     private val logger = LogManager.getLogger()
     private var cancel = false
     private lateinit var client: SimpleClient
@@ -85,17 +85,17 @@ fun main() = runBlocking {
     val bridgeManager = BridgeManager()
     bridgeManager.createNewRule(newRule)
 
-    val subscribers = mutableListOf<RJSubscriber>()
+    val subscribers = mutableListOf<CWSubscriber>()
     var i = 0
 
     // prepare subscribers
     locations.forEach {
-        val newS = RJSubscriber(it, publishTopic, "info_${i}")
+        val newS = CWSubscriber(it, publishTopic, "info_${i}")
         subscribers.add(newS)
         newS.prepare()
 
         // also prepare a subscriber for the matching topic
-        val newS2 = RJSubscriber(it, matchingTopic, "warnings_${i}")
+        val newS2 = CWSubscriber(it, matchingTopic, "warnings_${i}")
         subscribers.add(newS2)
         newS2.prepare()
 

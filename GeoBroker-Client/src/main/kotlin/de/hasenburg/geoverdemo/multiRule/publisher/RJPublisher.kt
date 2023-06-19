@@ -1,4 +1,4 @@
-package de.hasenburg.geoverdemo.multiRule.publisher
+package de.hasenburg.geoverdemo.crossWind.publisher
 
 import de.hasenburg.geobroker.client.main.SimpleClient
 import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
@@ -9,9 +9,9 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.randomDouble
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geobroker.commons.sleep
-import de.hasenburg.geoverdemo.multiRule.common.locations
-import de.hasenburg.geoverdemo.multiRule.common.numberOfRepeats
-import de.hasenburg.geoverdemo.multiRule.common.publishTopic
+import de.hasenburg.geoverdemo.crossWind.common.locations
+import de.hasenburg.geoverdemo.crossWind.common.numberOfRepeats
+import de.hasenburg.geoverdemo.crossWind.common.publishTopic
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.json.JSONObject

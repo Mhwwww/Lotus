@@ -1,4 +1,4 @@
 [
-  {"topic":"aircraft type","operator":"=","constraints":"Boeing","link":""},
-  {"topic":"crosswind","operator":">=","constraints":"40","link":"AND"}
+  {"topic":"aircraft type","constraints":"Boring767","link":""},
+  {"topic":"runway direction","constraints":"RWY30","link":""}
 ]
