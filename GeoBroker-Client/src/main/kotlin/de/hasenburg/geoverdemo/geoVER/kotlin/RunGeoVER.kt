@@ -66,6 +66,7 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
 
                 if (processMessage(message)) {
                     val warningUrl = URL("http://localhost:8081/warningMessage")
+                    logger.error(warningArray)
                     postEvents(warningUrl, displayEvents(message, warningArray))
                 } else {
                     val infoUrl = URL("http://localhost:8081/infoMessage")

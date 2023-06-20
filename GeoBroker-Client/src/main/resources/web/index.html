@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/styleIndex.css">
     <title>Input Form</title>
 </head>
 <body>
+
+    <center>
+        <img src="geover.jpg" width="740">
+    </center>
+
+
 <div class="event">
     <h2>Subscription</h2>
     <form>
@@ -36,21 +42,24 @@
 
         <br/>
     </form>
-
-    <ul id="event-list"></ul>
+    <br/>
+    <br/>
+    <!-- <ul id="event-list"></ul>-->
+    <ul id="event"></ul>
 </div>
+
 
 <div class="rule">
     <h1>Rules</h1>
-    <form>
+    <form class="rule-form">
         <div class="Connection">
             <label for="rule-topic">Topic</label>
             <input type="text" id="rule-topic" required>
         </div>
         <div class="Connection">
             <label for="operator-select">Operator</label>
-            <select id="operator-select">
-                <option disabled selected>Select an operator</option>
+            <select id="operator-select" class="dropbtn">
+                <option disabled selected>Operator</option>
                 <option value="="> =</option>
                 <option value=">"> ></option>
                 <option value="<"> <</option>
@@ -58,48 +67,40 @@
                 <option value=">="> >=</option>
             </select>
         </div>
-
         <div class="Connection">
             <label for="rule-constraints">Constraints</label>
-            <!-- should be NUMBER for most of the time -->
             <input type="text" id="rule-constraints" required>
-<!--            <input type="number" id="rule-constraints" required>-->
-
         </div>
-
-
-
-        <div>
-            <button id="add-rule">Add Rule</button>
-
-
-            <div class="Connection">
-                <label for="link-select"></label>
-                <select id="link-select">
-                    <option disabled selected>Select a Link</option>
-                    <option value="AND"> and</option>
-                    <option value="OR"> or </option>
-                    <option value="NOT"> not </option>
-
-                </select>
-            </div>
-            <br>
-            <br>
-            <ul id="rule-list"></ul>
-            <br>
-            <br>
-            <button id="save-rules">Save Rules</button>
+        <div class="Connection">
+            <label for="link-select">Connector</label>
+            <select id="link-select" class="dropbtn">
+                <option disabled selected>Connector</option>
+                <option value=""> no connector</option>
+                <option value="AND"> and</option>
+                <option value="OR"> or</option>
+                <option value="NOT"> not</option>
+            </select>
         </div>
 
     </form>
 
 
+    <div class="Connection">
+        <button id="add-rule">Add Rule</button>
+        <ul class="rule-list" id="rule-list"></ul>
+    </div>
+    <br>
+    <br/>
+    <br/>
+    <div class="Connection">
+        <button id="save-rules" class="save-rules">Save Rules</button>
+    </div>
 </div>
 
 
 <div class="event">
     <div class="Connection">
-        <button class="show-warning" id="show-warning">Show Warnings</button>
+        <button class="show-warning" id="show-warning" style="float: right">Show Warnings</button>
     </div>
 </div>
 

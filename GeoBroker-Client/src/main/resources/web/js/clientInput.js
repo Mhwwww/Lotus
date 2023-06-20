@@ -1,30 +1,34 @@
 Vue.component('subscription-info', {
     template: `
-        <div>
-            <h2>Subscription Information</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Input</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(value, key) in infoText" :key="key">
-                        <td>{{ getFieldLabel(key) }}</td>
-                        <td>{{ value }}</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div>    
+<!--        <h2>Subscritpion Information</h2>-->
+        <div class="background">
+        <table>
+            <thead>
+                <tr>
+                    <th>Subscription</th>
+                    <th></th>
+                </tr>
+            </thead>
+                    
+            <tbody>
+                <tr v-for="(value, key) in infoText" :key="key">
+                    <td>{{ getFieldLabel(key) }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>  
+            
             <br>
             <br>
             <br>
-  
+        <div class="background">
             <table>
                 <thead>
                     <tr>
                         <th>Rule</th>
-                        <th>Content</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,7 +40,8 @@ Vue.component('subscription-info', {
                     </tr>
                 </tbody>
             </table>
-        </div>
+        </div>         
+    </div>
     `,
     data() {
         return {

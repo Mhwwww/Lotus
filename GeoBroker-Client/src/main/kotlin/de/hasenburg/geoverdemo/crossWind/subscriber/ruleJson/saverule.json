@@ -1,4 +1,1 @@
-[
-  {"topic":"aircraft type","constraints":"Boring767","link":""},
-  {"topic":"runway direction","constraints":"RWY30","link":""}
-]
+[{"topic":"aircraft type","operator":"=","constraints":"Boring767","link":"AND"},{"topic":"runway direction","operator":"=","constraints":"RWY30","link":""}]

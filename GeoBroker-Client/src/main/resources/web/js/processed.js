@@ -55,6 +55,7 @@ Vue.component('warning-list', {
       </tbody>
     </table>
   </div>
+
   `,
     data() {
         return {
@@ -81,8 +82,8 @@ Vue.component('warning-list', {
             }
         },
         togglePriority(warning) {
-            warning.priority = !warning.priority
-            //warning["message"]["priority"] = !warning["message"]["priority"];
+            //warning.priority = !warning.priority
+            warning["message"]["priority"] = !warning["message"]["priority"];
             //console.log("The current priority is ",warning["message"]["priority"]);
             this.deleteWarning(warning["message"]["timeSent"]);
             this.$forceUpdate();
@@ -186,29 +187,28 @@ new Vue({
         },
         async showInfo() {
             this.currentComponent = 'info-list';
-           /* await fetch('http://localhost:8081/showInfo', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(this.inputEvent)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error occurred');
-                    }
-                    location.assign('../information.html');
+            /* await fetch('http://localhost:8081/showInfo', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify(this.inputEvent)
+             })
+                 .then(response => {
+                     if (!response.ok) {
+                         throw new Error('Error occurred');
+                     }
+                     location.assign('../information.html');
 
-                })
-                .catch(error => {
-                    console.error('Error occurred:', error);
-                });*/
+                 })
+                 .catch(error => {
+                     console.error('Error occurred:', error);
+                 });*/
 
         }
     },
     components: {
         'warning-list': Vue.component('warning-list'),
         'info-list': Vue.component('info-list')
-}
+    }
 });
-

@@ -58,6 +58,7 @@ saveRulesButton.addEventListener('click', () => {
 });
 
 function renderRules() {
+    //todo: could delete inputed rules
     ruleList.innerHTML = '';
     for (const rule of rules) {
         const listItem = document.createElement('li');

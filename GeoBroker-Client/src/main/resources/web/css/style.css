@@ -2,11 +2,21 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+
+  alignment: center;
+
+
 }
 
-.rule {
+.event, .rule{
   margin: 20px auto;
-  max-width: 600px;
+  max-width: 700px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+  position: relative;
+
 }
 
 .Connection{
@@ -14,15 +24,8 @@ body {
   position: relative;
   margin: 0 5px 0 0;
 }
-
-.event {
-  margin: 20px auto;
-  max-width: 600px;
-}
-
-.event-list {
-  margin: 20px auto;
-  max-width: 600px;
+.Connection label {
+  margin-right: 5px;
 }
 
 .form-group {
@@ -35,7 +38,7 @@ label {
   margin-bottom: 5px;
 }
 
-input[type="text"], select {
+input[type="text"],[type="number"] {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
@@ -44,14 +47,13 @@ input[type="text"], select {
   width: 100%;
 }
 
-input[type="number"], select {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 16px;
-  padding: 10px;
-  width: 100%;
-}
+select {
+    border: 1px solid #ccc;
+    box-sizing: revert;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+
 
 button {
   background-color: rgba(128, 128, 128, 0.85);
@@ -69,16 +71,25 @@ button:hover {
 }
 
 .result {
-  background-color: #147027E0;
+  background-color: #5d7b8d;
   padding: 4px 15px;
+  border-top-right-radius: 16px;
 }
 .warning {
-   padding: 4px 15px;
+  padding: 4px 15px;
+  border-top-right-radius: 16px;
  }
 
 .result:hover{
-  background-color: #4CAF50;
+  background-color: rgba(93, 123, 141, 0.91);
 }
+
+.buttonTogether {
+  display: flex;
+  justify-content: flex-start; /* 按钮靠左对齐 */
+  gap: 0; /* 间距为0，按钮紧挨在一起 */
+}
+
 
 ul {
   list-style: none;
@@ -100,31 +111,43 @@ h1 {
 }
 /*warning.html*/
 .container {
+
   display: flex;
-}
+  justify-content: space-between;
+  height: 100vh;
 
+}
+/*todo: separate subscription and rule input*/
+.background{
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
 .left {
-  width: 40%;
-}
+  width: 35%;
+  margin: 36px 10px;
 
+}
 .right {
-  width: 60%;
+  width: 65%;
+  padding-right: 10px;
 }
 .field {
   padding-right: 10px; /* Adjust the spacing as needed */
 }
 
 .priority-button {
-  background-color: white;
+  background-color: transparent;
   color: red;
   border: none;
   padding: 1px 5px;
 }
 .priority-button:hover{
-  background-color: white;
+  background-color: transparent;
 }
 .show-more-button {
-  background-color: white;
+  background-color: transparent;
   color: darkblue;
   border: none;
   padding: 1px 5px;
@@ -133,7 +156,7 @@ h1 {
 }
 
 .show-less-button {
-  background-color: white;
+  background-color: transparent;
   color: darkblue;
   border: none;
   padding: 1px 5px;
@@ -141,7 +164,7 @@ h1 {
 }
 
 .show-less-button:hover{
-  background-color: ghostwhite;
+  background-color: transparent;
  }
 .show-more-row {
   display: flex;
@@ -150,7 +173,7 @@ h1 {
   margin-top: 10px;
 }
 .show-more-button:hover{
-  background-color: ghostwhite;
+  background-color: transparent;
 }
 .warning-row {
   align-items: center;
@@ -172,10 +195,43 @@ table {
 .show-warning:hover{
   background-color: #4CAF50;
 }
+/*selector*/
+.dropbtn {
+  background-color: rgba(128, 128, 128, 0.85);
+  color: white;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
 
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
 
+.dropdown:hover .dropbtn {
+  background-color: darkgrey;
+}
 
+/* table formatting */
 
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
 
+th, td {
+  text-align: left;
+  padding: 8px;
+}
 
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+
+}
+
+tr:hover {
+  background-color: lightgrey;
+}
 

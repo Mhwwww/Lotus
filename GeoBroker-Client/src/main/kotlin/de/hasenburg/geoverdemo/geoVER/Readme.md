@@ -18,7 +18,7 @@
 - press 'Show Warnings' to waiting for the matching events
 
 ### Matching Events
-- start PublishingClient.kt(default topic is 'info')
+- start _PublishingClient.kt_ in "/geoVER/publisher" folder.(default topic is 'info')
 - press 'Show Warnings' after publishing events to see the 'warnings' 
 - press 'Show Information' after publishing events to see the geo-fence matching events.
 - 

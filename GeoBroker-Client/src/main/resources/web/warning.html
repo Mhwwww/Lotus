@@ -6,16 +6,31 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<div style="height: 10%">
+    <center>
+        <img src="geover.jpg" width="740">
+    </center>
+
+</div>
 <div class="container">
     <div class="left" id="left-app">
-        <subscription-info></subscription-info>
+        <div >
+            <subscription-info></subscription-info>
     </div>
-    <div class="right" id="right-app">
 
+
+    </div>
+
+
+    <div class="right" id="right-app">
+        <div class="buttonTogether">
             <button @click="reloadPage()" class="warning">Show Warnings</button>
             <button @click="showInfo()" class="result" >Show information</button>
+        </div>
 
+     <div class="background">
         <component :is="currentComponent"></component>
+    </div>
 
 <!--        <warning-list></warning-list>-->
 

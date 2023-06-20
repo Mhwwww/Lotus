@@ -1,0 +1,139 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  /*background-image: url("/web/favicon.ico");
+  background-color: #5d7b8d;*/
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.event, .rule{
+  margin: 20px auto;
+  max-width: 700px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+  position: relative;
+}
+
+.event h2, .rule h1 {
+  font-size: 24px;
+}
+
+.Connection {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.Connection label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input[type="text"], .Connection input[type="number"]{
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  padding: 10px;
+  width: 100%;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: darkgrey;
+}
+
+.dropbtn {
+  background-color: rgba(128, 128, 128, 0.85);
+  color: white;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100px;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul li {
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+button {
+  background-color: rgba(128, 128, 128, 0.85);
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  padding: 10px 20px;
+}
+
+button:hover {
+  background-color: #8D8A8A;
+}
+
+.show-warning ,
+.save-rules {
+  background-color: #147027E0;
+  width: 155px;
+  margin-left: 535px;
+}
+.save-rules:hover,
+.show-warning:hover {
+  background-color: #4CAF50;
+}
+
+.rule-form {
+  display: flex;
+  flex-wrap: nowrap;/*do not allow to change line */
+  align-items: center;/* align in center */
+  justify-content: space-between;
+}
+
+.rule-form .Connection {
+  flex: 1;
+  flex-basis: 25%;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.rule-form .Connection label {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.rule-form .Connection select,
+.rule-form .Connection input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+.rule-form .rule-list {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.rule-form .rule-list li {
+  margin-bottom: 5px;
+}
+
