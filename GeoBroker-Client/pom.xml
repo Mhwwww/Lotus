@@ -83,11 +83,8 @@
             <version>${ktor_version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.ktor</groupId>
-            <artifactId>ktor-client-okhttp</artifactId>
-            <version>${ktor_version}</version>
-        </dependency>
+
+
         <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-server-content-negotiation-jvm</artifactId>
@@ -106,11 +103,31 @@
             <version>1.3</version>
         </dependency>
 
+
         <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-serialization-jackson-jvm</artifactId>
             <version>${ktor_version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-core-jvm</artifactId>
+            <version>${ktor_version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-websockets-jvm</artifactId>
+            <version>${ktor_version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-cio-jvm</artifactId>
+            <version>${ktor_version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -165,8 +182,6 @@
         </dependency>
 
     </dependencies>
-
-
 
     <build>
         <plugins>

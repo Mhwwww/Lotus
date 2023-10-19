@@ -90,5 +90,32 @@ release [v1.0-noContext](https://github.com/MoeweX/geobroker/releases/tag/v1.0-n
 The [fork](https://github.com/SoftwareImpacts/SIMPAC-2020-30) of the Software Impacts paper is identical with the contents of the [single](https://github.com/MoeweX/geobroker/tree/single) branch.
 
 The master branch contains the most up to date version of the distributed GeoBroker source code.
+ 
+## Maybe update the root pom.xml with the following, then don't need to git submodule init/update
 
+```
+    <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>exec-maven-plugin</artifactId>
+      <version>3.0.0</version>
+      <executions>
+        <execution>
+          <id>init-git-submodules</id>
+          <phase>initialize</phase>
+          <goals>
+            <goal>exec</goal>
+          </goals>
+          <configuration>
+            <executable>git</executable>
+            <arguments>
+              <argument>submodule</argument>
+              <argument>update</argument>
+              <argument>--init</argument>
+              <argument>--recursive</argument>
+            </arguments>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+```
 

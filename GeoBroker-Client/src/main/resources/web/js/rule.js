@@ -35,7 +35,8 @@ addRuleButton.addEventListener('click', (event) => {
 
 saveRulesButton.addEventListener('click', () => {
     event.preventDefault();
-    fetch("http://localhost:8081/saveRules", {
+    // fetch("http://localhost:8081/saveRules", {
+    fetch(saveRuleUrl, {
         method: "POST",
         body: JSON.stringify(rules),
         headers: {

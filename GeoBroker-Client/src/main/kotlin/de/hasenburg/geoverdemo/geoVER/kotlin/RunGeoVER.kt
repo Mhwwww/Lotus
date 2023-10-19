@@ -9,6 +9,7 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
+import de.hasenburg.geoverdemo.geoVER.kotlin.Websocket
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
@@ -22,7 +23,8 @@ import kotlin.system.exitProcess
 private val logger = LogManager.getLogger()
 var warningArray = JSONArray()
 var infoArray = JSONArray()
-
+val websocketSubscriber = Websocket()
+var DT_ClientID = ""
 class RunGeoVER(private val loc: Location, private val topic: Topic, private val name: String) {
     private val logger = LogManager.getLogger()
     private var cancel = false
@@ -33,7 +35,7 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
         logger.debug("{}: Subscribing to {} at {}", name, topic, loc)
 
         this.processManager = ZMQProcessManager()
-        this.client = SimpleClient("localhost", 5559, identity = " RuleJsonSub_${name}")
+        this.client = SimpleClient("localhost", 5559, identity = " CrossWindSub_${name}")
 
         logger.debug("{}: sending connect with client id {}", name, client.identity)
 
@@ -46,7 +48,7 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
         logger.info("{}: Subscribed to {} at {}", name, topic, loc)
     }
 
-    fun run() {
+     suspend fun run() {
         logger.info("{}: Running subscriber for {} at {}", name, topic, loc)
 
         while (!this.cancel) {
@@ -59,23 +61,25 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
                 //logger.error("The content is {}", message)
                 val timeSent = JSONObject(message.content).getLong("timeSent")
                 logger.info("{}: Time for topic {} difference: {}", name, message.topic, timeReceived - timeSent)
-
-
                 // add priority to message content, and set it to Boolean
                 // if it is "info", set to be 'false', if it is warning, then true
-
-                if (processMessage(message)) {
+                if (processMessage(message)) { // warning messages
+                    //logger.error(warningArray)
                     val warningUrl = URL("http://localhost:8081/warningMessage")
-                    logger.error(warningArray)
-                    postEvents(warningUrl, displayEvents(message, warningArray))
+                    val warnings = displayEvents(message, warningArray)
+
+                    postEvents(warningUrl, warnings)
+
+                    sendWarningsToDT(message.content)
+
                 } else {
                     val infoUrl = URL("http://localhost:8081/infoMessage")
-                    postEvents(infoUrl, displayEvents(message, infoArray))
+                    val info = displayEvents(message, infoArray)
+                    postEvents(infoUrl, info)
                 }
             }
         }
     }
-
     fun stop() {
         this.cancel = true
         // disconnect
@@ -85,7 +89,6 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
         exitProcess(0)
     }
 }
-
 fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
     setLogLevel(logger, Level.DEBUG)
 
@@ -105,9 +108,16 @@ fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
     val newS2 = RunGeoVER(locations, matchingTopic, matchingTopic.topic)
     subscribers.add(newS2)
     newS2.prepare()
+    //TODO: get DT client info when have the subscriber
+    getDTClientID()
+    //todo: create a websocket session for publishing warning
 
     subscribers.forEach {
-        thread { it.run() }
+        thread {
+            runBlocking {
+            it.run()
+            }
+        }
     }
 
     logger.info("Press enter to finish subscribers")
@@ -119,7 +129,6 @@ fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
 
     bridgeManager.deleteRule(rule)
 }
-
 fun displayEvents(message: Payload.PUBLISHPayload, array: JSONArray): String {
     val locJson = JSONObject()
     locJson.put("lat", message.geofence.center.lat)
@@ -135,7 +144,6 @@ fun displayEvents(message: Payload.PUBLISHPayload, array: JSONArray): String {
 
     return array.toString()
 }
-
 fun postEvents(url: URL, inputJsonArray: String) {
     val connection = url.openConnection() as HttpURLConnection
     connection.requestMethod = "POST"
@@ -150,7 +158,6 @@ fun postEvents(url: URL, inputJsonArray: String) {
     connection.connect()
     connection.disconnect()
 }
-
 fun addPriority(message: Payload.PUBLISHPayload, priority: Boolean): String {
     val msgContent = message.content
     var contentWithPriority = JSONObject(msgContent).put("priority", priority)
@@ -174,4 +181,20 @@ fun processMessage(message: Payload.PUBLISHPayload): Boolean {
         }
     }
     return false
+}
+suspend fun getDTClientID():String{//{"version":"1.0.2","sender":"b2","secure":false,"clients":1}
+    val dtClientInfo = websocketSubscriber.info()
+
+    if (dtClientInfo != null) {
+        DT_ClientID = dtClientInfo.substringAfter("""sender":""").substringBefore(""","secure""")
+
+    }
+    logger.error("DT Client ID is: {}", DT_ClientID)
+    return DT_ClientID
+}
+
+suspend fun sendWarningsToDT(warning:String){
+    websocketSubscriber.single(DT_ClientID, warning)
+    //websocketSubscriber.all(warning)
+    logger.debug("The Message Send To DT is: {}", warning)
 }

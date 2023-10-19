@@ -1,3 +1,15 @@
+POST http://localhost:8081/warningMessage/15200065465416
+Content-Type: application/json
+
+<> 2023-09-01T163507.200.txt
+
+###
+
+POST http://localhost:8081/WarningMessage/15200065465416
+Content-Type: application/json
+
+###
+
 POST http://localhost:8081/warningMessage/201545370162083
 Content-Type: application/json
 

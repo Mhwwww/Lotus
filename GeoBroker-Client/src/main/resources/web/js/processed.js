@@ -60,7 +60,7 @@ Vue.component('warning-list', {
     data() {
         return {
             warnings: [],
-            warningKeys: []
+            warningKeys: [],
         };
     },
     mounted() {
@@ -70,7 +70,9 @@ Vue.component('warning-list', {
     methods: {
         async fetchWarnings() {
             try {
+                //todo: configure in config.js
                 const response = await fetch('http://localhost:8081/warningMessage');
+
                 const data = await response.json();
                 this.warnings = data.map(warning => {
                     return {...warning, collapsed: true};
@@ -164,7 +166,8 @@ Vue.component('info-list', {
     methods: {
         async fetchInfoSet() {
             try {
-                const response = await fetch('http://localhost:8081/infoMessage');
+                // const response = await fetch('http://localhost:8081/infoMessage');
+                const response = await fetch(infoMsgUrl);
                 const data = await response.json();
                 this.infoSet = data;
                 this.infoSetKeys = Object.keys(data[0]);
@@ -179,7 +182,7 @@ Vue.component('info-list', {
 new Vue({
     el: '#right-app',
     data: {
-        currentComponent: 'warning-list'
+        currentComponent: 'warning-list',
     },
     methods: {
         reloadPage() {

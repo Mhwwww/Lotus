@@ -17,11 +17,11 @@
     <h2>Subscription</h2>
     <form>
         <div class="Connection">
-            <label for="event-topic">Topic</label>
+            <label for="event-topic">Subscription Topic</label>
             <input type="text" id="event-topic" required>
         </div>
         <div class="Connection">
-            <label for="repub-topic">Target Topic</label>
+            <label for="repub-topic">Warning Topic</label>
             <input type="text" id="repub-topic" required>
         </div>
         <br/>
@@ -59,7 +59,7 @@
         <div class="Connection">
             <label for="operator-select">Operator</label>
             <select id="operator-select" class="dropbtn">
-                <option disabled selected>Operator</option>
+                <option disabled selected> operator </option>
                 <option value="="> =</option>
                 <option value=">"> ></option>
                 <option value="<"> <</option>
@@ -74,7 +74,7 @@
         <div class="Connection">
             <label for="link-select">Connector</label>
             <select id="link-select" class="dropbtn">
-                <option disabled selected>Connector</option>
+                <option disabled selected> </option>
                 <option value=""> no connector</option>
                 <option value="AND"> and</option>
                 <option value="OR"> or</option>
@@ -108,6 +108,7 @@
 <script src="https://unpkg.com/vue@next"></script>
 <script src="js/event.js"></script>
 <script src="js/rule.js"></script>
+<script src="js/config.js"></script>
 
 </body>
 </html>

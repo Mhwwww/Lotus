@@ -11,7 +11,6 @@ import java.io.DataOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-
 const val GEOBROKER_HOST = "localhost"
 const val GEOBROKER_PORT = 5559
 const val TINYFAAS_BASE_URL = "http://localhost:80/"
@@ -89,22 +88,19 @@ public suspend fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: L
         )
         val resultFromTinyFaaS = sendReqToTinyFaaS(functionName, jsonToSendToTinyFaaS.toString())
 
-        logger.debug("Processed Event. Asnwer from TinyFaaS is={}", resultFromTinyFaaS)
+        logger.debug("Processed Event. Answer from TinyFaaS is={}", resultFromTinyFaaS)
 
         if (resultFromTinyFaaS.isNotEmpty()) {
             // response messages from tinyfaas are the processed event topics
             // new topic: original + client id (including funcitonName--original topic)
             logger.debug("We have found a match! Publishing answer from tinyFaaS to {}", newTopicIfMatch)
             republish(client, newTopicIfMatch, message.geofence, resultFromTinyFaaS)
-
             eventNum += 1
 
             logger.info("Number of processed events: $eventNum")
-
         } else {
             logger.debug("TinyFaaS returned an empty object, so we don't need to forward it to any other topic")
         }
-
     }
 }
 

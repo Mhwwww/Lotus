@@ -30,7 +30,7 @@ class CbfSubscriber(private val loc: Location, private val topic: Topic, private
     fun prepare() {
        setLogLevel(this.logger, Level.DEBUG)
 
-        logger.debug("{}: Subscribing to {} at {}", name, topic, loc)
+       logger.debug( "{}: Subscribing to {} at {}", name, topic, loc)
 
         this.processManager = ZMQProcessManager()
         this.client = SimpleClient("localhost", 5559, identity = " CbfSub_${name}")

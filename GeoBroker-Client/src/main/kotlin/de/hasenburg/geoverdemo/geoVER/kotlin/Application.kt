@@ -8,7 +8,6 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.serialization.Serializable
 import org.apache.logging.log4j.LogManager
-import org.json.JSONArray
 import java.io.File
 
 private val logger = LogManager.getLogger()
@@ -29,10 +28,8 @@ data class InputRule(val topic: String, val operator: String, val constraints: S
 @Serializable
 data class ErrorResponseRule(val message: String)
 
-
-
 fun main() {
-    val ruleArray= JSONArray()
+    //val ruleArray= JSONArray()
     val server = embeddedServer(Netty, port = 8081) {
         applyRouting()
         configureSerialization()
@@ -42,14 +39,14 @@ fun main() {
     server.start(wait = true)
 }
 
-fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
+suspend fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
     publishTopic = Topic(inputEvent.topic)
     matchingTopic = Topic(inputEvent.repubTopic)
     locations = Location(inputEvent.lat.toDouble(), inputEvent.lon.toDouble())
     logger.info(publishTopic)
     logger.info(locations)
-    //Using the rule-based filtering function
-    //return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"), "nodejs", matchingTopic)
-    return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"), "nodejs", matchingTopic)
 
+    //Using the rule-based filtering function
+//    return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"), "nodejs", matchingTopic)
+    return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"), "nodejs", matchingTopic)
 }

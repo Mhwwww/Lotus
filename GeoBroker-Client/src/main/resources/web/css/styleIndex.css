@@ -52,14 +52,12 @@ input[type="text"], .Connection input[type="number"]{
 }
 
 .dropbtn {
-  background-color: rgba(128, 128, 128, 0.85);
-  color: white;
+  color: grey;
   padding: 10px;
   font-size: 16px;
-  border: none;
   cursor: pointer;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  width: 100px;
 }
 
 ul {

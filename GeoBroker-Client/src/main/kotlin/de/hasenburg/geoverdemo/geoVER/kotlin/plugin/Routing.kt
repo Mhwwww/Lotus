@@ -19,27 +19,7 @@ fun Application.applyRouting(){
             resources("web")
         }
 
-/*        // apply subscription
-        options("/clientInput") {
-            call.respond(HttpStatusCode.OK)
-        }
-        post("/clientInput") {
-            try {
-                val inputEvent = call.receive<InputEvent>()
-                println("Received inputEvent: $inputEvent")
-
-                call.respond("post test successfully")
-
-            } catch (e: Exception) {
-                val errorMessage = e.message ?: "Unknown error"
-                call.respond(status = HttpStatusCode.BadRequest, ErrorResponseEvent(errorMessage))
-            }
-        }*/
-        // show warnings
-        options("/show") {
-            call.respond(HttpStatusCode.OK)
-        }
-        post("/show") {
+        post("/subscriptionInput") {
             try {
                 val inputEvent = call.receive<InputEvent>()
                 println("Received inputEvent: $inputEvent")
@@ -54,25 +34,14 @@ fun Application.applyRouting(){
             }
         }
 
-/*        // show warnings
-        options("/showInfo") {
-            call.respond(HttpStatusCode.OK)
-        }
-        post("/showInfo") {
-            call.respond("testing")
-        }*/
-
-        // save the added rules to 'saverule.json' in 'multiRule' folder
-        options("/saveRules") {
-            call.respond(HttpStatusCode.OK)
-        }
         post("/saveRules") {
             try {
-                //receive the forwarded rule set
+                //receive the frontend input rule set
                 val rules: List<InputRule> = call.receive()
                 val json = Json.encodeToString(rules)
 
-                //val file = File("./GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/saverule.json")
+                // the file to save use input rules
+//                val file = File("./GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/saverule.json")
                 val file = File("./GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/saverule.json")
 
                 // clear file
@@ -84,14 +53,18 @@ fun Application.applyRouting(){
                 call.respond(status = HttpStatusCode.BadRequest, ErrorResponseRule(errorMessage))
             }
         }
+
+        // messages in 'info' topic
+        get("/infoMessage"){
+            call.respond(infoArray.toString())
+        }
+
         //get the events from 'warnings' topic
         get("/warningMessage"){
             call.respond(warningArray.toString())
         }
 
-        options("/warningMessage/{timeSent}") {
-            call.respond(HttpStatusCode.OK)
-        }
+        // change priority of the warning messages
         post("/warningMessage/{timeSent}") {
             val timeSent = call.parameters["timeSent"]?.toLongOrNull()
             if (timeSent == null) {
@@ -113,12 +86,10 @@ fun Application.applyRouting(){
 
                         //delete this message from 'warningArray'
                         warningArray.remove(i)
-
                         break
                     }
                 }
             }
-
             // number of remaining warnings
             val remainingCount = warningArray.length()
             val responseMessage = "Remaining: $remainingCount warnings"
@@ -126,9 +97,30 @@ fun Application.applyRouting(){
             call.respond(responseMessage)
         }
 
-        get("/infoMessage"){
-            call.respond(infoArray.toString())
-        }
 
     }
 }
+
+/*        // show warnings
+        options("/showInfo") {
+            call.respond(HttpStatusCode.OK)
+        }
+        post("/showInfo") {
+            call.respond("testing")
+        }*/
+
+// save the added rules to 'saverule.json' in 'multiRule' folder
+
+// get user input(topic, repubTopic, lat, lon, rad)
+//        options("/subscriptionInput") {
+//            call.respond(HttpStatusCode.OK)
+//        }
+
+
+//        options("/saveRules") {
+//            call.respond(HttpStatusCode.OK)
+//        }
+
+//        options("/warningMessage/{timeSent}") {
+//            call.respond(HttpStatusCode.OK)
+//        }

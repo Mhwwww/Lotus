@@ -1,1 +1,1 @@
-[{"topic":"wet","operator":"<","constraints":"13","link":""},{"topic":"temperature","operator":">","constraints":"45","link":"OR"},{"topic":"wind","operator":"<","constraints":"11","link":"AND"},{"topic":"speed","operator":"<","constraints":"11","link":"NOT"}]
+[{"topic":"aircraft type","operator":"=","constraints":"Boring767","link":"connector"},{"topic":"runway direction","operator":"=","constraints":"RWY30","link":""}]

@@ -25,7 +25,9 @@ showWarningButton.addEventListener('click', (event)=>{
         rad: eventRadiusInput.value
     };
 
-    fetch('http://localhost:8081/show', {
+    // fetch('http://localhost:8081/show', {
+    fetch(subscriptionInputUrl, {
+
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
