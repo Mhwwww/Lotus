@@ -2,10 +2,6 @@ module.exports = (req, res) => {
     const fs = require("fs");
     const fileName = "saverule.json";
 
-    // wind data name in the publisher sensor data
-    const WIND_DIRECTION= "windDirection"
-    const WIND_VELOCITY = "windVelocity"
-
     //const crosswindFs = require("fs");
     const crosswindFileName = "aircraftType.json";
 
@@ -14,6 +10,8 @@ module.exports = (req, res) => {
             // user input rules related
             let rules = JSON.parse(data);
             let inJson = JSON.parse(JSON.stringify(req.body));
+
+            let reponseJson = req.body["message"]
 
             // crosswind user input related
             let crosswindThreshold = 0.0;
@@ -46,7 +44,7 @@ module.exports = (req, res) => {
                 readCrosswindThresholdFromFile(crosswindFileName, aircraftType)
                     .then((threshold) => {
                         crosswindThreshold = threshold;
-                        console.log("READ FROM FILE " + crosswindThreshold);
+                        console.log("READ FROM FILE" + crosswindThreshold);
 
                         // Process windVelocity and windAngle
                         processWindData();
@@ -62,8 +60,8 @@ module.exports = (req, res) => {
             }
 
             function processWindData() {
-                windAngle = inJson["message"][WIND_DIRECTION];
-                windVelocity = inJson["message"][WIND_VELOCITY];
+                windAngle = inJson["message"]["windDirection"];
+                windVelocity = inJson["message"]["windVelocity"];
 
                 //console.log(windVelocity, windAngle, windVelocity && windAngle);
 
@@ -77,29 +75,37 @@ module.exports = (req, res) => {
                     console.log("result from calculator" + resultFromCalculator);
 
                     if (resultFromCalculator == "Input Error From Sensor") {
-                        res.write("Sensor Input Error")
+                        //res.write("Sensor Input Error")
+                        console.log("Sensor Input Error")
                         res.end();
                     }
                     if (resultFromCalculator == "Error in Calculation") {
-                        res.write("Error in Calculation")
+                        //
+                        console.log("Error in Calculation")
                         res.end();
                     }
+
 
                     crosswind = resultFromCalculator[0];
                     headwind = resultFromCalculator[1];
                     //console.log("The crosswind is " + crosswind + "\nThe headwind is " + headwind);
 
+
                     if (crosswind >= crosswindThreshold) {
                         console.log("DO NOT LAND!!!");
-                        res.write("DO NOT LAND!!!\n"+ JSON.stringify(inJson));
+                        //send warnings back
+                        //res.write(JSON.stringify(inJson));
+                        res.write(JSON.stringify(reponseJson));
+
                     } else {
                         console.log("current crosswind is " + crosswind + "\nYOU CAN LAND");
-                        res.write("YOU CAN LAND at current crosswind: " +crosswind);
+                        //res.write("YOU CAN LAND at current crosswind: " +crosswind);
                     }
                 } else {
                     console.log("There is not enough information for crosswind");
-                    res.write("There is not enough information for crosswind");
+                    //res.write("There is not enough information for crosswind");
                 }
+
                 res.end();
             }
         }
@@ -128,23 +134,41 @@ function readCrosswindThresholdFromFile(fileName, aircraftType) {
 }
 
 function drittelmethodeCrosswindCalculator(runwayDirection, windVelocity, windAngle) {
+    // const windAngleSet = {
+    //     N: 0,//0
+    //     NNE: 22.5,//1
+    //     NE: 45,//2
+    //     ENE: 67.5,//3
+    //     E: 90,//4
+    //     ESE: 112.5,//5
+    //     SE: 135,//6
+    //     SSE: 157.5,//7
+    //     S: 180,//8
+    //     SSW: 202.5,
+    //     SW: 225,
+    //     WSW: 247.5,
+    //     W: 270,//12
+    //     WNW: 292.5,
+    //     NW: 315,
+    //     NNW: 337.5,
+    // };
     const windAngleSet = {
-        N: 0,//0
-        NNE: 22.5,//1
-        NE: 45,//2
-        ENE: 67.5,//3
-        E: 90,//4
-        ESE: 112.5,//5
-        SE: 135,//6
-        SSE: 157.5,//7
-        S: 180,//8
-        SSW: 202.5,
-        SW: 225,
-        WSW: 247.5,
-        W: 270,//12
-        WNW: 292.5,
-        NW: 315,
-        NNW: 337.5,
+        0: 0,//0
+        1: 22.5,//1
+        2: 45,//2
+        3: 67.5,//3
+        4: 90,//4
+        5: 112.5,//5
+        6: 135,//6
+        7: 157.5,//7
+        8: 180,//8
+        9: 202.5,
+        10: 225,
+        11: 247.5,
+        12: 270,//12
+        13: 292.5,
+        14: 315,
+        15: 337.5,
     };
 
     let result = 0.0
@@ -152,45 +176,46 @@ function drittelmethodeCrosswindCalculator(runwayDirection, windVelocity, windAn
 
     console.log("Here is the runway angle " + runwayAngle + " ,read from " + runwayDirection)
 
+
     let angle = windAngleSet[windAngle];
 
     //If data from sensor is ERROR/ or Error code 255
-    if (windAngle == 255 || windAngle == "ERROR") {
+    if (windAngle === 255 || windAngle === "ERROR") {
         console.log(windAngle)
-        return "Sensor Input Error"
+        return "Input Error From Sensor"
     }
 
     if (angle < 180) {
         result = Math.abs(runwayAngle - angle)
         console.log(result)
     } else {
-        console.log("angle over 180, it is: " + angle)
+        console.log("angle over 180 " + angle)
         result = Math.abs(360 - angle + runwayAngle)
     }
 
     while (result > 180) {
         result = result - 180
-        console.log("The original result still over 180, the minus 180 result is: " + result);
+        console.log("Here is the value of result " + result);
     }
 
-    //todo: one is head wind, one is back wind. The head/back wind velocity is the same but in different direction
+
     //let firstSet = 0 <= windDirction < 30
     if ((result >= 0 && result < 30) || (result >= 150 && result < 180)) {
         crosswind = windVelocity / 3;
         headwind = windVelocity;
-        console.log("crosswind in the FIRST SET, the CROSSWIND is: " + crosswind + " the HEADWIND/BACKWIND is: " + headwind);
+        console.log("crosswind in the FIRST SET, the CROSSWIND is: " + crosswind + " the HEADWIND is: " + headwind);
         //result =
         return [crosswind, headwind];
     } else if ((result >= 30 && result < 60) || (result >= 120 && result < 150)) {//    let secondSet = 30 <= windDirction < 60
         crosswind = windVelocity * 2 / 3;
         headwind = windVelocity * 2 / 3;
-        console.log("crosswind in the SECOND SET, the CROSSWIND is: " + crosswind + " the HEADWIND/BACKWIND is: " + headwind);
+        console.log("crosswind in the SECOND SET, the CROSSWIND is: " + crosswind + " the HEADWIND is: " + headwind);
 
         return [crosswind, headwind];
     } else if ((result >= 60 && result < 90) || (result >= 90 && result < 120)) {//let thirdSet = 60 <= windDirction <= 90
         headwind = windVelocity / 3;
         crosswind = windVelocity;
-        console.log("crosswind in the THIRD SET, the CROSSWIND is: " + crosswind + " the HEADWIND/BACKWIND is: " + headwind);
+        console.log("crosswind in the THIRD SET, the CROSSWIND is: " + crosswind + " the HEADWIND is: " + headwind);
 
         return [crosswind, headwind];
     } else {

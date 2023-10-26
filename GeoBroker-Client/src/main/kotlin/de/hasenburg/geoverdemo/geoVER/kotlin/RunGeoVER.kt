@@ -9,7 +9,7 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
-import de.hasenburg.geoverdemo.geoVER.kotlin.Websocket
+import de.hasenburg.geoverdemo.geoVER.kotlin.TalkToXR
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
@@ -23,8 +23,11 @@ import kotlin.system.exitProcess
 private val logger = LogManager.getLogger()
 var warningArray = JSONArray()
 var infoArray = JSONArray()
-val websocketSubscriber = Websocket()
-var DT_ClientID = ""
+
+val talkToXR = TalkToXR()
+
+//val websocketSubscriber = Websocket()
+//var DT_ClientID = ""
 class RunGeoVER(private val loc: Location, private val topic: Topic, private val name: String) {
     private val logger = LogManager.getLogger()
     private var cancel = false
@@ -68,10 +71,10 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
                     val warningUrl = URL("http://localhost:8081/warningMessage")
                     val warnings = displayEvents(message, warningArray)
 
-                    postEvents(warningUrl, warnings)
-
+                    //postEvents(warningUrl, warnings)
+                    postEvents(warningUrl, message.content)
+                    //send warning to DT
                     sendWarningsToDT(message.content)
-
                 } else {
                     val infoUrl = URL("http://localhost:8081/infoMessage")
                     val info = displayEvents(message, infoArray)
@@ -109,7 +112,7 @@ fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
     subscribers.add(newS2)
     newS2.prepare()
     //TODO: get DT client info when have the subscriber
-    getDTClientID()
+    //getDTClientID()
     //todo: create a websocket session for publishing warning
 
     subscribers.forEach {
@@ -133,6 +136,7 @@ fun displayEvents(message: Payload.PUBLISHPayload, array: JSONArray): String {
     val locJson = JSONObject()
     locJson.put("lat", message.geofence.center.lat)
     locJson.put("lon", message.geofence.center.lon)
+
     val jsonToSendToTinyFaaS = JSONObject()
     jsonToSendToTinyFaaS.put("topic", message.topic.topic)
     jsonToSendToTinyFaaS.put("location", locJson)
@@ -182,19 +186,8 @@ fun processMessage(message: Payload.PUBLISHPayload): Boolean {
     }
     return false
 }
-suspend fun getDTClientID():String{//{"version":"1.0.2","sender":"b2","secure":false,"clients":1}
-    val dtClientInfo = websocketSubscriber.info()
-
-    if (dtClientInfo != null) {
-        DT_ClientID = dtClientInfo.substringAfter("""sender":""").substringBefore(""","secure""")
-
-    }
-    logger.error("DT Client ID is: {}", DT_ClientID)
-    return DT_ClientID
-}
-
 suspend fun sendWarningsToDT(warning:String){
-    websocketSubscriber.single(DT_ClientID, warning)
-    //websocketSubscriber.all(warning)
+    //todo: modify direction later
+    talkToXR.sendWarning(warning)
     logger.debug("The Message Send To DT is: {}", warning)
 }

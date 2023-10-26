@@ -33,24 +33,6 @@ fun getStationData(): StationData {
     // Get station data--> [temperature = 216, humidity = 44, windSpeed = 0, gustSpeed = 0, rain = 48, windDirection = 2, batteryLow = false, lastChange = 41]
     val stationData = outdoorWeather.getStationData(STATION_ID)
 
-//    BrickletOutdoorWeather.WIND_DIRECTION_N = 0
-//    BrickletOutdoorWeather.WIND_DIRECTION_NNE = 1
-//    BrickletOutdoorWeather.WIND_DIRECTION_NE = 2
-//    BrickletOutdoorWeather.WIND_DIRECTION_ENE = 3
-//    BrickletOutdoorWeather.WIND_DIRECTION_E = 4
-//    BrickletOutdoorWeather.WIND_DIRECTION_ESE = 5
-//    BrickletOutdoorWeather.WIND_DIRECTION_SE = 6
-//    BrickletOutdoorWeather.WIND_DIRECTION_SSE = 7
-//    BrickletOutdoorWeather.WIND_DIRECTION_S = 8
-//    BrickletOutdoorWeather.WIND_DIRECTION_SSW = 9
-//    BrickletOutdoorWeather.WIND_DIRECTION_SW = 10
-//    BrickletOutdoorWeather.WIND_DIRECTION_WSW = 11
-//    BrickletOutdoorWeather.WIND_DIRECTION_W = 12
-//    BrickletOutdoorWeather.WIND_DIRECTION_WNW = 13
-//    BrickletOutdoorWeather.WIND_DIRECTION_NW = 14
-//    BrickletOutdoorWeather.WIND_DIRECTION_NNW = 15
-//    BrickletOutdoorWeather.WIND_DIRECTION_ERROR = 255
-
     return stationData
 }
 
@@ -70,11 +52,33 @@ fun main() {
     repeat(20) {
         val outdoorWeatherBrickletStationData = getStationData()
 
+    //    BrickletOutdoorWeather.WIND_DIRECTION_N = 0
+    //    BrickletOutdoorWeather.WIND_DIRECTION_NNE = 1
+    //    BrickletOutdoorWeather.WIND_DIRECTION_NE = 2
+    //    BrickletOutdoorWeather.WIND_DIRECTION_ENE = 3
+    //    BrickletOutdoorWeather.WIND_DIRECTION_E = 4
+    //    BrickletOutdoorWeather.WIND_DIRECTION_ESE = 5
+    //    BrickletOutdoorWeather.WIND_DIRECTION_SE = 6
+    //    BrickletOutdoorWeather.WIND_DIRECTION_SSE = 7
+    //    BrickletOutdoorWeather.WIND_DIRECTION_S = 8
+    //    BrickletOutdoorWeather.WIND_DIRECTION_SSW = 9
+    //    BrickletOutdoorWeather.WIND_DIRECTION_SW = 10
+    //    BrickletOutdoorWeather.WIND_DIRECTION_WSW = 11
+    //    BrickletOutdoorWeather.WIND_DIRECTION_W = 12
+    //    BrickletOutdoorWeather.WIND_DIRECTION_WNW = 13
+    //    BrickletOutdoorWeather.WIND_DIRECTION_NW = 14
+    //    BrickletOutdoorWeather.WIND_DIRECTION_NNW = 15
+    //    BrickletOutdoorWeather.WIND_DIRECTION_ERROR = 255
+
+
         val temperature = outdoorWeatherBrickletStationData.temperature
         val humidity= outdoorWeatherBrickletStationData.humidity
-        val windSpeed = outdoorWeatherBrickletStationData.windSpeed
+        val windSpeed = outdoorWeatherBrickletStationData.windSpeed //mps
         val windDirection = outdoorWeatherBrickletStationData.windDirection
-//
+
+        logger.error(windDirection)
+
+        //val windDirection = outdoorWeatherBrickletStationData.windDirection
 //        val gustSpeed = outdoorWeatherBrickletStationData.gustSpeed
 //        val rain = outdoorWeatherBrickletStationData.rain
 //        val batteryLow = outdoorWeatherBrickletStationData.batteryLow
@@ -84,21 +88,16 @@ fun main() {
         locations = Location(Random.nextDouble(0.0, 2.0), Random.nextDouble(0.0, 2.0))
 
         val newElem = JSONObject().apply {
-            put("publisherID", client.identity)
+            put("publisher ID", client.identity)
             put("timeSent", System.nanoTime())
 
             put("temperature", temperature)
             put("humidity", humidity)
-            //todo: this is the sensor value
-            //put("windVelocity", windSpeed)
+            put("windSpeed", windSpeed)//sensor value --> 1 meter per second = 1.94384449 knot
+            put("windDirection", windDirection)
+
             //TODO: delete later, here for crosswind function checking
             put("windVelocity", randomDouble(110.0, 140.0))
-            //TODO: modify function or modify the data function here
-            put("windDirection", "NW")
-            put("windD", windDirection)
-
-//            put("temperature", randomDouble(0.0, 60.0))
-//            put("humidity", randomDouble(0.0, 60.0))
         }
 
         client.send(

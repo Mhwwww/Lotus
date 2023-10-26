@@ -25,6 +25,7 @@ import org.json.JSONObject
 //const val DT_SINGLE_URL = "urn:tlabs:geover:ws:receiver:single" //Forward message to a single client. The receiver property must be set and should contain a sender ID.
 //const val DT_MUTI_URL = "urn:tlabs:geover:ws:receiver:multiple" //Forward message to multiple clients. The receivers property must be set and should contain an array of sender IDs.
 private val logger = LogManager.getLogger()
+lateinit var webSocketSession: WebSocketSession
 
 class Websocket {
     //TODO: data format
@@ -106,10 +107,10 @@ class Websocket {
         val speed = jsonObject.get("windVelocity")
 
         val windData = WindData(
-            direction = direction,
-            directionType = "deg",
+            direction = direction,//directionType: "id", "deg"
+            directionType = "id",
             speed = speed as Double,
-            speedType = "kn"
+            speedType = "ms"//speedType: "kn", "mph", "kmh", "ms"
         )
         val sensorData = SensorData(
             sensor = sensor,
@@ -168,10 +169,7 @@ class Websocket {
     }
 
 
-    suspend fun createWebSocketSession(): Pair<WebSocketSession, String> {
-        var receivedJson = ""
-        lateinit var webSocketSession: WebSocketSession
-
+    suspend fun createWebSocketSession() {
         try {
             websocketClient.webSocket(
                 method = HttpMethod.Get,
@@ -181,62 +179,61 @@ class Websocket {
             ) {
                 webSocketSession = this  // Store the WebSocketSession in the outer variable
 
-                val websocketMsg = WebSocketMessage(target = "urn:tlabs:geover:ws:info")
-                val msgToSend = Json.encodeToString(websocketMsg)
+//                val websocketMsg = WebSocketMessage(target = "urn:tlabs:geover:ws:info")
+//                val msgToSend = Json.encodeToString(websocketMsg)
+//
+//                send(Frame.Text(msgToSend))
+//
+//                for (frame in incoming) {
+//                    if (frame is Frame.Text) {
+//                        receivedJson = frame.readText()
+//                        logger.debug("WebSocket Info: $receivedJson")
+//                        println(receivedJson)
+//                        return@webSocket
+//                    }
+//                }
 
-                send(Frame.Text(msgToSend))
 
-                for (frame in incoming) {
-                    if (frame is Frame.Text) {
-                        receivedJson = frame.readText()
-                        logger.debug("WebSocket Info: $receivedJson")
-                        println(receivedJson)
-                        return@webSocket
-                    }
-                }
             }
-        }catch (e: CancellationException) {
+        } catch (e: CancellationException) {
             // Handle cancellation, if needed
             logger.debug("WebSocket session creation was canceled.")
         }
-        return Pair(webSocketSession, receivedJson)
+
     }
 
 
-     suspend fun sendMsgWithSession(ws: WebSocketSession, msg: WebSocketMessage) {
+     suspend fun sendMsgWithSession(ws: DefaultClientWebSocketSession, msg: WebSocketMessage) {
         val msgToSend = Json.encodeToString(msg)
         ws.send(Frame.Text(msgToSend))
-
     }
 }
 
-//fun main() = runBlocking {
-//    val websocketInstance = Websocket()
-//    val websocket = websocketInstance.createWebSocketSession()
-//    logger.info("WebSocket Session is: {}", websocket.first)
-//
-//    val info = websocket.second
-//    logger.info("Session Info is: {}", info)
-//
-//    val ws = websocket.first
-//
-//    // Send message using the existing WebSocket session
-//    val windData = Websocket.WindData(
-//        direction = "direction",
-//        directionType = "deg",
-//        speed = 10.0,
-//        speedType = "kn"
-//    )
-//    val sensorData = Websocket.SensorData(
-//        sensor = "sensor",
-//        wind = windData
-//    )
-//
-//    val msg = Websocket.WebSocketMessage(
-//        target = "urn:tlabs:geover:ws:receiver:all",
-//        receiver = info.substringAfter("""sender":""").substringBefore(""","secure"""),
-//        data = sensorData
-//    )
-//
+fun main() = runBlocking {
+    val websocketInstance = Websocket()
+    websocketInstance.createWebSocketSession()
+
+
+    // Send message using the existing WebSocket session
+    val windData = Websocket.WindData(
+        direction = "direction",
+        directionType = "deg",
+        speed = 10.0,
+        speedType = "kn"
+    )
+    val sensorData = Websocket.SensorData(
+        sensor = "sensor",
+        wind = windData
+    )
+
+        val msg = Websocket.WebSocketMessage(
+        target = "urn:tlabs:geover:ws:receiver:all",
+        data = sensorData
+    )
+
+
+    //websocketInstance.sendMsgWithSession(webSocketSession, msg)
+
+
 //    websocketInstance.sendMsgWithSession(ws, msg)
-//}
+}

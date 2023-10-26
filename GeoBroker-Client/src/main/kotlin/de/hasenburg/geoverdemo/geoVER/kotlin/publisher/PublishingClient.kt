@@ -31,6 +31,28 @@ fun main() {
     client.send(Payload.CONNECTPayload(locations))
     logger.info("Received server answer: {}", client.receive())
 
+//    val windDirectionMap = mapOf(
+//        0 to "N",
+//        1 to "NNE",
+//        2 to "NE",
+//        3 to "ENE",
+//        4 to "E",
+//        5 to "ESE",
+//        6 to "SE",
+//        7 to "SSE",
+//        8 to "S",
+//        9 to "SSW",
+//        10 to "SW",
+//        11 to "WSW",
+//        12 to "W",
+//        13 to "WNW",
+//        14 to "NW",
+//        15 to "NNW",
+//        255 to "ERROR"
+//    )
+//
+//    val testWD= windDirectionMap[14]
+
     var i = 0
     repeat(20) {
         locations = Location(Random.nextDouble(0.0, 2.0), Random.nextDouble(0.0, 2.0))
@@ -42,8 +64,10 @@ fun main() {
             put("humidity", randomDouble(0.0, 60.0))
 
             //put("wind", randomDouble(0.0, 60.0))
-            put("windVelocity", randomDouble(110.0, 140.0))
-            put("windDirection", "NW")
+            put("windVelocity", randomDouble(90.0, 140.0))
+            put("windDirection", 14)
+
+
         }
         //newElem.put("timeSent", System.nanoTime())
         //newElem.put("publisher ID", client.identity)

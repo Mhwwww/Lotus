@@ -151,12 +151,6 @@
             <artifactId>jetty-util</artifactId>
             <version>6.1.25</version>
         </dependency>
-        <!--        <dependency>
-                    <groupId>de.hasenburg</groupId>
-                    <artifactId>GeoBroker-Server</artifactId>
-                    <version>1.3</version>
-                    <scope>compile</scope>
-                </dependency>-->
 
         <dependency>
             <groupId>io.ktor</groupId>
@@ -181,6 +175,7 @@
             <version>2.1.32</version>
         </dependency>
 
+
     </dependencies>
 
     <build>
@@ -195,28 +190,29 @@
                     <outputDirectory>out/</outputDirectory>
                 </configuration>
                 <executions>
-                    <execution>
-                        <id>MultiFile Client</id>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <archive>
-                                <manifest>
-                                    <mainClass>de.hasenburg.geobroker.client.main.MultiFileClientKt</mainClass>
-                                </manifest>
-                                <manifestEntries>
-                                    <Multi-Release>true</Multi-Release>
-                                </manifestEntries>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <finalName>MultiFileClient</finalName>
-                        </configuration>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
+<!--                    <execution>-->
+<!--                        <id>MultiFile Client</id>-->
+<!--                        <configuration>-->
+<!--                            <appendAssemblyId>false</appendAssemblyId>-->
+<!--                            <archive>-->
+<!--                                <manifest>-->
+<!--                                    <mainClass>de.hasenburg.geobroker.client.main.MultiFileClientKt</mainClass>-->
+<!--                                </manifest>-->
+<!--                                <manifestEntries>-->
+<!--                                    <Multi-Release>true</Multi-Release>-->
+<!--                                </manifestEntries>-->
+<!--                            </archive>-->
+<!--                            <descriptorRefs>-->
+<!--                                <descriptorRef>jar-with-dependencies</descriptorRef>-->
+<!--                            </descriptorRefs>-->
+<!--                            <finalName>MultiFileClient</finalName>-->
+<!--                        </configuration>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>single</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+
                 </executions>
             </plugin>
         </plugins>
