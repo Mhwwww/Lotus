@@ -1,0 +1,101 @@
+package de.hasenburg.geoverdemo.geoVER.kotlin
+
+import kotlinx.serialization.Serializable
+import org.apache.logging.log4j.LogManager
+import java.io.File
+
+var TINYFASS_PATH = "/Users/minghe/geobroker/tinyFaaS/"
+var FUNCTION_FILE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
+var SAVE_RULES_JSON_PATH = FUNCTION_FILE_PATH+"/saverule.json"
+
+var PORT = 8081
+var ADDRESS = "localhost"
+
+var INFO_URL = "http://"+ ADDRESS+":"+ PORT+"/infoMessage"
+var WARNING_URL = "http://"+ ADDRESS+":"+ PORT+"/warningMessage"
+
+val SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ ADDRESS+":"+ PORT+"/subscriptionInput"
+val RULES_FRONTEND_INPUT_URL = "http://"+ ADDRESS+":"+ PORT+"/saveRules"
+
+private val logger = LogManager.getLogger()
+@Serializable
+data class ConfigData(
+    val infoUrl: String? = null,
+    val warningUrl: String? = null,
+    val subscriptionFrontEndInputUrl: String? = null,
+    val ruleFrontendInputUrl: String? = null,
+)
+
+class Configuration {
+    init {
+        logger.info("Hello from the Configuration init")
+
+        val tinyFaasPath = System.getenv("TINYFAAS_PATH")
+
+        if (tinyFaasPath != null) {
+            logger.info("TINYFAAS_PATH: $tinyFaasPath")
+            TINYFASS_PATH = tinyFaasPath
+        } else {
+            logger.info("DEFAULT TINYFAAS_PATH {}",TINYFASS_PATH)
+        }
+
+        val functionPath = System.getenv("FUNCTION_FILE_PATH")
+
+        if (functionPath != null) {
+            logger.info("FUNCTION_FILE_PATH: $functionPath")
+            FUNCTION_FILE_PATH = functionPath
+        } else {
+            logger.info("DEFAULT FUNCTION_FILE_PATH {}",FUNCTION_FILE_PATH)
+        }
+
+        val saveRulePath = System.getenv("SAVE_RULES_JSON_PATH")
+
+        if (saveRulePath != null) {
+            logger.info("SAVE_RULES_JSON_PATH: $saveRulePath")
+            SAVE_RULES_JSON_PATH = saveRulePath
+        } else {
+            logger.info("DEFAULT SAVE_RULES_JSON_PATH {}", SAVE_RULES_JSON_PATH)
+        }
+
+
+        val port = System.getenv("PORT")
+
+        if (port != null) {
+            logger.info("PORT: $port")
+            PORT = port.toIntOrNull()!!
+
+        } else {
+            logger.info("DEFAULT PORT {}", PORT)
+        }
+
+        val address = System.getenv("ADDRESS")
+
+        if (address != null) {
+            logger.info("ADDRESS: $address")
+            ADDRESS = address
+
+        } else {
+            logger.info("DEFAULT ADDRESS {}", ADDRESS)
+        }
+
+        saveConfig()
+    }
+}
+
+
+fun saveConfig(){
+
+    val configJsonFile = File("/Users/minghe/geobroker/GeoBroker-Client/src/main/resources/web/js/config.js")
+
+    val content = """
+        let warningMsgUrl ='$WARNING_URL';
+        let subscriptionInputUrl = '$SUBSCRIPTION_FRONTEND_INPUT_URL';
+        let saveRuleUrl = '$RULES_FRONTEND_INPUT_URL';
+        let infoMsgUrl = '$INFO_URL';
+    """.trimIndent()
+
+    println(content)
+    configJsonFile.writeText(content)
+}
+
+

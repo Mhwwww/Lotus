@@ -3,9 +3,7 @@ import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geover.UserSpecifiedRule
-import de.hasenburg.geoverdemo.geoVER.kotlin.plugin.configureSerialization
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import de.hasenburg.geoverdemo.geoVER.kotlin.FUNCTION_FILE_PATH
 import kotlinx.serialization.Serializable
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -28,18 +26,7 @@ data class InputRule(val topic: String, val operator: String, val constraints: S
 @Serializable
 data class ErrorResponseRule(val message: String)
 
-fun main() {
-    //val ruleArray= JSONArray()
-    val server = embeddedServer(Netty, port = 8081) {
-        applyRouting()
-        configureSerialization()
-        configureHTTP()
-        configureMonitoring()
-    }
-    server.start(wait = true)
-}
-
-suspend fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
+fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
     publishTopic = Topic(inputEvent.topic)
     matchingTopic = Topic(inputEvent.repubTopic)
     locations = Location(inputEvent.lat.toDouble(), inputEvent.lon.toDouble())
@@ -48,5 +35,5 @@ suspend fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
 
     //Using the rule-based filtering function
 //    return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"), "nodejs", matchingTopic)
-    return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"), "nodejs", matchingTopic)
+    return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File(FUNCTION_FILE_PATH), "nodejs", matchingTopic)
 }

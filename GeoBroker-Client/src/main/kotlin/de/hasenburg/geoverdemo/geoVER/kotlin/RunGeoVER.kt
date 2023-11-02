@@ -9,7 +9,9 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
+import de.hasenburg.geoverdemo.geoVER.kotlin.INFO_URL
 import de.hasenburg.geoverdemo.geoVER.kotlin.TalkToXR
+import de.hasenburg.geoverdemo.geoVER.kotlin.WARNING_URL
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
@@ -33,6 +35,9 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
     private var cancel = false
     private lateinit var client: SimpleClient
     private lateinit var processManager: ZMQProcessManager
+
+    private var warningUrl = URL(WARNING_URL)
+    private var infoUrl = URL(INFO_URL)
     fun prepare() {
         setLogLevel(this.logger, Level.DEBUG)
         logger.debug("{}: Subscribing to {} at {}", name, topic, loc)
@@ -57,7 +62,7 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
         while (!this.cancel) {
             // receive one message
             logger.debug("{}: Waiting for message", name)
-            val message = this.client.receive()
+            var message = this.client.receive()
             val timeReceived = System.nanoTime()
             logger.debug("{}: Relevant Message: {}", name, message)
             if (message is Payload.PUBLISHPayload) {
@@ -68,17 +73,22 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
                 // if it is "info", set to be 'false', if it is warning, then true
                 if (processMessage(message)) { // warning messages
                     //logger.error(warningArray)
-                    val warningUrl = URL("http://localhost:8081/warningMessage")
+                    //val warningUrl = URL("http://localhost:8081/warningMessage")
+//                    val warningUrl = URL(WARNING_URL)
                     val warnings = displayEvents(message, warningArray)
 
                     //postEvents(warningUrl, warnings)
                     postEvents(warningUrl, message.content)
                     //send warning to DT
-                    sendWarningsToDT(message.content)
+                    //sendMsgToDT(message.content)
                 } else {
-                    val infoUrl = URL("http://localhost:8081/infoMessage")
+//                  val infoUrl = URL("http://localhost:8081/infoMessage")
+//                    val infoUrl = URL(INFO_URL)
                     val info = displayEvents(message, infoArray)
                     postEvents(infoUrl, info)
+                    //send info to DT
+                    //TODO: enable later
+                    //sendMsgToDT(message.content)
                 }
             }
         }
@@ -111,9 +121,6 @@ fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
     val newS2 = RunGeoVER(locations, matchingTopic, matchingTopic.topic)
     subscribers.add(newS2)
     newS2.prepare()
-    //TODO: get DT client info when have the subscriber
-    //getDTClientID()
-    //todo: create a websocket session for publishing warning
 
     subscribers.forEach {
         thread {
@@ -163,12 +170,12 @@ fun postEvents(url: URL, inputJsonArray: String) {
     connection.disconnect()
 }
 fun addPriority(message: Payload.PUBLISHPayload, priority: Boolean): String {
-    val msgContent = message.content
-    var contentWithPriority = JSONObject(msgContent).put("priority", priority)
+    var msgContent = message.content
+    val contentWithPriority = JSONObject(msgContent).put("priority", priority)
     message.content = contentWithPriority.toString()
     logger.debug("Add Priority Successfully, and the current message is {}", message.content)
-
     return message.content
+
 }
 
 fun processMessage(message: Payload.PUBLISHPayload): Boolean {
@@ -184,10 +191,12 @@ fun processMessage(message: Payload.PUBLISHPayload): Boolean {
             return false
         }
     }
+
+    
     return false
 }
-suspend fun sendWarningsToDT(warning:String){
+suspend fun sendMsgToDT(msg:String){
     //todo: modify direction later
-    talkToXR.sendWarning(warning)
-    logger.debug("The Message Send To DT is: {}", warning)
+    talkToXR.sendWarning(msg)
+    logger.debug("The Message Send To DT is: {}", msg)
 }

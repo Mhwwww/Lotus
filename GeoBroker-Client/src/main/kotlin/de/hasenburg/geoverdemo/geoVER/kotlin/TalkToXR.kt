@@ -1,9 +1,15 @@
 package de.hasenburg.geoverdemo.geoVER.kotlin
 
+import applyRouting
+import configureHTTP
+import configureMonitoring
+import de.hasenburg.geoverdemo.geoVER.kotlin.plugin.configureSerialization
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import io.ktor.util.reflect.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
@@ -41,13 +47,11 @@ class TalkToXR {
         val speed: Double,
         val speedType: String
     )
-
     @Serializable
     data class SensorData(
         val sensor: String,
         val wind: WindData
     )
-
     @Serializable
     data class WebSocketMessage(
         val target: String? = null,
@@ -114,16 +118,17 @@ class TalkToXR {
         }
         val jsonObject = JSONObject(warning)
 
-        val sensor = jsonObject.get("publisher ID").toString()
+        //val sensor = jsonObject.get("publisher ID").toString()
+        val sensor = "live_demo_1"
         val direction = jsonObject.get("windDirection").toString()
         var speed = jsonObject.get("windVelocity") as Double
         speed = String.format("%.2f", speed).toDouble()
 
         val windData = WindData(
             direction = direction,
-            directionType = "deg",
+            directionType = "id",
             speed = speed,
-            speedType = "kn"
+            speedType = "ms"
         )
         val sensorData = SensorData(
             sensor = sensor,
@@ -142,28 +147,20 @@ class TalkToXR {
         if (!isClientRunning) {
             startClient()
         }
-
         channel.send(message)
-
     }
-
 }
 
-suspend fun main() {
-    logger.info("Hello World!")
-    val talkie = TalkToXR()
-    val msg =
-        """{"publisher ID":"SimpleClient-17042732347958","timeSent":17044469354208,"temperature":49.946372939646444,"humidity":59.50692732204431,"windDirection":"NW","windVelocity":135.27842076575092}}"""
+fun main(args: Array<String>) {
+    //val ruleArray= JSONArray()
+    //startTinyFaaS()
+    Configuration()
 
-
-    talkie.sendWarning(msg)
-    talkie.sendWarning(msg)
-    talkie.sendWarning(msg)
-    talkie.sendWarning(msg)
-    talkie.sendWarning(msg)
-    talkie.sendWarning(msg)
-
-
-    logger.info("Done!")
-    delay(10_000_000)
+    val server = embeddedServer(Netty, port = PORT) {
+        applyRouting()
+        configureSerialization()
+        configureHTTP()
+        configureMonitoring()
+    }
+    server.start(wait = true)
 }

@@ -1,4 +1,6 @@
 
+
+import de.hasenburg.geoverdemo.geoVER.kotlin.SAVE_RULES_JSON_PATH
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -11,6 +13,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.json.JSONObject
 import java.io.File
+
+
 
 fun Application.applyRouting(){
     routing {
@@ -42,7 +46,7 @@ fun Application.applyRouting(){
 
                 // the file to save use input rules
 //                val file = File("./GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/saverule.json")
-                val file = File("./GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/saverule.json")
+                val file = File(SAVE_RULES_JSON_PATH)
 
                 // clear file
                 file.writeText("")

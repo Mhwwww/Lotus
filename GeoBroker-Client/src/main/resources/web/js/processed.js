@@ -71,8 +71,10 @@ Vue.component('warning-list', {
         async fetchWarnings() {
             try {
                 //todo: configure in config.js
-                const response = await fetch('http://localhost:8081/warningMessage');
+                console.log("THE WARNING URL FROM CONFIG FILE IS ",warningMsgUrl)
+                const response = await fetch(warningMsgUrl);
 
+                // const response = await fetch(warningMsgUrl);
                 const data = await response.json();
                 this.warnings = data.map(warning => {
                     return {...warning, collapsed: true};
@@ -92,7 +94,10 @@ Vue.component('warning-list', {
         },
         async deleteWarning(timeSent) {
             try {
-                const response = await fetch(`http://localhost:8081/warningMessage/${timeSent}`, {
+                const warningMsgUrlWithTimeSent = `${warningMsgUrl}/${timeSent}`;
+                // const response = await fetch(`http://localhost:8081/warningMessage/${timeSent}`, {
+                const response = await fetch(warningMsgUrlWithTimeSent, {
+
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -183,6 +188,7 @@ new Vue({
     el: '#right-app',
     data: {
         currentComponent: 'warning-list',
+
     },
     methods: {
         reloadPage() {
@@ -207,6 +213,7 @@ new Vue({
                  .catch(error => {
                      console.error('Error occurred:', error);
                  });*/
+
 
         }
     },
