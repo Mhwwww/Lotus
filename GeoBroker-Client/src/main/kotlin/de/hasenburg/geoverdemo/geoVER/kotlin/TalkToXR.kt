@@ -23,7 +23,6 @@ import java.util.*
 
 private val logger = LogManager.getLogger()
 
-
 // DT Websocket URLs
 const val DT_ALL_URL= "urn:tlabs:geover:ws:receiver:all" //Forward message to all connected clients (including myself). This is also default if no target property is set
 const val DT_INFO_URL = "urn:tlabs:geover:ws:info" //Special target. Server sends a message back with some info (e.g. own sender ID, connected clients, etc.).
@@ -31,7 +30,6 @@ const val DT_SELF_URL = "urn:tlabs:geover:ws:receiver:self" //Forward message on
 const val DT_ALL_EXCEPT_SELF_URL = "urn:tlabs:geover:ws:receiver:others" //Forward message to all connected clients (excluding myself).
 const val DT_SINGLE_URL = "urn:tlabs:geover:ws:receiver:single" //Forward message to a single client. The receiver property must be set and should contain a sender ID.
 const val DT_MUTI_URL = "urn:tlabs:geover:ws:receiver:multiple" //Forward message to multiple clients. The receivers property must be set and should contain an array of sender IDs.
-
 
 /**
  * - send messages to "all" --> there is only one receiver...

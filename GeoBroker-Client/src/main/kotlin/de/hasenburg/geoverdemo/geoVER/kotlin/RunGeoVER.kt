@@ -9,9 +9,7 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
-import de.hasenburg.geoverdemo.geoVER.kotlin.INFO_URL
-import de.hasenburg.geoverdemo.geoVER.kotlin.TalkToXR
-import de.hasenburg.geoverdemo.geoVER.kotlin.WARNING_URL
+import de.hasenburg.geoverdemo.geoVER.kotlin.*
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
@@ -27,6 +25,7 @@ var warningArray = JSONArray()
 var infoArray = JSONArray()
 
 val talkToXR = TalkToXR()
+val influxdb = InfluxDB()
 
 //val websocketSubscriber = Websocket()
 //var DT_ClientID = ""
@@ -79,6 +78,9 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
 
                     //postEvents(warningUrl, warnings)
                     postEvents(warningUrl, message.content)
+
+                    influxdb.writeToInfluxDB(message.content, INFO_BUCKET, )
+
                     //send warning to DT
                     //sendMsgToDT(message.content)
                 } else {
@@ -170,12 +172,11 @@ fun postEvents(url: URL, inputJsonArray: String) {
     connection.disconnect()
 }
 fun addPriority(message: Payload.PUBLISHPayload, priority: Boolean): String {
-    var msgContent = message.content
+    val msgContent = message.content
     val contentWithPriority = JSONObject(msgContent).put("priority", priority)
     message.content = contentWithPriority.toString()
     logger.debug("Add Priority Successfully, and the current message is {}", message.content)
     return message.content
-
 }
 
 fun processMessage(message: Payload.PUBLISHPayload): Boolean {
@@ -185,7 +186,6 @@ fun processMessage(message: Payload.PUBLISHPayload): Boolean {
             logger.error(JSONObject(message.content).get("priority") is Boolean)
             return true
         }
-
         publishTopic.topic -> {
             addPriority(message, false)
             return false
@@ -199,4 +199,8 @@ suspend fun sendMsgToDT(msg:String){
     //todo: modify direction later
     talkToXR.sendWarning(msg)
     logger.debug("The Message Send To DT is: {}", msg)
+}
+
+suspend fun storeMsgToInfluxdb(msg:String){
+
 }

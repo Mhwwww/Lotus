@@ -17,6 +17,17 @@ var WARNING_URL = "http://"+ ADDRESS+":"+ PORT+"/warningMessage"
 val SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ ADDRESS+":"+ PORT+"/subscriptionInput"
 val RULES_FRONTEND_INPUT_URL = "http://"+ ADDRESS+":"+ PORT+"/saveRules"
 
+
+val URL = "http://localhost:8086"
+val ORGANIZATION = "geover"
+val WARNING_BUCKET = "warning"
+val INFO_BUCKET = "info"
+
+val TOKEN =
+    "cDcQwBEUylxWSIYO6t5R4Wx9Id2kbLw-Vs87Wozn649_6QTYcuQCnS5Hu0UBhCBWpmdzoAUH1B7h9ZDN2SxjKw==".toCharArray()
+
+
+
 private val logger = LogManager.getLogger()
 @Serializable
 data class ConfigData(

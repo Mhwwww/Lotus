@@ -36,6 +36,7 @@ fun main() {
         locations = Location(Random.nextDouble(0.0, 2.0), Random.nextDouble(0.0, 2.0))
         val newElem = JSONObject().apply {
             put("timeSent", System.nanoTime())
+//            put("current time", Instant.now())
             put("publisher ID", client.identity)
 
             put("temperature", randomDouble(0.0, 60.0))

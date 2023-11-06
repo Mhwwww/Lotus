@@ -17,6 +17,14 @@
     <artifactId>GeoBroker-Client</artifactId>
 
     <dependencies>
+
+        <!-- https://mvnrepository.com/artifact/com.influxdb/influxdb-client-kotlin -->
+        <dependency>
+            <groupId>com.influxdb</groupId>
+            <artifactId>influxdb-client-kotlin</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
         <dependency>
             <groupId>de.hasenburg</groupId>
             <artifactId>GeoBroker-Commons</artifactId>
