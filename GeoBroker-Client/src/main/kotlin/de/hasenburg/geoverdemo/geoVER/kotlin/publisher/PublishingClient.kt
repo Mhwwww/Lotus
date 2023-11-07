@@ -30,9 +30,10 @@ fun main() {
     val client = SimpleClient("localhost", 5559)
     client.send(Payload.CONNECTPayload(locations))
     logger.info("Received server answer: {}", client.receive())
-
     var i = 0
     repeat(20) {
+
+
         locations = Location(Random.nextDouble(0.0, 2.0), Random.nextDouble(0.0, 2.0))
         val newElem = JSONObject().apply {
             put("timeSent", System.nanoTime())
@@ -45,11 +46,10 @@ fun main() {
             //put("wind", randomDouble(0.0, 60.0))
             put("windVelocity", randomDouble(0.0, 64.0))
             put("windDirection", 14)
-
-
         }
         //newElem.put("timeSent", System.nanoTime())
         //newElem.put("publisher ID", client.identity)
+        println(newElem.get("windVelocity"))
 
         client.send(
             Payload.PUBLISHPayload(

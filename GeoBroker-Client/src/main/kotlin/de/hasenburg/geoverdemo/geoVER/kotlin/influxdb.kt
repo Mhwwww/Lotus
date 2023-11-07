@@ -4,6 +4,7 @@ import com.influxdb.annotations.Column
 import com.influxdb.annotations.Measurement
 import com.influxdb.client.domain.WritePrecision
 import com.influxdb.client.kotlin.InfluxDBClientKotlinFactory
+import de.hasenburg.geobroker.commons.model.message.Payload
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
@@ -20,9 +21,10 @@ data class Temperature(
 @Measurement(name = "wind")
 data class Wind(
 //    @Column(tag = true) val location: String,
-    @Column(tag = true) val windDirection: Int,
+    @Column val windDirection: Int,
     @Column val value: Double,//wind speed
-    @Column(timestamp = true) val time: Instant
+    @Column(timestamp = true) val time: Instant,
+//    @Column val location: Pair <Double, Double>
 )
 
 class InfluxDB{
@@ -79,14 +81,6 @@ class InfluxDB{
             }
         }
     }
-//        #group	FALSE	FALSE	TRUE	TRUE	FALSE	FALSE	TRUE	TRUE	TRUE
-//        #datatype	string	long	dateTime:RFC3339	dateTime:RFC3339	dateTime:RFC3339	double	string	string	string
-//        #default	mean
-//            result	table	_start	_stop	_time	_value	_field	_measurement	location
-//        0	2023-11-03T12:02:51.214466Z	2023-11-03T13:02:51.214466Z	2023-11-03T12:55:40Z	60	value	temperature	north
-//        1	2023-11-03T12:02:51.214466Z	2023-11-03T13:02:51.214466Z	2023-11-03T12:55:40Z	62	value	temperature	south
-//        2	2023-11-03T12:02:51.214466Z	2023-11-03T13:02:51.214466Z	2023-11-03T12:55:40Z	55	value	temperature	west
-
     fun queryFromInfluxDBwithKey(fluxQuery: String, key:String, bucket: String) {
         runBlocking {
             val client = InfluxDBClientKotlinFactory.create( url = URL, token = TOKEN, org = ORGANIZATION)
@@ -100,7 +94,6 @@ class InfluxDB{
             client.close()
         }
     }
-
     fun queryFromInfluxDBwithoutKey(fluxQuery: String, bucket: String) {
         runBlocking {
             val client = InfluxDBClientKotlinFactory.create( url = URL, token = TOKEN, org = ORGANIZATION)
@@ -114,6 +107,58 @@ class InfluxDB{
             client.close()
         }
     }
+    fun writeMsgToInfluxDB(msg: Payload.PUBLISHPayload, bucket: String) {
+        runBlocking {
+            //publisher data
+            val location = Pair(msg.geofence.center.lat, msg.geofence.center.lon)
+            val messageContent = msg.content
+
+            val jsonObject = JSONObject(messageContent)
+
+            val direction = jsonObject.get("windDirection") as Int
+            var speed = jsonObject.get("windVelocity") as Double
+            speed = String.format("%.2f", speed).toDouble()
+            val temp = jsonObject.get("temperature") as Double
+            val humidity = jsonObject.get("humidity").toString()
+            val timeSent = jsonObject.get("timeSent").toString()
+            val publisherID = jsonObject.get("publisher ID").toString()
+
+            // Initialize client
+            val client = InfluxDBClientKotlinFactory.create( url = URL, token = TOKEN, org = ORGANIZATION, bucket = bucket)
+
+            client.use {
+                val writeApi = client.getWriteKotlinApi()
+                val temperature = Temperature(temp, Instant.now())// Write by DataClass
+                writeApi.writeMeasurement(temperature, WritePrecision.NS)//nano-second
+
+                val wind = Wind(direction, speed, Instant.now())// Write by DataClass
+                writeApi.writeMeasurement(wind, WritePrecision.NS)//nano-second
+
+//                /* Query results */
+//                val fluxQuery_wind =
+//                    """from(bucket: "$INFO_BUCKET") |> range(start: 0) |> filter(fn: (r) => (r["_measurement"] == "wind"))"""
+//                val fluxQuery_temperature=
+//                    """from(bucket: "$INFO_BUCKET") |> range(start: 0) |> filter(fn: (r) => (r["_measurement"] == "temperature"))"""
+////
+//                client
+//                    .getQueryKotlinApi()
+//                    .query(fluxQuery_wind)
+//                    .consumeAsFlow()
+//                    .collect { println("Measurement: ${it.measurement}, value: ${it.value}, wind direction: ${it.getValueByKey("windDirection")}, time: ${it.time}") }
+////                /* Query results */
+//
+//                client
+//                    .getQueryKotlinApi()
+//                    .query(fluxQuery_temperature)
+//                    .consumeAsFlow()
+//                    .collect { println("Measurement: ${it.measurement}, value: ${it.value},  time: ${it.time}") }
+////
+//                //client.close()
+            }
+        }
+    }
+
+
 }
 
 fun main(){
@@ -132,9 +177,9 @@ fun main(){
 
 
     val influxdb = InfluxDB()
-//    influxdb.queryFromInfluxDBwithKey(fluxQuery_wind, "windDirection", testBucket)
+    influxdb.queryFromInfluxDBwithKey(fluxQuery_wind, "location", testBucket)
 //    influxdb.queryFromInfluxDBwithoutKey(fluxQuery_temperature, testBucket)
-    influxdb.queryFromInfluxDBwithoutKey(query, testBucket)
+//    influxdb.queryFromInfluxDBwithoutKey(query, testBucket)
 
 
 }

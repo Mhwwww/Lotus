@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager
 import java.io.File
 
 var TINYFASS_PATH = "/Users/minghe/geobroker/tinyFaaS/"
+
 var FUNCTION_FILE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
 var SAVE_RULES_JSON_PATH = FUNCTION_FILE_PATH+"/saverule.json"
 

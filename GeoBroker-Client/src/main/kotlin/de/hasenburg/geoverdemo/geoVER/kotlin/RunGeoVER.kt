@@ -21,16 +21,20 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
+
 var warningArray = JSONArray()
 var infoArray = JSONArray()
 
 val talkToXR = TalkToXR()
 val influxdb = InfluxDB()
 
-//val websocketSubscriber = Websocket()
-//var DT_ClientID = ""
+const val CROSSWIND_HOST = "localhost"
+const val CROSSWIND_PORT = 5559
+const val TINYFAAS_BASE_URL = "http://localhost:80/"
+
 class RunGeoVER(private val loc: Location, private val topic: Topic, private val name: String) {
     private val logger = LogManager.getLogger()
+
     private var cancel = false
     private lateinit var client: SimpleClient
     private lateinit var processManager: ZMQProcessManager
@@ -42,26 +46,27 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
         logger.debug("{}: Subscribing to {} at {}", name, topic, loc)
 
         this.processManager = ZMQProcessManager()
-        this.client = SimpleClient("localhost", 5559, identity = " CrossWindSub_${name}")
+        this.client = SimpleClient(CROSSWIND_HOST, CROSSWIND_PORT, identity = " CrossWindSub_${name}")
 
         logger.debug("{}: sending connect with client id {}", name, client.identity)
 
         client.send(Payload.CONNECTPayload(loc))
         logger.debug("{}: ConnAck: {}", name, client.receive())
 
-        client.send(Payload.SUBSCRIBEPayload(topic, Geofence.circle(loc, 2.0)))
-        logger.debug("{}: SubAck: {}", name, client.receive())
+//        client.send(Payload.SUBSCRIBEPayload(topic, Geofence.circle(loc, 2.0)))
+        client.send(Payload.SUBSCRIBEPayload(topic, Geofence.circle(loc, radius)))
 
-        logger.info("{}: Subscribed to {} at {}", name, topic, loc)
+        logger.debug("{}: SubAck: {}", name, client.receive())
+        logger.info("{}: Subscribed to {} at {} with raduis {}", name, topic, loc, radius)
     }
 
-     suspend fun run() {
+      fun run() {
         logger.info("{}: Running subscriber for {} at {}", name, topic, loc)
 
         while (!this.cancel) {
             // receive one message
             logger.debug("{}: Waiting for message", name)
-            var message = this.client.receive()
+            val message = this.client.receive()
             val timeReceived = System.nanoTime()
             logger.debug("{}: Relevant Message: {}", name, message)
             if (message is Payload.PUBLISHPayload) {
@@ -71,25 +76,22 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
                 // add priority to message content, and set it to Boolean
                 // if it is "info", set to be 'false', if it is warning, then true
                 if (processMessage(message)) { // warning messages
-                    //logger.error(warningArray)
-                    //val warningUrl = URL("http://localhost:8081/warningMessage")
-//                    val warningUrl = URL(WARNING_URL)
-                    val warnings = displayEvents(message, warningArray)
+                    displayEvents(message, warningArray)
 
                     //postEvents(warningUrl, warnings)
                     postEvents(warningUrl, message.content)
-
-                    influxdb.writeToInfluxDB(message.content, INFO_BUCKET, )
-
+                    //store warnings in Bucket_warning
+                    influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
                     //send warning to DT
                     //sendMsgToDT(message.content)
                 } else {
-//                  val infoUrl = URL("http://localhost:8081/infoMessage")
-//                    val infoUrl = URL(INFO_URL)
                     val info = displayEvents(message, infoArray)
                     postEvents(infoUrl, info)
+                    //store info in Bucket_info
+                    influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
+
                     //send info to DT
-                    //TODO: enable later
+                    //TODO: enable when finishing Influxdb
                     //sendMsgToDT(message.content)
                 }
             }
@@ -104,43 +106,7 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
         exitProcess(0)
     }
 }
-fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
-    setLogLevel(logger, Level.DEBUG)
 
-    val bridgeManager = BridgeManager()
-    bridgeManager.createNewRule(rule)
-
-    val subscribers = mutableListOf<RunGeoVER>()
-
-    logger.debug(locations)
-
-    // prepare subscribers
-    val newS = RunGeoVER(locations, rule.topic, rule.topic.topic)
-    subscribers.add(newS)
-    newS.prepare()
-
-    // subscriber for the matching topic
-    val newS2 = RunGeoVER(locations, matchingTopic, matchingTopic.topic)
-    subscribers.add(newS2)
-    newS2.prepare()
-
-    subscribers.forEach {
-        thread {
-            runBlocking {
-            it.run()
-            }
-        }
-    }
-
-    logger.info("Press enter to finish subscribers")
-    readLine()
-
-    subscribers.forEach {
-        it.stop()
-    }
-
-    bridgeManager.deleteRule(rule)
-}
 fun displayEvents(message: Payload.PUBLISHPayload, array: JSONArray): String {
     val locJson = JSONObject()
     locJson.put("lat", message.geofence.center.lat)
@@ -201,6 +167,40 @@ suspend fun sendMsgToDT(msg:String){
     logger.debug("The Message Send To DT is: {}", msg)
 }
 
-suspend fun storeMsgToInfluxdb(msg:String){
 
+fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
+    setLogLevel(logger, Level.DEBUG)
+
+    val bridgeManager = BridgeManager()
+    bridgeManager.createNewRule(rule)
+
+    val subscribers = mutableListOf<RunGeoVER>()
+    logger.debug(locations)
+
+    // prepare subscribers
+    val newS = RunGeoVER(locations, rule.topic, rule.topic.topic)
+    subscribers.add(newS)
+    newS.prepare()
+
+    // subscriber for the matching topic
+    val newS2 = RunGeoVER(locations, matchingTopic, matchingTopic.topic)
+    subscribers.add(newS2)
+    newS2.prepare()
+
+    subscribers.forEach {
+        thread {
+            runBlocking {
+                it.run()
+            }
+        }
+    }
+
+    logger.info("Press enter to finish subscribers")
+    readLine()
+
+    subscribers.forEach {
+        it.stop()
+    }
+
+    bridgeManager.deleteRule(rule)
 }

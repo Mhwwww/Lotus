@@ -13,6 +13,7 @@ private val logger = LogManager.getLogger()
 var locations = Location(0.0,0.0)
 var publishTopic = Topic("")
 var matchingTopic = Topic("")
+var radius = 0.0
 
 var constraints = 0.0
 
@@ -30,10 +31,13 @@ fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
     publishTopic = Topic(inputEvent.topic)
     matchingTopic = Topic(inputEvent.repubTopic)
     locations = Location(inputEvent.lat.toDouble(), inputEvent.lon.toDouble())
+    radius = inputEvent.rad.toDouble()
+
     logger.info(publishTopic)
     logger.info(locations)
+    logger.info(radius)
 
     //Using the rule-based filtering function
 //    return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"), "nodejs", matchingTopic)
-    return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File(FUNCTION_FILE_PATH), "nodejs", matchingTopic)
+    return UserSpecifiedRule(Geofence.circle(locations, radius), publishTopic, File(FUNCTION_FILE_PATH), "nodejs", matchingTopic)
 }

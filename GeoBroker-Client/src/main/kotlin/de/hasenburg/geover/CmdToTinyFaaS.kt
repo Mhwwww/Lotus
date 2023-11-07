@@ -1,8 +1,11 @@
 package de.hasenburg.geover
 import de.hasenburg.geoverdemo.geoVER.kotlin.TINYFASS_PATH
+import kotlinx.coroutines.*
 import org.apache.logging.log4j.LogManager
+import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
+import java.io.InputStreamReader
 
 // tinyFaaS is a submodule to the main repo
 // seven levels up from this should do
@@ -21,8 +24,9 @@ fun cmdUploadToTinyFaaS(path:String, functionName:String, fnEnv:String, thread: 
     logger.debug("isUnix: {}", isUnix())
     if (isUnix()) {
         val upload: String = TINYFAAS_UPLOAD_PATH + path + "\t" + functionName + "\t" + fnEnv+ "\t" + thread
-        runOnUnix(upload)
+        runOnUnixAsync(upload)
 //        runOnUnixWithDirectory(upload,"/Users/minghe/geobroker")
+        logger.info("going to upload function")
 
     } else {
         //TODO: cmd on windows and linux
@@ -51,7 +55,6 @@ fun cmdGetAllFunctionsLogsFromTinyFaaS(): String {
         runOnWindows("git log")
     }
 }
-
 fun cmdGetFuncList(): List<String> {
     return if (isUnix()) {
         val getList = TINYFAAS_LIST_PATH
@@ -84,16 +87,47 @@ fun runOnWindows(cmd: String): String {
     }
 }
 
+@OptIn(DelicateCoroutinesApi::class)
+fun runOnUnixAsync(cmd: String) {
+    GlobalScope.launch {
+        try {
+            val process = withContext(Dispatchers.IO) {
+                ProcessBuilder("/bin/sh", "-c", cmd).start()
+            }
+            val reader = BufferedReader(InputStreamReader(process.inputStream))
+            var line: String?
+            while (withContext(Dispatchers.IO) {
+                    reader.readLine()
+                }.also { line = it } != null) {
+                println(line)
+            }
+            if (withContext(Dispatchers.IO) {
+                    process.waitFor()
+                } != 0) {
+                val errorReader = BufferedReader(InputStreamReader(process.errorStream))
+                var errorLine: String?
+                while (withContext(Dispatchers.IO) {
+                        errorReader.readLine()
+                    }.also { errorLine = it } != null) {
+                    println("Error: $errorLine")
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}
 fun runOnUnix(cmd: String):String {
+    logger.info("get runtime")
     val runtime = Runtime.getRuntime()
     return try {
         logger.info("running cmd: {}", cmd)
 
         val p = runtime.exec(cmd)
-        val result: String = p.inputStream.bufferedReader().readText()
+        logger.info("getting result {}", p)
 
-        val output = String.format("execute cmd : \" %s \" and result is \n\n%s ", cmd, result)
-        logger.info(output)
+        val result  = p.inputStream.bufferedReader().readText()
+        logger.error(result)
 
         if (p.exitValue() != 0) {
             logger.error("Command was not successful! error code {} with err stream {}", p.exitValue(), p.errorStream.bufferedReader().readText())
@@ -106,10 +140,6 @@ fun runOnUnix(cmd: String):String {
         e.printStackTrace().toString()
     }
 }
-
-
-
-
 fun main(){
     //de.hasenburg.geover.cmdGetFuncList()
     //de.hasenburg.geover.cmdGetAllFunctionsLogsFromTinyFaaS()
