@@ -222,6 +222,34 @@
                             <goal>single</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>Publisher Client</id>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <archive>
+                                <manifest>
+                                    <!--<mainClass>de.hasenburg.geobroker.client.main.MultiFileClientKt</mainClass>-->
+                                    <mainClass>de.hasenburg.geoverdemo.geoVER.kotlin.publisher.PubConfigurationKt</mainClass>
+                                </manifest>
+                                <manifestEntries>
+                                    <Multi-Release>true</Multi-Release>
+                                </manifestEntries>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>publisher</finalName>
+                        </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+
+
+
+
+
                 </executions>
             </plugin>
         </plugins>

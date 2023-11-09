@@ -10,6 +10,9 @@ import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
 import de.hasenburg.geoverdemo.geoVER.kotlin.*
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.BER_AIRPORT
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.FRANKFURT_AIRPORT
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.SCHOENHAGEN_AIRPORT
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
@@ -71,25 +74,27 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
             logger.debug("{}: Relevant Message: {}", name, message)
             if (message is Payload.PUBLISHPayload) {
                 //logger.error("The content is {}", message)
-                val timeSent = JSONObject(message.content).getLong("timeSent")
-                logger.info("{}: Time for topic {} difference: {}", name, message.topic, timeReceived - timeSent)
+//                val timeSent = JSONObject(message.content).getLong("timeSent")
+//                logger.info("{}: Time for topic {} difference: {}", name, message.topic, timeReceived - timeSent)
                 // add priority to message content, and set it to Boolean
                 // if it is "info", set to be 'false', if it is warning, then true
                 if (processMessage(message)) { // warning messages
-                    displayEvents(message, warningArray)
-
+                    val reformatMsg = reformatEvents(message, warningArray)
                     //postEvents(warningUrl, warnings)
                     postEvents(warningUrl, message.content)
                     //store warnings in Bucket_warning
-                    influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
+//                    influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
+
+                    influxdb.writeToInfluxDB(reformatMsg, WARNING_BUCKET)
                     //send warning to DT
                     //sendMsgToDT(message.content)
                 } else {
-                    val info = displayEvents(message, infoArray)
-                    postEvents(infoUrl, info)
+                    val info = reformatEvents(message, infoArray)
+                    postEvents(infoUrl, message.content)
+//                    postEvents(infoUrl, info)
                     //store info in Bucket_info
-                    influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
-
+                    //influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
+                    influxdb.writeToInfluxDB(info, INFO_BUCKET)
                     //send info to DT
                     //TODO: enable when finishing Influxdb
                     //sendMsgToDT(message.content)
@@ -107,21 +112,39 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
     }
 }
 
-fun displayEvents(message: Payload.PUBLISHPayload, array: JSONArray): String {
+fun reformatEvents(message: Payload.PUBLISHPayload, array: JSONArray): String {
     val locJson = JSONObject()
-    locJson.put("lat", message.geofence.center.lat)
-    locJson.put("lon", message.geofence.center.lon)
+    val sentJson = JSONObject()
+    val msgLocation = message.geofence
+    var locationName = ""
 
-    val jsonToSendToTinyFaaS = JSONObject()
-    jsonToSendToTinyFaaS.put("topic", message.topic.topic)
-    jsonToSendToTinyFaaS.put("location", locJson)
-    jsonToSendToTinyFaaS.put("message", JSONObject(message.content))
+    // if the location is the known location, then send the 'name', else send the concreate location.
+    if (msgLocation == SCHOENHAGEN_AIRPORT){
+        locationName = "Schönhagen Airport"
+        sentJson.put("location", locationName)
 
-    array.put(jsonToSendToTinyFaaS)
+    } else if (msgLocation == BER_AIRPORT){
+        locationName = "Berlin Airport"
+        sentJson.put("location", locationName)
 
+    } else if (msgLocation == FRANKFURT_AIRPORT){
+        locationName = "Frankfurt Airport"
+        sentJson.put("location", locationName)
+    }  else{
+        locJson.put("lat", msgLocation.center.lat)
+        locJson.put("lon", msgLocation.center.lon)
+    }
+
+    sentJson.put("topic", message.topic.topic)
+//    sentJson.put("location", locJson)
+    sentJson.put("message", JSONObject(message.content))
+
+    array.put(sentJson)
     logger.debug("The Number of {} Event is: {}", message.topic.topic, array.length())
 
-    return array.toString()
+//    return array.toString()
+
+    return sentJson.toString()
 }
 fun postEvents(url: URL, inputJsonArray: String) {
     val connection = url.openConnection() as HttpURLConnection
@@ -139,7 +162,7 @@ fun postEvents(url: URL, inputJsonArray: String) {
 }
 fun addPriority(message: Payload.PUBLISHPayload, priority: Boolean): String {
     val msgContent = message.content
-    val contentWithPriority = JSONObject(msgContent).put("priority", priority)
+    val contentWithPriority = JSONObject(msgContent).put("Priority", priority)
     message.content = contentWithPriority.toString()
     logger.debug("Add Priority Successfully, and the current message is {}", message.content)
     return message.content
@@ -149,7 +172,7 @@ fun processMessage(message: Payload.PUBLISHPayload): Boolean {
     when (message.topic.topic) {
         matchingTopic.topic -> {
             addPriority(message, true)
-            logger.error(JSONObject(message.content).get("priority") is Boolean)
+            logger.error(JSONObject(message.content).get("Priority") is Boolean)
             return true
         }
         publishTopic.topic -> {

@@ -20,64 +20,94 @@ data class Temperature(
 
 @Measurement(name = "wind")
 data class Wind(
-//    @Column(tag = true) val location: String,
+    //    @Column val location: String,
     @Column val windDirection: Int,
     @Column val value: Double,//wind speed
     @Column(timestamp = true) val time: Instant,
-//    @Column val location: Pair <Double, Double>
+
 )
 
 class InfluxDB{
-    //args: msg to store & the bucket
-//    fun writeToInfluxDB(msg: String, bucket: String) {
     fun writeToInfluxDB(msg: String, bucket: String) {
         runBlocking {
             //publisher data
             val jsonObject = JSONObject(msg)
+//            {
+        //            "topic":"warning",
+        //            "location":"Frankfurt Airport",
+        //            "message":{
+        //                  "Time Sent":9205281982041,
+        //                  "Temperature":24.451258330866057,
+        //                  "Wind Velocity":60.1580425198826,
+        //                  "Priority":true,
+        //                  "Humidity":59.22916413142805,
+        //                  "Wind Direction":14
+        //                  }
+        //     }
+//            val location = jsonObject.get("location").toString()
 
-            val direction = jsonObject.get("windDirection") as Int
-            var speed = jsonObject.get("windVelocity") as Double
-            speed = String.format("%.2f", speed).toDouble()
-            val temp = jsonObject.get("temperature") as Double
-            val humidity = jsonObject.get("humidity").toString()
-            val timeSent = jsonObject.get("timeSent").toString()
-            val publisherID = jsonObject.get("publisher ID").toString()
+            val message = JSONObject(jsonObject.get("message").toString())
 
-            // Initialize client
+            var windSpeed = message.get("Wind Velocity") as Double
+            windSpeed = String.format("%.2f", windSpeed).toDouble()
+            val windDirection = message.get("Wind Direction") as Int
+            val temperature = message.get("Temperature") as Double
+
+
             val client = InfluxDBClientKotlinFactory.create( url = URL, token = TOKEN, org = ORGANIZATION, bucket = bucket)
 
             client.use {
                 val writeApi = client.getWriteKotlinApi()
-                val temperature = Temperature(temp, Instant.now())// Write by DataClass
-                writeApi.writeMeasurement(temperature, WritePrecision.NS)//nano-second
+                val tempe = Temperature(temperature, Instant.now())// Write by DataClass
 
-                val wind = Wind(direction, speed, Instant.now())// Write by DataClass
-                writeApi.writeMeasurement(wind, WritePrecision.NS)//nano-second
+                writeApi.writeMeasurement(tempe, WritePrecision.MS)//nano-second
 
-//                /* Query results */
-//                //TODO: leave here for testing, delete later.
+                val wind = Wind(windDirection , windSpeed, Instant.now())// Write by DataClass
+                writeApi.writeMeasurement(wind, WritePrecision.MS)//nano-second
+
+                /* Query results */
+                //TODO: leave here for testing, delete later.
                 val fluxQuery_wind =
-                    """from(bucket: "$INFO_BUCKET") |> range(start: 0) |> filter(fn: (r) => (r["_measurement"] == "wind"))"""
+                    """
+                    from(bucket: "$INFO_BUCKET")
+                        ||> range(start: -5m)
+                        |> filter(fn: (r) => (r["_measurement"] == "wind"))
+                        |
+                        """.trimMargin()
                 val fluxQuery_temperature=
-                    """from(bucket: "$INFO_BUCKET") |> range(start: 0) |> filter(fn: (r) => (r["_measurement"] == "temperature"))"""
+                    """from(bucket: "$INFO_BUCKET")
+                        ||> range(start: -5m)
+                        |> filter(fn: (r) => (r["_measurement"] == "temperature"))""".trimMargin()
 
-                val fluxQuery_delete =
-                    """"""
-//
-                client
-                    .getQueryKotlinApi()
-                    .query(fluxQuery_wind)
-                    .consumeAsFlow()
-                    .collect { println("Measurement: ${it.measurement}, value: ${it.value}, wind direction: ${it.getValueByKey("windDirection")}, time: ${it.time}") }
+                val fluxQuery_all=
+                    """from(bucket: "$INFO_BUCKET")
+                        ||> range(start: -5m)
+                        """.trimMargin()
+
+
+                //Result is returned as a stream
+
+
+
+//                client
+//                    .getQueryKotlinApi()
+//                    .query(fluxQuery_all)
+//                    .consumeAsFlow()
+//                    .collect { println("Measurement: ${it.table}") }
+//                client
+//                    .getQueryKotlinApi()
+//                    .query(fluxQuery_wind)
+//                    .consumeAsFlow()
+//                    .collect { println("Measurement: ${it.measurement}, value: ${it.value}, wind direction: ${it.getValueByKey("windDirection")}, time: ${it.time}") }
 //                /* Query results */
-
-                client
-                    .getQueryKotlinApi()
-                    .query(fluxQuery_temperature)
-                    .consumeAsFlow()
-                    .collect { println("Measurement: ${it.measurement}, value: ${it.value},  time: ${it.time}") }
 //
-//                //client.close()
+//                client
+//                    .getQueryKotlinApi()
+//                    .query(fluxQuery_temperature)
+//                    .consumeAsFlow()
+//                    .collect { println("Measurement: ${it.measurement}, value: ${it.value},  time: ${it.time}") }
+
+                //client.close()
             }
         }
     }
@@ -102,7 +132,7 @@ class InfluxDB{
                 .getQueryKotlinApi()
                 .query(fluxQuery)
                 .consumeAsFlow()
-                .collect { println("Measurement: ${it.measurement}, value: ${it.value},  time: ${it.time}") }
+                .collect { println("Measurement: ${it.measurement}, value: ${it.value}, ${it.field}") }
 
             client.close()
         }
@@ -115,13 +145,13 @@ class InfluxDB{
 
             val jsonObject = JSONObject(messageContent)
 
-            val direction = jsonObject.get("windDirection") as Int
-            var speed = jsonObject.get("windVelocity") as Double
+            val direction = jsonObject.get("Wind Direction") as Int
+            var speed = jsonObject.get("Wind Velocity") as Double
             speed = String.format("%.2f", speed).toDouble()
-            val temp = jsonObject.get("temperature") as Double
-            val humidity = jsonObject.get("humidity").toString()
-            val timeSent = jsonObject.get("timeSent").toString()
-            val publisherID = jsonObject.get("publisher ID").toString()
+            val temp = jsonObject.get("Temperature") as Double
+//            val humidity = jsonObject.get("Humidity").toString()
+//            val timeSent = jsonObject.get("timeSent").toString()
+//            val publisherID = jsonObject.get("Publisher ID").toString()
 
             // Initialize client
             val client = InfluxDBClientKotlinFactory.create( url = URL, token = TOKEN, org = ORGANIZATION, bucket = bucket)
@@ -159,37 +189,31 @@ class InfluxDB{
     }
 
 
+//}
+
+
 }
 
 fun main(){
     val testBucket = INFO_BUCKET
 
-    val fluxQuery_wind =
-                    """from(bucket: "$testBucket") |> range(start: 0) |> filter(fn: (r) => (r["_measurement"] == "wind"))"""
+    val fluxQuery_wind=
+        """from(bucket: "$testBucket") |> range(start: 0) |> filter(fn: (r) => (r["_measurement"] == "wind" and r["_field"] == "windDirection"))"""
+
+
     val fluxQuery_temperature=
-                    """from(bucket: "$testBucket") |> range(start: 0) |> filter(fn: (r) => (r["_measurement"] == "temperature"))"""
+        """from(bucket: "$testBucket") |> range(start: 0) |> filter(fn: (r) => (r["_measurement"] == "temperature"))"""
 
     val query = """from(bucket: "info")
      |> range(start: 0)
      |> filter(fn: (r) => (r["_measurement"] == "wind"))
-     |> DURATION(1s)
+     
 """
 
 
     val influxdb = InfluxDB()
-    influxdb.queryFromInfluxDBwithKey(fluxQuery_wind, "location", testBucket)
-//    influxdb.queryFromInfluxDBwithoutKey(fluxQuery_temperature, testBucket)
+//    influxdb.queryFromInfluxDBwithKey(fluxQuery_wind, "Wind Direction", testBucket)
+    influxdb.queryFromInfluxDBwithoutKey(fluxQuery_wind, testBucket)
 //    influxdb.queryFromInfluxDBwithoutKey(query, testBucket)
-
-
-}
-
-
-//TODO: clear the table content && delete the table
-fun clearBucket() {
-
-}
-
-fun deleteBucket() {
 
 }

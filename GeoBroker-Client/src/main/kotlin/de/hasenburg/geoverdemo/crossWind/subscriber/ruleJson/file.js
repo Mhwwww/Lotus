@@ -2,6 +2,9 @@ module.exports = (req, res) => {
     const fs = require("fs");
     const fileName = "saverule.json";
 
+    const WIND_DIRECTION = "Wind Direction"
+    const WIND_VELOCITY = "Wind Velocity"
+
     //const crosswindFs = require("fs");
     const crosswindFileName = "aircraftType.json";
 
@@ -60,8 +63,8 @@ module.exports = (req, res) => {
             }
 
             function processWindData() {
-                windAngle = inJson["message"]["windDirection"];
-                windVelocity = inJson["message"]["windVelocity"];
+                windAngle = inJson["message"][WIND_DIRECTION];
+                windVelocity = inJson["message"][WIND_VELOCITY];
 
                 //console.log(windVelocity, windAngle, windVelocity && windAngle);
 

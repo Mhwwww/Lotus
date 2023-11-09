@@ -81,7 +81,7 @@ fun Application.applyRouting(){
 
                 if (obj.has("message")) {
                     val message = obj.getJSONObject("message")
-                    val oriTimeSent = message.optLong("timeSent")
+                    val oriTimeSent = message.optLong("Time Sent")
 
                     if (oriTimeSent == timeSent) {
                         //add changed info message to 'warningArray'

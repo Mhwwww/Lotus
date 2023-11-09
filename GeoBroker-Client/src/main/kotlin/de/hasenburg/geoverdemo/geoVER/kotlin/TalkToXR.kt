@@ -152,8 +152,9 @@ class TalkToXR {
 
 fun main(args: Array<String>) {
     //val ruleArray= JSONArray()
-    startTinyFaaS()
     Configuration()
+
+    startTinyFaaS()
 
     val server = embeddedServer(Netty, port = PORT) {
         applyRouting()

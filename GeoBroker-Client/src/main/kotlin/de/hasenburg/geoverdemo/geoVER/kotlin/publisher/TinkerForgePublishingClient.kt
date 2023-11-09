@@ -23,7 +23,7 @@ private const val HOST = "localhost"
 private const val PORT = 4223
 private const val UID_TEMPERATURE = "EKx"
 private const val UID_HUMIDITY = "HF1"
-private const val UID_OUTDOORWEATHER = "***"
+private const val UID_OUTDOOR_WEATHER = "***"
 
 fun main() {
     setLogLevel(logger, Level.DEBUG)
@@ -34,7 +34,7 @@ fun main() {
     val humi = BrickletHumidityV2(UID_HUMIDITY, ipcon)
     //TODO: test wind use case related bricklet
 
-     val outdoorWeather = BrickletOutdoorWeather(UID_OUTDOORWEATHER, ipcon)
+     val outdoorWeather = BrickletOutdoorWeather(UID_OUTDOOR_WEATHER, ipcon)
     // Connect to brick daemon
     ipcon.connect(HOST, PORT)
 

@@ -71,4 +71,7 @@ class Client(val clientIdentifier: String, location: Location?, val remote: Bool
         return "Client{heartbeat=$heartbeat, clientIdentifier=$clientIdentifier, location=$location, subscriptions=$s}"
     }
 
+
+
+
 }

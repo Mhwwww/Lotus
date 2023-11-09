@@ -9,14 +9,15 @@ var TINYFASS_PATH = "/Users/minghe/geobroker/tinyFaaS/"
 var FUNCTION_FILE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
 var SAVE_RULES_JSON_PATH = FUNCTION_FILE_PATH+"/saverule.json"
 
+
 var PORT = 8081
-var ADDRESS = "localhost"
+var IP_ADDRESS = "localhost"
 
-var INFO_URL = "http://"+ ADDRESS+":"+ PORT+"/infoMessage"
-var WARNING_URL = "http://"+ ADDRESS+":"+ PORT+"/warningMessage"
+var INFO_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/infoMessage"
+var WARNING_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/warningMessage"
 
-val SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ ADDRESS+":"+ PORT+"/subscriptionInput"
-val RULES_FRONTEND_INPUT_URL = "http://"+ ADDRESS+":"+ PORT+"/saveRules"
+val SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/subscriptionInput"
+val RULES_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/saveRules"
 
 
 val URL = "http://localhost:8086"
@@ -26,8 +27,6 @@ val INFO_BUCKET = "info"
 
 val TOKEN =
     "cDcQwBEUylxWSIYO6t5R4Wx9Id2kbLw-Vs87Wozn649_6QTYcuQCnS5Hu0UBhCBWpmdzoAUH1B7h9ZDN2SxjKw==".toCharArray()
-
-
 
 private val logger = LogManager.getLogger()
 @Serializable
@@ -84,10 +83,10 @@ class Configuration {
 
         if (address != null) {
             logger.info("ADDRESS: $address")
-            ADDRESS = address
+            IP_ADDRESS = address
 
         } else {
-            logger.info("DEFAULT ADDRESS {}", ADDRESS)
+            logger.info("DEFAULT ADDRESS {}", IP_ADDRESS)
         }
 
         saveConfig()
@@ -106,7 +105,7 @@ fun saveConfig(){
         let infoMsgUrl = '$INFO_URL';
     """.trimIndent()
 
-    println(content)
+    //println(content)
     configJsonFile.writeText(content)
 }
 

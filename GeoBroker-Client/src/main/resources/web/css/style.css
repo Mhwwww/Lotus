@@ -4,8 +4,6 @@ body {
   padding: 0;
 
   alignment: center;
-
-
 }
 
 .event, .rule{
@@ -117,7 +115,8 @@ h1 {
   height: 100vh;
 
 }
-/*todo: separate subscription and rule input*/
+
+/* separate subscription and rule input */
 .background{
   background-color: #fff;
   padding: 20px;
@@ -233,5 +232,9 @@ tr:nth-child(even) {
 
 tr:hover {
   background-color: lightgrey;
+}
+
+.uppercase {
+  text-transform: uppercase;
 }
 

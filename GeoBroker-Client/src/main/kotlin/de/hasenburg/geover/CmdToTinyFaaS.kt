@@ -25,7 +25,7 @@ fun cmdUploadToTinyFaaS(path:String, functionName:String, fnEnv:String, thread: 
     if (isUnix()) {
         val upload: String = TINYFAAS_UPLOAD_PATH + path + "\t" + functionName + "\t" + fnEnv+ "\t" + thread
         runOnUnixAsync(upload)
-//        runOnUnixWithDirectory(upload,"/Users/minghe/geobroker")
+
         logger.info("going to upload function")
 
     } else {
@@ -38,7 +38,7 @@ fun cmdUploadToTinyFaaS(path:String, functionName:String, fnEnv:String, thread: 
 fun cmdDeleteFromTinyFaaS(functionName:String) {
     if (isUnix()) {
         val delete = TINYFAAS_DELETE_PATH + functionName
-        runOnUnix(delete)
+        runOnUnixAsync(delete)
 
     } else {
         runOnWindows("dir")
@@ -48,7 +48,8 @@ fun cmdDeleteFromTinyFaaS(functionName:String) {
 fun cmdGetAllFunctionsLogsFromTinyFaaS(): String {
     return if (isUnix()) {
         val logs = TINYFAAS_LOGS_PATH
-        runOnUnix(logs)
+        runOnUnixAsync(logs)
+
 
     } else {
         runOnWindows("dir")
@@ -58,12 +59,12 @@ fun cmdGetAllFunctionsLogsFromTinyFaaS(): String {
 fun cmdGetFuncList(): List<String> {
     return if (isUnix()) {
         val getList = TINYFAAS_LIST_PATH
-        listOf(runOnUnix(getList))
+        listOf(runOnUnixAsync(getList))
 
     } else {
 
         val getList = TINYFAAS_LIST_PATH
-        listOf(runOnUnix(getList))
+        listOf(runOnUnixAsync(getList))
     }
 }
 
@@ -88,14 +89,15 @@ fun runOnWindows(cmd: String): String {
 }
 
 @OptIn(DelicateCoroutinesApi::class)
-fun runOnUnixAsync(cmd: String) {
+fun runOnUnixAsync(cmd: String) :String{
+    var line = ""
     GlobalScope.launch {
         try {
             val process = withContext(Dispatchers.IO) {
                 ProcessBuilder("/bin/sh", "-c", cmd).start()
             }
             val reader = BufferedReader(InputStreamReader(process.inputStream))
-            var line: String?
+//            var line: String?
             while (withContext(Dispatchers.IO) {
                     reader.readLine()
                 }.also { line = it } != null) {
@@ -116,30 +118,11 @@ fun runOnUnixAsync(cmd: String) {
             e.printStackTrace()
         }
     }
+
+    logger.error(line)
+    return line
 }
-fun runOnUnix(cmd: String):String {
-    logger.info("get runtime")
-    val runtime = Runtime.getRuntime()
-    return try {
-        logger.info("running cmd: {}", cmd)
 
-        val p = runtime.exec(cmd)
-        logger.info("getting result {}", p)
-
-        val result  = p.inputStream.bufferedReader().readText()
-        logger.error(result)
-
-        if (p.exitValue() != 0) {
-            logger.error("Command was not successful! error code {} with err stream {}", p.exitValue(), p.errorStream.bufferedReader().readText())
-        }
-
-        result
-    } catch (e: IOException) {
-
-        e.printStackTrace()
-        e.printStackTrace().toString()
-    }
-}
 fun main(){
     //de.hasenburg.geover.cmdGetFuncList()
     //de.hasenburg.geover.cmdGetAllFunctionsLogsFromTinyFaaS()

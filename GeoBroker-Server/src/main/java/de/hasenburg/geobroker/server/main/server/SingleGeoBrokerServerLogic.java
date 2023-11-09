@@ -82,7 +82,6 @@ public class SingleGeoBrokerServerLogic implements IServerLogic {
 						writeLogToFile(heartbeat, s);
 					}
 
-
 				}
 			}
 

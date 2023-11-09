@@ -6,7 +6,8 @@ Vue.component('warning-list', {
       <thead>
         <tr>
           <th></th>
-          <th v-for="key in warningKeys" :key="key">{{ key }}</th>
+<!--          <th v-for="key in warningKeys" :key="key">{{ key }}</th>-->
+          <th v-for="key in warningKeys" :key="key" :class="{ 'uppercase': true }">{{ key.toUpperCase() }}</th>
         </tr>
       </thead>
       <tbody>
@@ -18,7 +19,7 @@ Vue.component('warning-list', {
                 <div v-for="(subValue, subKey, index) in warning[key]" :key="subKey">
                   <div v-if="index < 2">{{ subKey }}: {{ subValue }}</div>
                   <div v-else v-show="!warning.collapsed">{{ subKey }}:
-                    <template v-if="subKey === 'priority'">
+                    <template v-if="subKey === 'Priority'">
                        <a @click="togglePriority(warning)" class="toggle-priority">
                           <template v-if="subValue == false">         
                             <button class="priority-button">Information</button>
@@ -76,6 +77,8 @@ Vue.component('warning-list', {
 
                 // const response = await fetch(warningMsgUrl);
                 const data = await response.json();
+
+
                 this.warnings = data.map(warning => {
                     return {...warning, collapsed: true};
                 });
@@ -87,15 +90,14 @@ Vue.component('warning-list', {
         },
         togglePriority(warning) {
             //warning.priority = !warning.priority
-            warning["message"]["priority"] = !warning["message"]["priority"];
+            warning["message"]["Priority"] = !warning["message"]["Priority"];
             //console.log("The current priority is ",warning["message"]["priority"]);
-            this.deleteWarning(warning["message"]["timeSent"]);
+            this.deleteWarning(warning["message"]["Time Sent"]);
             this.$forceUpdate();
         },
         async deleteWarning(timeSent) {
             try {
                 const warningMsgUrlWithTimeSent = `${warningMsgUrl}/${timeSent}`;
-                // const response = await fetch(`http://localhost:8081/warningMessage/${timeSent}`, {
                 const response = await fetch(warningMsgUrlWithTimeSent, {
 
                     method: 'POST',
@@ -127,7 +129,9 @@ Vue.component('info-list', {
             <thead>
                 <tr>
                     <th></th>
-                    <th v-for="key in infoSetKeys" :key="key">{{ key }}</th>
+<!--                    <th v-for="key in infoSetKeys" :key="key">{{ key }}</th>-->
+                    <th v-for="key in infoSetKeys" :key="key" :class="{ 'uppercase': true }">{{ key.toUpperCase() }}</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -143,7 +147,6 @@ Vue.component('info-list', {
                                 <tr v-for="(subValue, subKey) in info[key]">
                                     <td>{{ subKey }}</td>
                                     <td>{{ subValue }}</td>
-
                                 </tr>
                             </table>
                             <template v-else>
