@@ -4,16 +4,18 @@ import kotlinx.serialization.Serializable
 import org.apache.logging.log4j.LogManager
 import java.io.File
 
-var TINYFASS_PATH = "/Users/minghe/geobroker/tinyFaaS/"
+//configuration on raspis
+var TINYFASS_PATH ="/home/pi/Documents/tinyFaaS/"
+var FUNCTION_FILE_PATH="/home/pi/geover/Lotus/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
 
-///Users/minghe/Desktop/tinyFaaS/test/fns/ruleJson/file.js
 
-var FUNCTION_FILE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
+//var TINYFASS_PATH = "/Users/minghe/geobroker/tinyFaaS/"
+//var FUNCTION_FILE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
 var SAVE_RULES_JSON_PATH = FUNCTION_FILE_PATH+"/saverule.json"
 
 
 var PORT = 8082
-var IP_ADDRESS = "localhost"
+var IP_ADDRESS = "192.168.0.125"
 
 var INFO_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/infoMessage"
 var WARNING_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/warningMessage"
@@ -98,8 +100,8 @@ class Configuration {
 
 fun saveConfig(){
 
-//    val configJsonFile = File("/Users/minghe/geobroker/GeoBroker-Client/src/main/resources/web/js/config.js")
-    val configJsonFile = File("/home/pi/geover/Lotus/GeoBroker-Client/src/main/resources/web/js/config.js")
+    val configJsonFile = File("/Users/minghe/geobroker/GeoBroker-Client/src/main/resources/web/js/config.js")
+//    val configJsonFile = File("/home/pi/geover/Lotus/GeoBroker-Client/src/main/resources/web/js/config.js")
 
 
 

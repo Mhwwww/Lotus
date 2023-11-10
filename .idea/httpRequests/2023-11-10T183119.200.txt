@@ -1,0 +1,1 @@
+{"Time Sent":281721188491680,"Temperature":51.56915443045522,"Wind Velocity":64.40571387840946,"Humidity":30.287551320931577,"Wind Direction":14}

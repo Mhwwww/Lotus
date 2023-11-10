@@ -12,12 +12,9 @@ module.exports = (req, res) => {
         if (!err) {
             // user input rules related
             let rules = JSON.parse(data);
-            let inJson = JSON.parse(JSON.stringify(req.body));
+            let inJson = JSON.parse(JSON.stringify(req.body));//string
 
-            // let reponseJson = req.body["message"]
-
-            let reponseJson = JSON.parse(inJson)["message"];
-            console.log("responseJson", typeof  reponseJson)
+            let reponseJson = JSON.parse(inJson)["message"]
 
             // crosswind user input related
             let crosswindThreshold = 0.0;
@@ -28,8 +25,8 @@ module.exports = (req, res) => {
             let crosswind = 0.0;
             let headwind = 0.0;
 
-            let runwayDirection = "";
-            //let runwayDirection = "RWY30";
+            let runwayDirection = "";            //let runwayDirection = "RWY30";
+
 
             for (let i = 0; i < rules.length; i++) {
                 if (rules[i]["topic"] == "aircraft type") {
@@ -66,11 +63,11 @@ module.exports = (req, res) => {
             }
 
             function processWindData() {
-                inJson = JSON.parse(inJson);
-                console.log(typeof inJson);
+                // inJson = JSON.parse(inJson);
+                // console.log(typeof inJson);
 
-                windAngle = inJson["message"][WIND_DIRECTION];
-                windVelocity = inJson["message"][WIND_VELOCITY];
+                windAngle = reponseJson[WIND_DIRECTION];
+                windVelocity = reponseJson[WIND_VELOCITY];
 
                 console.log(windVelocity, windAngle, windVelocity && windAngle);
 
@@ -103,7 +100,7 @@ module.exports = (req, res) => {
                     if (crosswind >= crosswindThreshold) {
                         console.log("DO NOT LAND!!!");
                         //send warnings back
-                        //res.write(JSON.stringify(inJson));
+
                         res.write(JSON.stringify(reponseJson));
 
                     } else {
