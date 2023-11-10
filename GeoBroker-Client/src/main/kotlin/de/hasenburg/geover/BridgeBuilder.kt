@@ -14,7 +14,7 @@ import java.net.URL
 
 const val GEOBROKER_HOST = "localhost"
 const val GEOBROKER_PORT = 5559
-const val TINYFAAS_BASE_URL = "http://localhost:80/"
+const val TINYFAAS_BASE_URL = "http://localhost:8000/"
 
 private val logger = LogManager.getLogger()
 

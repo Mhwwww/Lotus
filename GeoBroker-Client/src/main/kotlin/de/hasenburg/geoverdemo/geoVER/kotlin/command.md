@@ -6,4 +6,4 @@ ADDRESS="192.168.0.172" STATION_ID=143 TINKERFORGE_HOST="192.168.0.172" PUBLISH_
 
 ADDRESS="192.168.0.172" STATION_ID=143 TINKERFORGE_HOST="192.168.0.172" PUBLISH_GEOFENCE="Berlin Airport" java -jar publisher.jar
 
-IP_ADDRESS="192.168.0.125" TINYFAAS_PATH="/home/pi/geover/tinyFaaS/"
+FUNCTION_FILE_PATH="/home/pi/geover/Lotus/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/" TINYFAAS_PATH="/home/pi/Documents/tinyFaaS/" java -jar GeoVER.jar

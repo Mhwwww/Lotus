@@ -6,18 +6,20 @@ import java.io.File
 
 var TINYFASS_PATH = "/Users/minghe/geobroker/tinyFaaS/"
 
+///Users/minghe/Desktop/tinyFaaS/test/fns/ruleJson/file.js
+
 var FUNCTION_FILE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
 var SAVE_RULES_JSON_PATH = FUNCTION_FILE_PATH+"/saverule.json"
 
 
-var PORT = 8081
+var PORT = 8082
 var IP_ADDRESS = "localhost"
 
 var INFO_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/infoMessage"
 var WARNING_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/warningMessage"
 
-val SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/subscriptionInput"
-val RULES_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/saveRules"
+var SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/subscriptionInput"
+var RULES_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/saveRules"
 
 
 val URL = "http://localhost:8086"
@@ -96,7 +98,16 @@ class Configuration {
 
 fun saveConfig(){
 
-    val configJsonFile = File("/Users/minghe/geobroker/GeoBroker-Client/src/main/resources/web/js/config.js")
+//    val configJsonFile = File("/Users/minghe/geobroker/GeoBroker-Client/src/main/resources/web/js/config.js")
+    val configJsonFile = File("/home/pi/geover/Lotus/GeoBroker-Client/src/main/resources/web/js/config.js")
+
+
+
+    INFO_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/infoMessage"
+     WARNING_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/warningMessage"
+
+     SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/subscriptionInput"
+     RULES_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/saveRules"
 
     val content = """
         let warningMsgUrl ='$WARNING_URL';
@@ -105,7 +116,7 @@ fun saveConfig(){
         let infoMsgUrl = '$INFO_URL';
     """.trimIndent()
 
-    //println(content)
+    println(content)
     configJsonFile.writeText(content)
 }
 

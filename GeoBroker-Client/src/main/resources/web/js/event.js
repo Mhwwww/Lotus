@@ -1,51 +1,69 @@
-const eventTopicInput = document.getElementById('event-topic');
-const eventRepTopicInput = document.getElementById('repub-topic');
-const eventLatitudeInput = document.getElementById('event-lat');
-const eventLongitudeInput = document.getElementById('event-lon');
-const eventRadiusInput = document.getElementById('event-rad');
-const showWarningButton = document.getElementById('show-warning');
+document.addEventListener('DOMContentLoaded', function () {
+    const eventTopicInput = document.getElementById('event-topic');
+    const eventRepTopicInput = document.getElementById('repub-topic');
+    const eventLatitudeInput = document.getElementById('event-lat');
+    const eventLongitudeInput = document.getElementById('event-lon');
+    const eventRadiusInput = document.getElementById('event-rad');
+    //const showWarningButton = document.getElementById('show-warning');
 
-let events = [];
-let inputEvent = {
-    topic: "",
-    repubTopic: "",
-    lat: "",
-    lon: "",
-    rad: ""
-};
+    const showWarningButton = document.querySelector('.event .Connection #show-warning');
 
-// redirect to another page
-showWarningButton.addEventListener('click', (event)=>{
-    event.preventDefault();
-    inputEvent = {
-        topic: eventTopicInput.value,
-        repubTopic: eventRepTopicInput.value,
-        lat: eventLatitudeInput.value,
-        lon: eventLongitudeInput.value,
-        rad: eventRadiusInput.value
+
+    let events = [];
+    let inputEvent = {
+        topic: "",
+        repubTopic: "",
+        lat: "",
+        lon: "",
+        rad: ""
     };
 
-    // fetch('http://localhost:8081/show', {
-    fetch(subscriptionInputUrl, {
+    console.log('showWarningButton:', showWarningButton);
 
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(inputEvent)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('!!!!!!!!!!!!!!!!!!!!!!!!');
-            }
-            location.assign(`../warning.html?subscription=${JSON.stringify(inputEvent)}&ruleinput=${JSON.stringify(rules)}`);
+// redirect to another page
+    showWarningButton.addEventListener('click', (event)=>{
+        event.preventDefault();
+        inputEvent = {
+            topic: eventTopicInput.value,
+            repubTopic: eventRepTopicInput.value,
+            lat: eventLatitudeInput.value,
+            lon: eventLongitudeInput.value,
+            rad: eventRadiusInput.value
+        };
+
+
+        // fetch('http://localhost:8081/show', {
+        fetch(subscriptionInputUrl, {
+
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(inputEvent)
         })
-        .then(data => {
-            console.log('Response received:', data);
-            //return data.json(inputEvent);
-            return data.json();
-        })
-        .catch(error => {
-            console.error('Error occurred:', error);
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('!!!!!!!!!!!!!!!!!!!!!!!!');
+                }
+                //location.assign(`../warning.html?subscription=${JSON.stringify(inputEvent)}&ruleinput=${JSON.stringify(rules)}`);
+            })
+            .then(data => {
+                if (data != null){
+                    console.log('Response received:', data);
+                }else{
+                    console.log('no data')
+                }
+
+                //return data.json(inputEvent);
+                location.assign(`../warning.html?subscription=${JSON.stringify(inputEvent)}&ruleinput=${JSON.stringify(rules)}`);
+                return data.json();
+            })
+            .catch(error => {
+                console.error('Error occurred:', error);
+            });
+    });
+
+
 });
+
+

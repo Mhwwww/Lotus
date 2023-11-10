@@ -174,7 +174,6 @@ Vue.component('info-list', {
     methods: {
         async fetchInfoSet() {
             try {
-                // const response = await fetch('http://localhost:8081/infoMessage');
                 const response = await fetch(infoMsgUrl);
                 const data = await response.json();
                 this.infoSet = data;

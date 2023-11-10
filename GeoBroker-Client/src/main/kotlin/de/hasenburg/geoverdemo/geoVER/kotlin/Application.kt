@@ -28,14 +28,16 @@ data class InputRule(val topic: String, val operator: String, val constraints: S
 data class ErrorResponseRule(val message: String)
 
 fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
-    publishTopic = Topic(inputEvent.topic)
-    matchingTopic = Topic(inputEvent.repubTopic)
-    locations = Location(inputEvent.lat.toDouble(), inputEvent.lon.toDouble())
-    radius = inputEvent.rad.toDouble()
+        publishTopic = Topic(inputEvent.topic)
+        matchingTopic = Topic(inputEvent.repubTopic)
+        locations = Location(inputEvent.lat.toDouble(), inputEvent.lon.toDouble())
+        radius = inputEvent.rad.toDouble()
 
-    logger.info(publishTopic)
-    logger.info(locations)
-    logger.info(radius)
+        logger.info(publishTopic)
+        logger.info(matchingTopic)
+        logger.info(locations)
+        logger.info(radius)
+
 
     //Using the rule-based filtering function
 //    return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"), "nodejs", matchingTopic)

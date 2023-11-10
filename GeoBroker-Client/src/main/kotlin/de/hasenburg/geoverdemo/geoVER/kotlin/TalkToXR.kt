@@ -3,7 +3,6 @@ package de.hasenburg.geoverdemo.geoVER.kotlin
 import applyRouting
 import configureHTTP
 import configureMonitoring
-import de.hasenburg.geover.startTinyFaaS
 import de.hasenburg.geoverdemo.geoVER.kotlin.plugin.configureSerialization
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
@@ -154,8 +153,7 @@ fun main(args: Array<String>) {
     //val ruleArray= JSONArray()
     Configuration()
 
-    startTinyFaaS()
-
+//    startTinyFaaS()
     val server = embeddedServer(Netty, port = PORT) {
         applyRouting()
         configureSerialization()

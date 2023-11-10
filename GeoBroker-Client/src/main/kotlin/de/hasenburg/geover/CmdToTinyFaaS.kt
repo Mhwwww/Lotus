@@ -90,18 +90,21 @@ fun runOnWindows(cmd: String): String {
 
 @OptIn(DelicateCoroutinesApi::class)
 fun runOnUnixAsync(cmd: String) :String{
-    var line = ""
+    var result = ""
     GlobalScope.launch {
+
         try {
+
             val process = withContext(Dispatchers.IO) {
                 ProcessBuilder("/bin/sh", "-c", cmd).start()
             }
             val reader = BufferedReader(InputStreamReader(process.inputStream))
-//            var line: String?
+            var line: String?
             while (withContext(Dispatchers.IO) {
                     reader.readLine()
                 }.also { line = it } != null) {
                 println(line)
+                result = line.toString()
             }
             if (withContext(Dispatchers.IO) {
                     process.waitFor()
@@ -117,10 +120,12 @@ fun runOnUnixAsync(cmd: String) :String{
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
 
-    logger.error(line)
-    return line
+
+    }
+    return result
+    //logger.error(line)
+
 }
 
 fun main(){

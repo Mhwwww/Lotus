@@ -14,7 +14,10 @@ module.exports = (req, res) => {
             let rules = JSON.parse(data);
             let inJson = JSON.parse(JSON.stringify(req.body));
 
-            let reponseJson = req.body["message"]
+            // let reponseJson = req.body["message"]
+
+            let reponseJson = JSON.parse(inJson)["message"];
+            console.log("responseJson", typeof  reponseJson)
 
             // crosswind user input related
             let crosswindThreshold = 0.0;
@@ -63,10 +66,13 @@ module.exports = (req, res) => {
             }
 
             function processWindData() {
+                inJson = JSON.parse(inJson);
+                console.log(typeof inJson);
+
                 windAngle = inJson["message"][WIND_DIRECTION];
                 windVelocity = inJson["message"][WIND_VELOCITY];
 
-                //console.log(windVelocity, windAngle, windVelocity && windAngle);
+                console.log(windVelocity, windAngle, windVelocity && windAngle);
 
                 if (windVelocity && windAngle) {
                     console.log(windAngle, windVelocity);
