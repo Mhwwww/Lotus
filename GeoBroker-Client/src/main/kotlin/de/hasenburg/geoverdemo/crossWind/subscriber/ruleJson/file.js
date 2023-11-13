@@ -14,7 +14,7 @@ module.exports = (req, res) => {
             let rules = JSON.parse(data);
             let inJson = JSON.parse(JSON.stringify(req.body));//string
 
-            let reponseJson = JSON.parse(inJson)["message"]
+            let reponseJson = JSON.parse(inJson)["message"];
 
             // crosswind user input related
             let crosswindThreshold = 0.0;
@@ -65,7 +65,6 @@ module.exports = (req, res) => {
             function processWindData() {
                 // inJson = JSON.parse(inJson);
                 // console.log(typeof inJson);
-
                 windAngle = reponseJson[WIND_DIRECTION];
                 windVelocity = reponseJson[WIND_VELOCITY];
 

@@ -17,7 +17,7 @@ import kotlin.system.exitProcess
 private val logger = LogManager.getLogger()
 
 class PublishingClient(){
-    fun startPublisherClient() {
+    fun startPublisherClient(address: String) {
         setLogLevel(logger, Level.DEBUG)
 
         val publishTopic = Topic(PUB_TOPIC)
@@ -29,12 +29,12 @@ class PublishingClient(){
 
         val processManager = ZMQProcessManager()
 
-        val client = SimpleClient(ADDRESS, PORT)
+        val client = SimpleClient(address, PORT)
         client.send(Payload.CONNECTPayload(locations))
         logger.info("Received server answer: {}", client.receive())
 
         var i = 0
-        repeat(20) {
+        repeat(REPEAT_TIME) {
             //locations = Location(Random.nextDouble(0.0, 2.0), Random.nextDouble(0.0, 2.0))
             //locations = PUBLISHER_LOCATION
 
@@ -62,8 +62,10 @@ class PublishingClient(){
             logger.debug("PubAck: {}", client!!.receive())
 
             sleep(PUB_INTERVAL, 0)
-            logger.info("Sent message ${++i}: ${newElem.toString()} ")
+            logger.info("Sent message ${++i} to ${address}: ${newElem.toString()} ")
         }
+
+        sleep(2000, 0)
 
         client!!.send(Payload.DISCONNECTPayload(ReasonCode.NormalDisconnection))
         client!!.tearDownClient()
@@ -75,7 +77,7 @@ class PublishingClient(){
 
 fun main(){
     val publishClient = PublishingClient()
-    publishClient.startPublisherClient()
+    publishClient.startPublisherClient(ADDRESS_AIRPORT)
 }
 
 

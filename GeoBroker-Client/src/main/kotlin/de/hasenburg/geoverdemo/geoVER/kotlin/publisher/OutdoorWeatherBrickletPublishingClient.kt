@@ -7,8 +7,6 @@ import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
 import de.hasenburg.geobroker.commons.model.message.Payload
 import de.hasenburg.geobroker.commons.model.message.ReasonCode
 import de.hasenburg.geobroker.commons.model.message.Topic
-import de.hasenburg.geobroker.commons.model.spatial.Geofence
-import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.randomDouble
 import de.hasenburg.geobroker.commons.sleep
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.*
@@ -17,7 +15,6 @@ import org.json.JSONObject
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
-
 //TODO: enable listener(current doesn't work)
 
 class OutdoorWeatherBrickletPublishingClient(){
@@ -40,15 +37,17 @@ class OutdoorWeatherBrickletPublishingClient(){
         return stationData
     }
 
-    fun startOutdoorBrickletPublisher(stationID: Int) {
+    fun startOutdoorBrickletPublisher(stationID: Int, address: String) {
         val publishTopic = Topic(PUB_TOPIC)
-        var locations = Location(0.0, 0.0)
+//        var locations = Location(0.0, 0.0)
+        var locations = PUBLISH_GEOFENCE.center
 
         logger.info("the input subscription's topic is: {}", publishTopic)
 
         val processManager = ZMQProcessManager()
 
-        val client = SimpleClient(ADDRESS, PORT)
+//        val client = SimpleClient(ADDRESS, PORT)
+        val client = SimpleClient(address, PORT)
         client.send(Payload.CONNECTPayload(locations))
 
         logger.info("Received server answer: {}", client.receive())
@@ -92,25 +91,26 @@ class OutdoorWeatherBrickletPublishingClient(){
 //
             //todo: the location should be just the sensor location
 //            locations = PUBLISHER_LOCATION
-            locations = PUBLISH_GEOFENCE.center
+//            locations = PUBLISH_GEOFENCE.center
 
             val newElem = JSONObject().apply {
-                put("Publisher ID", client.identity)
-                put("Time Sent", System.nanoTime())
-                put("Temperature", temperature/10.0)
-                put("Humidity", humidity/1.0)
+                //put("Publisher ID", client.identity)
+                put(TIME_SENT, System.nanoTime())
+                put(TEMPERATURE, temperature/10.0)
+                put(HUMIDITY, humidity/1.0)
                 // todo: need to expand values of wind speed
                 put("Wind Speed", windSpeed/1.0)//sensor value --> 1 meter per second = 1.94384449 knot
-                put("Wind Direction", windDirection)
+                put(WIND_DIRECTION, windDirection)
 
                 //TODO: delete later, here for crosswind function checking
-                put("Wind Velocity", randomDouble(0.0, 64.0))
+                put(WIND_VELOCITY, randomDouble(0.0, 64.0))
             }
 
             client.send(
                 Payload.PUBLISHPayload(
                     publishTopic,
-                    Geofence.circle(locations, 1.0),
+//                    Geofence.circle(locations, 1.0),
+                    PUBLISH_GEOFENCE,
                     newElem.toString()
                 )
             )
@@ -118,11 +118,11 @@ class OutdoorWeatherBrickletPublishingClient(){
             logger.info("Publishing at {} topic {}", locations, publishTopic)
             logger.debug("PubAck: {}", client!!.receive())
             sleep(100, 0)
-            logger.info("Sent message ${++i}: ${newElem.toString()}")
+            logger.info("Sent message ${++i} to ${address}: ${newElem.toString()} from ${stationID}")
 
         }
 
-        //sleep(10000, 0)
+        sleep(2000, 0)
 
         client!!.send(Payload.DISCONNECTPayload(ReasonCode.NormalDisconnection))
         client!!.tearDownClient()

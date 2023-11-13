@@ -1,4 +1,4 @@
-let warningMsgUrl ='http://192.168.0.125:8082/warningMessage';
-let subscriptionInputUrl = 'http://192.168.0.125:8082/subscriptionInput';
-let saveRuleUrl = 'http://192.168.0.125:8082/saveRules';
-let infoMsgUrl = 'http://192.168.0.125:8082/infoMessage';
+let warningMsgUrl ='http://localhost:8082/warningMessage';
+let subscriptionInputUrl = 'http://localhost:8082/subscriptionInput';
+let saveRuleUrl = 'http://localhost:8082/saveRules';
+let infoMsgUrl = 'http://localhost:8082/infoMessage';

@@ -1,8 +1,9 @@
 package de.hasenburg.geoverdemo.geoVER.kotlin.publisher
 
+import OutdoorWeatherBrickletPublishingClient
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
-import de.hasenburg.geoverdemo.multiRule.publisher.PublishingClient
+import kotlinx.coroutines.*
 import org.apache.logging.log4j.LogManager
 
 val PUBLISHER_ID = "Publisher ID"
@@ -18,12 +19,11 @@ private val logger = LogManager.getLogger()
 
 //todo: set the locations later
 
-
 //broker
 var PORT = 5559
-var ADDRESS = "localhost"
+var ADDRESS_AIRPORT = "localhost"
+var ADDRESS_WEATHER = "192.168.0.125"
 var REPEAT_TIME = 20
-
 
 //tinkerforge
 var TINKERFORGE_HOST= "localhost"
@@ -107,13 +107,22 @@ class PubConfiguration{
             logger.info("DEFAULT PUB_RADIUS {}", PUB_RADIUS)
         }
 
-        val addr = System.getenv("ADDRESS")
+        val addrWeather = System.getenv("ADDRESS_WEATHER")
 
-        if (addr != null) {
-            logger.info("ADDRESS: $addr")
-            ADDRESS = addr
+        if (addrWeather != null) {
+            logger.info("ADDRESS_WEATHER: $addrWeather")
+            ADDRESS_WEATHER = addrWeather
         } else {
-            logger.info("DEFAULT ADDRESS is: {}", ADDRESS)
+            logger.info("DEFAULT ADDRESS_WEATHER is: {}", ADDRESS_WEATHER)
+        }
+
+        val addrAirport = System.getenv("ADDRESS_AIRPORT")
+
+        if (addrAirport != null) {
+            logger.info("ADDRESS_AIRPORT: $addrAirport")
+            ADDRESS_AIRPORT = addrAirport
+        } else {
+            logger.info("DEFAULT ADDRESS_AIRPORT is: {}", ADDRESS_AIRPORT)
         }
 
         val port = System.getenv("PORT")
@@ -134,15 +143,31 @@ class PubConfiguration{
             logger.info("DEFAULT REPEAT_TIME is {}", REPEAT_TIME)
         }
     }
-
 }
 
 
-fun main(){
+@OptIn(DelicateCoroutinesApi::class)
+fun main()= runBlocking{
     PubConfiguration()
-    PublishingClient().startPublisherClient()
+    // normal publisher
+//    PublishingClient().startPublisherClient()
 
-    //get data from station 1
-//    OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID)
+    // tinkerforge publisher--station1
+    // OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID)
+    val job1 = GlobalScope.async {
+//        PublishingClient().startPublisherClient(ADDRESS_AIRPORT)
+        OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS_WEATHER)
+    }
 
+    val job2 = GlobalScope.async {
+        // Uncomment the following line if you want to run OutdoorWeatherBrickletPublishingClient
+        OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS_AIRPORT)
+//        PublishingClient().startPublisherClient(ADDRESS_WEATHER)
+    }
+
+    // Wait for both jobs to complete
+    job1.await()
+    job2.await()
 }
+
+
