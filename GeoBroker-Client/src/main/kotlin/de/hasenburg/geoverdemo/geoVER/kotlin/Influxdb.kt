@@ -5,6 +5,9 @@ import com.influxdb.annotations.Measurement
 import com.influxdb.client.domain.WritePrecision
 import com.influxdb.client.kotlin.InfluxDBClientKotlinFactory
 import de.hasenburg.geobroker.commons.model.message.Payload
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.TEMPERATURE
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.WIND_DIRECTION
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.WIND_VELOCITY
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
@@ -145,10 +148,20 @@ class InfluxDB{
 
             val jsonObject = JSONObject(messageContent)
 
-            val direction = jsonObject.get("Wind Direction") as Int
-            var speed = jsonObject.get("Wind Velocity") as Double
+            val direction = jsonObject.get(WIND_DIRECTION) as Int
+
+            var speed = (jsonObject.get(WIND_VELOCITY)).toString().toDouble()
             speed = String.format("%.2f", speed).toDouble()
-            val temp = jsonObject.get("Temperature") as Double
+
+            val temp = (jsonObject.get(TEMPERATURE)).toString().toDouble()
+
+
+
+
+
+
+
+
 //            val humidity = jsonObject.get("Humidity").toString()
 //            val timeSent = jsonObject.get("timeSent").toString()
 //            val publisherID = jsonObject.get("Publisher ID").toString()

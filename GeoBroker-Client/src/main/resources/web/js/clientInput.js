@@ -51,9 +51,9 @@ Vue.component('subscription-info', {
     },
     mounted() {
         const urlParams = new URLSearchParams(window.location.search);
+
         const input = urlParams.get('subscription');
         const rule = urlParams.get('ruleinput');
-
 
         this.infoText = JSON.parse(input);
         this.ruleText = JSON.parse(rule);
@@ -64,8 +64,9 @@ Vue.component('subscription-info', {
             const fieldLabels = {
                 topic: 'Topic',
                 repubTopic: 'Target Topic',
-                lat: 'Latitude',
-                lon: 'Longitude',
+                // lat: 'Latitude',
+                // lon: 'Longitude',
+                locationName: 'Location',
                 rad: 'Radius'
             };
             return fieldLabels[key] || key;

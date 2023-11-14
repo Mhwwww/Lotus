@@ -121,14 +121,15 @@ class TalkToXR {
         //val sensor = jsonObject.get("publisher ID").toString()
         val sensor = "live_demo_1"
         val direction = jsonObject.get(WIND_DIRECTION).toString()
-        var speed = jsonObject.get(WIND_VELOCITY) as Double
+
+        var speed = (jsonObject.get(WIND_VELOCITY)).toString().toDouble()
         speed = String.format("%.2f", speed).toDouble()
 
         val windData = WindData(
             direction = direction,
             directionType = "id",
             speed = speed,
-            speedType = "ms"
+            speedType = "kt"
         )
         val sensorData = SensorData(
             sensor = sensor,
@@ -145,7 +146,6 @@ class TalkToXR {
 }
 
 fun main(args: Array<String>) {
-    //val ruleArray= JSONArray()
     Configuration()
 
     val server = embeddedServer(Netty, port = PORT) {

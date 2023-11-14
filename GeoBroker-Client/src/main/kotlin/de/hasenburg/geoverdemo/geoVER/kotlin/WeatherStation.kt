@@ -195,9 +195,10 @@ fun runRuleSubscriber1(rule: UserSpecifiedRule) = runBlocking {
 }
 
 
-fun main () = runBlocking {
-    val rule = geoBrokerPara(InputEvent(topic= "info", repubTopic = "weather", lat = "0", lon = "0", rad = "80"))
-
-    runRuleSubscriber1(rule)
-
-}
+//fun main () = runBlocking {
+//
+//    val rule = geoBrokerPara(InputEvent(topic= "info", repubTopic = "weather", locationName = "Weather Station", rad = "80"))
+//
+//    runRuleSubscriber1(rule)
+//
+//}

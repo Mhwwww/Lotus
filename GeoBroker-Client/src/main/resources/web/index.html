@@ -11,9 +11,9 @@
 
 <body>
 
-    <center>
-        <img src="geover.jpg" width="740">
-    </center>
+<center>
+    <img src="geover.jpg" width="740">
+</center>
 
 
 <div class="event">
@@ -30,14 +30,26 @@
         <br/>
 
         <h2>Geofence</h2>
+<!--        <div class="Connection">-->
+<!--            <label for="event-lat">Latitude</label>-->
+<!--            <input type="text" id="event-lat" required>-->
+<!--        </div>-->
+<!--        <div class="Connection">-->
+<!--            <label for="event-lon">Longitude</label>-->
+<!--            <input type="text" id="event-lon" required>-->
+<!--        </div>-->
         <div class="Connection">
-            <label for="event-lat">Latitude</label>
-            <input type="text" id="event-lat" required>
+            <label for="event-location-name">Location</label>
+<!--            <input type="text" id="event-location-name" required>-->
+
+            <select id="event-location-name" class="dropbtn">
+                <option disabled selected></option>
+                <option value="Berlin Airport">Berlin Airport</option>
+                <option value="Schönhagen Airport">Schönhagen Airport</option>
+                <option value="Frankfurt Airport">Frankfurt Airport</option>
+            </select>
         </div>
-        <div class="Connection">
-            <label for="event-lon">Longitude</label>
-            <input type="text" id="event-lon" required>
-        </div>
+
         <div class="Connection">
             <label for="event-rad">Radius</label>
             <input type="text" id="event-rad" required>
@@ -51,8 +63,21 @@
     <ul id="event"></ul>
 </div>
 
-
 <div class="rule">
+<!--    <h1>Function</h1>-->
+<!--    <form class="rule-form">-->
+<!--        <div class="function-select">-->
+<!--            <label for="function-select"></label>-->
+<!--            <select id="function-select" class="dropbtn">-->
+<!--                <option disabled selected></option>-->
+<!--                <option value="crosswind">Crosswind Warning Generator</option>-->
+<!--                <option value="temperature">Temperature Warning Generator</option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--    </form>-->
+
+<!--    <br>-->
+
     <h1>Rules</h1>
     <form class="rule-form">
         <div class="Connection">
@@ -62,7 +87,7 @@
         <div class="Connection">
             <label for="operator-select">Operator</label>
             <select id="operator-select" class="dropbtn">
-                <option disabled selected> operator </option>
+                <option disabled selected> </option>
                 <option value="="> =</option>
                 <option value=">"> ></option>
                 <option value="<"> <</option>
@@ -77,7 +102,7 @@
         <div class="Connection">
             <label for="link-select">Connector</label>
             <select id="link-select" class="dropbtn">
-                <option disabled selected> </option>
+                <option disabled selected></option>
                 <option value=""> no connector</option>
                 <option value="AND"> and</option>
                 <option value="OR"> or</option>
@@ -104,7 +129,7 @@
 
 <div class="event">
     <div class="Connection">
-        <button class="show-warning" id="show-warning" style="float: right">Show Warnings</button>
+        <button class="show-warning" id="show-warnings" style="float: right">Show Warnings</button>
     </div>
 </div>
 

@@ -228,7 +228,6 @@
                             <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <manifest>
-                                    <!--<mainClass>de.hasenburg.geobroker.client.main.MultiFileClientKt</mainClass>-->
                                     <mainClass>de.hasenburg.geoverdemo.geoVER.kotlin.publisher.PubConfigurationKt</mainClass>
                                 </manifest>
                                 <manifestEntries>
@@ -239,6 +238,29 @@
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
                             <finalName>publisher</finalName>
+                        </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>weather</id>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <archive>
+                                <manifest>
+                                    <mainClass>de.hasenburg.geoverdemo.geoVER.kotlin.ConfigurationKt</mainClass>
+                                </manifest>
+                                <manifestEntries>
+                                    <Multi-Release>true</Multi-Release>
+                                </manifestEntries>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>weather</finalName>
                         </configuration>
                         <phase>package</phase>
                         <goals>

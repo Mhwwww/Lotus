@@ -14,8 +14,6 @@ import kotlinx.serialization.json.Json
 import org.json.JSONObject
 import java.io.File
 
-
-
 fun Application.applyRouting(){
     routing {
         //static page for localhost:8081/index.html
@@ -47,6 +45,7 @@ fun Application.applyRouting(){
                 // the file to save use input rules
 //                val file = File("./GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/saverule.json")
                 val file = File(SAVE_RULES_JSON_PATH)
+                println(json)
 
                 // clear file
                 file.writeText("")
@@ -54,7 +53,7 @@ fun Application.applyRouting(){
 
             } catch (e: Exception) {
                 val errorMessage = e.message ?: "Unknown error"
-                call.respond(status = HttpStatusCode.BadRequest, ErrorResponseRule(errorMessage))
+                call.respond(status = HttpStatusCode.InternalServerError, ErrorResponseRule(errorMessage))
             }
         }
 
@@ -121,9 +120,7 @@ fun Application.applyRouting(){
 //        }
 
 
-//        options("/saveRules") {
-//            call.respond(HttpStatusCode.OK)
-//        }
+
 
 //        options("/warningMessage/{timeSent}") {
 //            call.respond(HttpStatusCode.OK)

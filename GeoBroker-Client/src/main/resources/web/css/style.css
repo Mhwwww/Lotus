@@ -187,11 +187,11 @@ table {
   border-collapse: separate;
   border-spacing: 20px;
 }
-.show-warning{
+.show-warnings{
   background-color: #147027E0;
 }
 
-.show-warning:hover{
+.show-warnings:hover{
   background-color: #4CAF50;
 }
 /*selector*/

@@ -1,8 +1,8 @@
 package de.hasenburg.geoverdemo.geoVER.kotlin.publisher
 
+import OutdoorWeatherBrickletPublishingClient
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
-import de.hasenburg.geoverdemo.multiRule.publisher.PublishingClient
 import kotlinx.coroutines.*
 import org.apache.logging.log4j.LogManager
 
@@ -21,8 +21,9 @@ private val logger = LogManager.getLogger()
 
 //broker
 var PORT = 5559
-var ADDRESS_AIRPORT = "localhost"
-var ADDRESS_WEATHER = "192.168.0.125"
+var ADDRESS = "localhost"
+var ADDRESS_WEATHER = "192.168.0.125"//todo: if could work with 1 broker, then delete
+
 var REPEAT_TIME = 20
 
 //tinkerforge
@@ -38,10 +39,11 @@ var PUB_TOPIC = "info"
 var PUB_RADIUS = 2.0
 var PUB_INTERVAL: Long = 300 //ms
 // locations for different publishers
-val SCHOENHAGEN_AIRPORT = Geofence.circle(Location(0.0, 0.0), 2.0)
-val BER_AIRPORT = Geofence.circle(Location(10.0,20.0), 5.0)
-val FRANKFURT_AIRPORT = Geofence.circle(Location(30.0, 50.0), 10.0)
+val SCHOENHAGEN_AIRPORT = Geofence.circle(Location(1.0, 1.0), PUB_RADIUS)
+val BER_AIRPORT = Geofence.circle(Location(10.0,20.0), PUB_RADIUS)
+val FRANKFURT_AIRPORT = Geofence.circle(Location(30.0, 50.0), PUB_RADIUS)
 
+val WEATHER_STATION = Geofence.circle(Location(0.0, 0.0), PUB_RADIUS)
 
 var PUBLISH_GEOFENCE = SCHOENHAGEN_AIRPORT
 
@@ -74,13 +76,13 @@ class PubConfiguration{
             logger.info("PUBLISH_GEOFENCE: $pubGeofence")
 
             when (pubGeofence) {
-                "Berlin Airport" -> {
+                "Berlin" -> {
                     PUBLISH_GEOFENCE = BER_AIRPORT
                 }
-                "Schoenhagen Airport", "Schönhagen Airport" -> {
+                "Schoenhagen", "Schönhagen Airport" -> {
                     PUBLISH_GEOFENCE = SCHOENHAGEN_AIRPORT
                 }
-                "Frankfurt Airport" -> {
+                "Frankfurt" -> {
                     PUBLISH_GEOFENCE = FRANKFURT_AIRPORT
                 }
             }
@@ -120,9 +122,9 @@ class PubConfiguration{
 
         if (addrAirport != null) {
             logger.info("ADDRESS_AIRPORT: $addrAirport")
-            ADDRESS_AIRPORT = addrAirport
+            ADDRESS = addrAirport
         } else {
-            logger.info("DEFAULT ADDRESS_AIRPORT is: {}", ADDRESS_AIRPORT)
+            logger.info("DEFAULT ADDRESS_AIRPORT is: {}", ADDRESS)
         }
 
         val port = System.getenv("PORT")
@@ -142,6 +144,7 @@ class PubConfiguration{
         } else {
             logger.info("DEFAULT REPEAT_TIME is {}", REPEAT_TIME)
         }
+
     }
 }
 
@@ -150,24 +153,10 @@ class PubConfiguration{
 fun main(){
     PubConfiguration()
     // normal publisher
-    PublishingClient().startPublisherClient(ADDRESS_AIRPORT)
+//    PublishingClient().startPublisherClient(ADDRESS)
 
-//    // tinkerforge publisher--station1
-//    // OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID)
-//    val job1 = GlobalScope.async {
-////        PublishingClient().startPublisherClient(ADDRESS_AIRPORT)
-//        OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS_WEATHER)
-//    }
-//
-//    val job2 = GlobalScope.async {
-//        // Uncomment the following line if you want to run OutdoorWeatherBrickletPublishingClient
-//        OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS_AIRPORT)
-////        PublishingClient().startPublisherClient(ADDRESS_WEATHER)
-//    }
-//
-//    // Wait for both jobs to complete
-//    job1.await()
-//    job2.await()
+    //tinkerforge
+    OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS)
 }
 
 

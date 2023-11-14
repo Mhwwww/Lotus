@@ -7,30 +7,42 @@ const ruleList = document.getElementById('rule-list');
 const addRuleButton = document.getElementById('add-rule');
 const saveRulesButton = document.getElementById('save-rules');
 
+// let functionSelectionInput = document.getElementById('function-select')
+
+
 let rules = [];
 
 addRuleButton.addEventListener('click', (event) => {
     event.preventDefault();
 
     let link = ruleLinkInput.value
+    // let functionName = functionSelectionInput.value
+
     if (link ==="Select a Link") {
         link = '';
     }
+    // if(functionName === "Crosswind Warning Generator"|| functionName === ""){
+    //     functionName = 'crosswind'
+    // }else if(functionName === "Temperature Warning Generator"){
+    //     functionName = 'temperature'
+    // }
 
   const rule = {
         topic: ruleTopicInput.value,
         operator: ruleOperatorInput.value,
         constraints: ruleConstraintsInput.value,
         link: link,
+        // functionName: functionName,
     };
 
     rules.push(rule);
     renderRules();
 
     ruleTopicInput.value = '';
-    ruleOperatorInput.value = 'Select an Operator';
+    ruleOperatorInput.value = '';
     ruleConstraintsInput.value = '';
-    ruleLinkInput.value = 'Select a Link';
+    ruleLinkInput.value = '';
+    // functionSelectionInput = '';
 });
 
 saveRulesButton.addEventListener('click', () => {

@@ -1,20 +1,22 @@
 document.addEventListener('DOMContentLoaded', function () {
     const eventTopicInput = document.getElementById('event-topic');
     const eventRepTopicInput = document.getElementById('repub-topic');
-    const eventLatitudeInput = document.getElementById('event-lat');
-    const eventLongitudeInput = document.getElementById('event-lon');
+    // const eventLatitudeInput = document.getElementById('event-lat');
+    // const eventLongitudeInput = document.getElementById('event-lon');
+    const eventLocationNameInput = document.getElementById('event-location-name');
     const eventRadiusInput = document.getElementById('event-rad');
     //const showWarningButton = document.getElementById('show-warning');
 
-    const showWarningButton = document.querySelector('.event .Connection #show-warning');
+    const showWarningButton = document.querySelector('.event .Connection #show-warnings');
 
 
     let events = [];
     let inputEvent = {
         topic: "",
         repubTopic: "",
-        lat: "",
-        lon: "",
+        locationName: "",
+        // lat: "",
+        // lon: "",
         rad: ""
     };
 
@@ -26,8 +28,9 @@ document.addEventListener('DOMContentLoaded', function () {
         inputEvent = {
             topic: eventTopicInput.value,
             repubTopic: eventRepTopicInput.value,
-            lat: eventLatitudeInput.value,
-            lon: eventLongitudeInput.value,
+            locationName: eventLocationNameInput.value,
+            // lat: eventLatitudeInput.value,
+            // lon: eventLongitudeInput.value,
             rad: eventRadiusInput.value
         };
 

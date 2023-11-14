@@ -1,7 +1,10 @@
 package de.hasenburg.geoverdemo.geoVER.kotlin
 
+import InputEvent
+import geoBrokerPara
 import kotlinx.serialization.Serializable
 import org.apache.logging.log4j.LogManager
+import runRuleSubscriber1
 import java.io.File
 
 //configuration on raspis
@@ -11,7 +14,7 @@ import java.io.File
 
 var TINYFASS_PATH = "/Users/minghe/geobroker/tinyFaaS/"
 var FUNCTION_FILE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
-var SAVE_RULES_JSON_PATH = FUNCTION_FILE_PATH+"/saverule.json"
+var SAVE_RULES_JSON_PATH = FUNCTION_FILE_PATH+"/saverule.json/"
 
 
 var PORT = 8082
@@ -118,6 +121,13 @@ fun saveConfig(){
 
     println(content)
     configJsonFile.writeText(content)
+}
+
+fun main(){
+    Configuration()
+
+    val rule = geoBrokerPara(InputEvent(topic= "info", repubTopic = "weather", locationName = "Weather Station", rad = "80"))
+    runRuleSubscriber1(rule)
 }
 
 

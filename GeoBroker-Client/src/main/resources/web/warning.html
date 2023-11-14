@@ -14,9 +14,9 @@
 </div>
 <div class="container">
     <div class="left" id="left-app">
-        <div >
+        <div>
             <subscription-info></subscription-info>
-    </div>
+        </div>
 
 
     </div>
@@ -25,14 +25,14 @@
     <div class="right" id="right-app">
         <div class="buttonTogether">
             <button @click="reloadPage()" class="warning">Show Warnings</button>
-            <button @click="showInfo()" class="result" >Show information</button>
+            <button @click="showInfo()" class="result">Show information</button>
         </div>
 
-     <div class="background">
-        <component :is="currentComponent"></component>
-    </div>
+        <div class="background">
+            <component :is="currentComponent"></component>
+        </div>
 
-<!--        <warning-list></warning-list>-->
+        <!--        <warning-list></warning-list>-->
 
     </div>
 </div>

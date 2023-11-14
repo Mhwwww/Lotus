@@ -39,8 +39,15 @@ input[type="text"], .Connection input[type="number"]{
   box-sizing: border-box;
   font-size: 16px;
   padding: 10px;
-  width: 100%;
+  width: 250px;
+  margin-right: 10px;
 }
+.event .Connection .dropbtn{
+  width: 250px;
+  margin-right: 10px;
+}
+
+
 
 .dropdown {
   position: relative;
@@ -52,7 +59,7 @@ input[type="text"], .Connection input[type="number"]{
 }
 
 .dropbtn {
-  color: grey;
+  color: black;
   padding: 10px;
   font-size: 16px;
   cursor: pointer;

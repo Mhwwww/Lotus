@@ -46,7 +46,6 @@ class OutdoorWeatherBrickletPublishingClient(){
 
         val processManager = ZMQProcessManager()
 
-//        val client = SimpleClient(ADDRESS, PORT)
         val client = SimpleClient(address, PORT)
         client.send(Payload.CONNECTPayload(locations))
 
@@ -81,8 +80,6 @@ class OutdoorWeatherBrickletPublishingClient(){
             val windSpeed = outdoorWeatherBrickletStationData.windSpeed //mps
             val windDirection = outdoorWeatherBrickletStationData.windDirection
 
-            logger.error(windDirection)
-
             //val windDirection = outdoorWeatherBrickletStationData.windDirection
 //        val gustSpeed = outdoorWeatherBrickletStationData.gustSpeed
 //        val rain = outdoorWeatherBrickletStationData.rain
@@ -99,7 +96,8 @@ class OutdoorWeatherBrickletPublishingClient(){
                 put(TEMPERATURE, temperature/10.0)
                 put(HUMIDITY, humidity/1.0)
                 // todo: need to expand values of wind speed
-                put("Wind Speed", windSpeed/1.0)//sensor value --> 1 meter per second = 1.94384449 knot
+//                put(WIND_VELOCITY, windSpeed * 1.94)//sensor value --> 1 meter per second = 1.94384449 knot
+
                 put(WIND_DIRECTION, windDirection)
 
                 //TODO: delete later, here for crosswind function checking

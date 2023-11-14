@@ -77,7 +77,7 @@ class PublishingClient(){
 
 fun main(){
     val publishClient = PublishingClient()
-    publishClient.startPublisherClient(ADDRESS_AIRPORT)
+    publishClient.startPublisherClient(ADDRESS)
 }
 
 
