@@ -9,7 +9,6 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
-import de.hasenburg.geoverdemo.geoVER.kotlin.*
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.BER_AIRPORT
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.FRANKFURT_AIRPORT
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.SCHOENHAGEN_AIRPORT
@@ -18,41 +17,36 @@ import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.json.JSONArray
 import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
 import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
 
-var warningArray = JSONArray()
-var infoArray = JSONArray()
+var weatherWarningArray = JSONArray()
+var weatherInfoArray = JSONArray()
 
-val matchingTopics = mutableListOf<Topic>()
+const val WEATHER_STATION_HOST = "localhost"
+const val WEATHER_STATION_PORT = 5559
 
+const val WEATHER_INFO_TOPIC = "info"
+const val WEATHER_WARNING_TOPIC = "weather"
 
-val talkToXR = TalkToXR()
-val influxdb = InfluxDB()
+const val WEATHER_INFO_BUCKET = "allInfo"
+const val WEATHER_WARNING_BUCKET = "allWarning"
 
-const val CROSSWIND_HOST = "localhost"
-const val CROSSWIND_PORT = 5559
-const val TINYFAAS_BASE_URL = "http://localhost:80/"
-
-class RunGeoVER(private val loc: Location, private val topic: Topic, private val name: String) {
+class WeatherStation(private val loc: Location, private val topic: Topic, private val name: String) {
     private val logger = LogManager.getLogger()
 
     private var cancel = false
     private lateinit var client: SimpleClient
     private lateinit var processManager: ZMQProcessManager
 
-    private var warningUrl = URL(WARNING_URL)
-    private var infoUrl = URL(INFO_URL)
     fun prepare() {
         setLogLevel(this.logger, Level.DEBUG)
         logger.debug("{}: Subscribing to {} at {}", name, topic, loc)
 
         this.processManager = ZMQProcessManager()
-        this.client = SimpleClient(CROSSWIND_HOST, CROSSWIND_PORT, identity = "CrossWindSub_${name}_${System.currentTimeMillis()}")
+        this.client = SimpleClient(WEATHER_STATION_HOST, WEATHER_STATION_PORT, identity = "Weather_Station_Sub_${name}_${System.currentTimeMillis()}")
 
         logger.debug("{}: sending connect with client id {}", name, client.identity)
 
@@ -66,7 +60,7 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
         logger.info("{}: Subscribed to {} at {} with raduis {}", name, topic, loc, radius)
     }
 
-    suspend fun run() {
+    fun run() {
         logger.info("{}: Running subscriber for {} at {}", name, topic, loc)
 
         while (!this.cancel) {
@@ -78,25 +72,19 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
             if (message is Payload.PUBLISHPayload) {
                 // add priority to message content, and set it to Boolean
                 // if it is "info", set to be 'false', if it is warning, then true
-                if (processMessage(message)) { // warning messages
+                if (processMessage1(message)) { // warning messages
 
-                    reformatEvents(message, warningArray)
-                    postEvents(warningUrl, message.content)
+                    reformatEvents1(message, weatherWarningArray)
                     //store warnings in Bucket_warning
-                    influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
+                    influxdb.writeMsgToInfluxDB(message, WEATHER_WARNING_BUCKET)
 //                    influxdb.writeToInfluxDB(reformatMsg, WARNING_BUCKET)
 
-                    //send warning to DT
-                    //sendMsgToDT(message.content)
                 } else {
-                    val info = reformatEvents(message, infoArray)
-                    postEvents(infoUrl, message.content)
+                    val info = reformatEvents1(message, weatherInfoArray)
+
                     //store info in Bucket_info
-                    influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
+                    influxdb.writeMsgToInfluxDB(message, WEATHER_INFO_BUCKET)
 //                    influxdb.writeToInfluxDB(info, INFO_BUCKET)
-                    //send info to DT
-                    //TODO: enable when finishing Influxdb
-                    sendMsgToDT(message.content)
                 }
             }
         }
@@ -111,7 +99,7 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
     }
 }
 
-fun reformatEvents(message: Payload.PUBLISHPayload, array: JSONArray): String {
+fun reformatEvents1(message: Payload.PUBLISHPayload, array: JSONArray): String {
     val locJson = JSONObject()
     val sentJson = JSONObject()
     val msgLocation = message.geofence
@@ -142,22 +130,11 @@ fun reformatEvents(message: Payload.PUBLISHPayload, array: JSONArray): String {
     logger.debug("The Number of {} Event is: {}", message.topic.topic, array.length())
 
     return array.toString()
-}
-fun postEvents(url: URL, inputJsonArray: String) {
-    val connection = url.openConnection() as HttpURLConnection
-    connection.requestMethod = "POST"
-    connection.setRequestProperty("Content-Type", "application/json")
-    connection.doOutput = true
 
-    val output = connection.outputStream
-    output.write(inputJsonArray.toByteArray(Charsets.UTF_8))
-    output.flush()
-    output.close()
-
-    connection.connect()
-    connection.disconnect()
+//    return sentJson.toString()
 }
-fun addPriority(message: Payload.PUBLISHPayload, priority: Boolean): String {
+
+fun addPriority1(message: Payload.PUBLISHPayload, priority: Boolean): String {
     val msgContent = message.content
     val contentWithPriority = JSONObject(msgContent).put("Priority", priority)
     message.content = contentWithPriority.toString()
@@ -165,45 +142,39 @@ fun addPriority(message: Payload.PUBLISHPayload, priority: Boolean): String {
     return message.content
 }
 
-fun processMessage(message: Payload.PUBLISHPayload): Boolean {
-    if (matchingTopics.contains(message.topic)){
-        addPriority(message, true)
+fun processMessage1(message: Payload.PUBLISHPayload): Boolean {
+    if (message.topic.topic==WEATHER_WARNING_TOPIC){
+        addPriority1(message, true)
         logger.error(JSONObject(message.content).get("Priority") is Boolean)
         return true
-    } else if (message.topic.topic == publishTopic.topic){
-        addPriority(message, false)
+    } else if (message.topic.topic == WEATHER_INFO_TOPIC){
+        addPriority1(message, false)
         return false
     }
 
     logger.error("Fail to add priority! Do not find the matching topic for either info or warning")
     return false
 }
-suspend fun sendMsgToDT(msg:String){
-    //todo: modify direction later
-    talkToXR.sendWarning(msg)
-    logger.debug("The Message Send To DT is: {}", msg)
-}
-fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
+
+fun runRuleSubscriber1(rule: UserSpecifiedRule) = runBlocking {
     setLogLevel(logger, Level.DEBUG)
 
     val bridgeManager = BridgeManager()
     bridgeManager.createNewRule(rule)
 
-    val subscribers = mutableListOf<RunGeoVER>()
-    logger.debug(locations)
+    val subscribers = mutableListOf<WeatherStation>()
+    val location = Location(rule.geofences[0].center.lat, rule.geofences[0].center.lon)
+
     // prepare subscribers
-    val newS = RunGeoVER(locations, rule.topic, rule.topic.topic)
+    val newS = WeatherStation(location, rule.topic, rule.topic.topic)
     subscribers.add(newS)
 
     newS.prepare()
 
     // subscriber for the matching topic
-    val newS2 = RunGeoVER(locations, matchingTopic, matchingTopic.topic)
+    val newS2 = WeatherStation(location, rule.matchingTopic, rule.matchingTopic.topic)
     subscribers.add(newS2)
     newS2.prepare()
-    matchingTopics.add(rule.matchingTopic)
-
-    logger.debug(matchingTopics)
 
     subscribers.forEach {
         thread {
@@ -221,4 +192,12 @@ fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
     }
 
     bridgeManager.deleteRule(rule)
+}
+
+
+fun main () = runBlocking {
+    val rule = geoBrokerPara(InputEvent(topic= "info", repubTopic = "weather", lat = "0", lon = "0", rad = "80"))
+
+    runRuleSubscriber1(rule)
+
 }

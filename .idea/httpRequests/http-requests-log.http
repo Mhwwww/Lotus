@@ -1,3 +1,23 @@
+POST http://192.168.0.125:8000/read
+Content-Type: application/json
+
+{
+"topic":"info",
+"location":{"lon":0.0,"lat":0.0},
+"message": {
+"Time Sent":281721188491680,
+"Temperature":51.56915443045522,
+"Wind Velocity":66.40571387840946,
+"Humidity":30.287551320931577,
+"Wind Direction":14
+}
+
+}
+
+<> 2023-11-13T143422.200.txt
+
+###
+
 POST http://localhost:8000/read
 Content-Type: application/json
 
@@ -850,24 +870,6 @@ Content-Type: application/json
     "Humidity":30.287551320931577,
     "Wind Direction":14
   }
-}
-
-###
-
-POST http://192.168.0.125:8000/read
-Content-Type: application/json
-
-{
-  "topic":"info",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-}
-
 }
 
 ###

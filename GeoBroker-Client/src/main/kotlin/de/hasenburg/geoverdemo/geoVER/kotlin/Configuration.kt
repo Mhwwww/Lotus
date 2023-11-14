@@ -103,8 +103,6 @@ fun saveConfig(){
     val configJsonFile = File("/Users/minghe/geobroker/GeoBroker-Client/src/main/resources/web/js/config.js")
 //    val configJsonFile = File("/home/pi/geover/Lotus/GeoBroker-Client/src/main/resources/web/js/config.js")
 
-
-
     INFO_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/infoMessage"
      WARNING_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/warningMessage"
 

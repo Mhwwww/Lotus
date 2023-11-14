@@ -4,6 +4,8 @@ import applyRouting
 import configureHTTP
 import configureMonitoring
 import de.hasenburg.geoverdemo.geoVER.kotlin.plugin.configureSerialization
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.WIND_DIRECTION
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.WIND_VELOCITY
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
@@ -118,8 +120,8 @@ class TalkToXR {
 
         //val sensor = jsonObject.get("publisher ID").toString()
         val sensor = "live_demo_1"
-        val direction = jsonObject.get("windDirection").toString()
-        var speed = jsonObject.get("windVelocity") as Double
+        val direction = jsonObject.get(WIND_DIRECTION).toString()
+        var speed = jsonObject.get(WIND_VELOCITY) as Double
         speed = String.format("%.2f", speed).toDouble()
 
         val windData = WindData(
@@ -133,19 +135,12 @@ class TalkToXR {
             wind = windData
         )
         val json = WebSocketMessage(
-            target = DT_ALL_EXCEPT_SELF_URL,
+            target = DT_ALL_URL,
             data = sensorData
         )
 
         val msg = Json.encodeToString(json)
         channel.send(msg)
-    }
-
-    public suspend fun sendRawString(message: String) {
-        if (!isClientRunning) {
-            startClient()
-        }
-        channel.send(message)
     }
 }
 
@@ -153,7 +148,6 @@ fun main(args: Array<String>) {
     //val ruleArray= JSONArray()
     Configuration()
 
-//    startTinyFaaS()
     val server = embeddedServer(Netty, port = PORT) {
         applyRouting()
         configureSerialization()

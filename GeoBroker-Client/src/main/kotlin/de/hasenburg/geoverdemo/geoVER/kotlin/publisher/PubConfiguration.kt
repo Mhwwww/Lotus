@@ -1,8 +1,8 @@
 package de.hasenburg.geoverdemo.geoVER.kotlin.publisher
 
-import OutdoorWeatherBrickletPublishingClient
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
+import de.hasenburg.geoverdemo.multiRule.publisher.PublishingClient
 import kotlinx.coroutines.*
 import org.apache.logging.log4j.LogManager
 
@@ -38,9 +38,9 @@ var PUB_TOPIC = "info"
 var PUB_RADIUS = 2.0
 var PUB_INTERVAL: Long = 300 //ms
 // locations for different publishers
-val SCHOENHAGEN_AIRPORT = Geofence.circle(Location(0.0, 0.0), PUB_RADIUS)
-val BER_AIRPORT = Geofence.circle(Location(10.0,20.0), PUB_RADIUS)
-val FRANKFURT_AIRPORT = Geofence.circle(Location(30.0, 50.0), PUB_RADIUS)
+val SCHOENHAGEN_AIRPORT = Geofence.circle(Location(0.0, 0.0), 2.0)
+val BER_AIRPORT = Geofence.circle(Location(10.0,20.0), 5.0)
+val FRANKFURT_AIRPORT = Geofence.circle(Location(30.0, 50.0), 10.0)
 
 
 var PUBLISH_GEOFENCE = SCHOENHAGEN_AIRPORT
@@ -147,27 +147,27 @@ class PubConfiguration{
 
 
 @OptIn(DelicateCoroutinesApi::class)
-fun main()= runBlocking{
+fun main(){
     PubConfiguration()
     // normal publisher
-//    PublishingClient().startPublisherClient()
+    PublishingClient().startPublisherClient(ADDRESS_AIRPORT)
 
-    // tinkerforge publisher--station1
-    // OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID)
-    val job1 = GlobalScope.async {
-//        PublishingClient().startPublisherClient(ADDRESS_AIRPORT)
-        OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS_WEATHER)
-    }
-
-    val job2 = GlobalScope.async {
-        // Uncomment the following line if you want to run OutdoorWeatherBrickletPublishingClient
-        OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS_AIRPORT)
-//        PublishingClient().startPublisherClient(ADDRESS_WEATHER)
-    }
-
-    // Wait for both jobs to complete
-    job1.await()
-    job2.await()
+//    // tinkerforge publisher--station1
+//    // OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID)
+//    val job1 = GlobalScope.async {
+////        PublishingClient().startPublisherClient(ADDRESS_AIRPORT)
+//        OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS_WEATHER)
+//    }
+//
+//    val job2 = GlobalScope.async {
+//        // Uncomment the following line if you want to run OutdoorWeatherBrickletPublishingClient
+//        OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS_AIRPORT)
+////        PublishingClient().startPublisherClient(ADDRESS_WEATHER)
+//    }
+//
+//    // Wait for both jobs to complete
+//    job1.await()
+//    job2.await()
 }
 
 
