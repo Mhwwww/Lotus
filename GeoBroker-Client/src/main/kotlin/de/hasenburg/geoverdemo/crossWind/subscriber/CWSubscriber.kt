@@ -10,13 +10,12 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
-import de.hasenburg.geoverdemo.multiRule.common.locations
-import de.hasenburg.geoverdemo.multiRule.common.matchingTopic
-import de.hasenburg.geoverdemo.multiRule.common.publishTopic
+import de.hasenburg.geoverdemo.crossWind.common.locations
+import de.hasenburg.geoverdemo.crossWind.common.matchingTopic
+import de.hasenburg.geoverdemo.crossWind.common.publishTopic
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
-import org.json.JSONObject
 import java.io.File
 import kotlin.concurrent.thread
 import kotlin.system.exitProcess
@@ -33,7 +32,7 @@ class CWSubscriber(private val loc: Location, private val topic: Topic, private 
         logger.debug("{}: Subscribing to {} at {}", name, topic, loc)
 
         this.processManager = ZMQProcessManager()
-        this.client = SimpleClient("localhost", 5559, identity = " RuleJsonSub_${name}")
+        this.client = SimpleClient("192.168.0.172", 5559, identity = " RuleJsonSub_${name}")
 
         logger.debug("{}: sending connect with client id {}", name,  client.identity)
 
@@ -54,13 +53,13 @@ class CWSubscriber(private val loc: Location, private val topic: Topic, private 
             // receive one message
             logger.debug("{}: Waiting for message", name)
             val message = this.client.receive()
-            val timeReceived = System.nanoTime()
+            //val timeReceived = System.nanoTime()
             logger.debug("{}: Relevant Message: {}", name, message)
             if (message is Payload.PUBLISHPayload) {
-                val timeSent = JSONObject(message.content).getLong("timeSent")
-                logger.info("{}: Time for topic {} difference: {}", name, message.topic, timeReceived - timeSent)
+                //val timeSent = JSONObject(message.content).getLong("timeSent")
+                //logger.info("{}: Time for topic {} difference: {}", name, message.topic, timeReceived - timeSent)
 
-                if (message.topic.topic == "warnings"){
+                if (message.topic.topic == "weather"){
                     logger.error("The content is{}", message)
                 }
 
@@ -80,7 +79,7 @@ class CWSubscriber(private val loc: Location, private val topic: Topic, private 
 fun main() = runBlocking {
     setLogLevel(logger, Level.DEBUG)
     // Geofence.circle(Location(0.0,0.0), 350.0)
-    val newRule = UserSpecifiedRule(locations.map { Geofence.circle(it, 2.0) }, publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"), "nodejs", matchingTopic)
+    val newRule = UserSpecifiedRule(locations.map { Geofence.circle(it, 80.0) }, publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crosswind/subscriber/ruleJson/"), "nodejs", matchingTopic)
 
     val bridgeManager = BridgeManager()
     bridgeManager.createNewRule(newRule)
@@ -95,7 +94,7 @@ fun main() = runBlocking {
         newS.prepare()
 
         // also prepare a subscriber for the matching topic
-        val newS2 = CWSubscriber(it, matchingTopic, "warnings_${i}")
+        val newS2 = CWSubscriber(it, matchingTopic, "weather_${i}")
         subscribers.add(newS2)
         newS2.prepare()
 

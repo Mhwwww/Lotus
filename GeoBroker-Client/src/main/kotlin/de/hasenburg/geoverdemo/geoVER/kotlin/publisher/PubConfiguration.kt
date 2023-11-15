@@ -1,8 +1,8 @@
 package de.hasenburg.geoverdemo.geoVER.kotlin.publisher
 
-import OutdoorWeatherBrickletPublishingClient
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
+import de.hasenburg.geoverdemo.multiRule.publisher.PublishingClient
 import kotlinx.coroutines.*
 import org.apache.logging.log4j.LogManager
 
@@ -14,35 +14,27 @@ val WIND_SPEED = "Wind Speed"
 val WIND_DIRECTION = "Wind Direction"
 val WIND_VELOCITY = "Wind Velocity"
 
-
 private val logger = LogManager.getLogger()
-
-//todo: set the locations later
-
 //broker
 var PORT = 5559
-var ADDRESS = "localhost"
-var ADDRESS_WEATHER = "192.168.0.125"//todo: if could work with 1 broker, then delete
-
+var ADDRESS = "192.168.0.172"
 var REPEAT_TIME = 20
 
 //tinkerforge
-var TINKERFORGE_HOST= "localhost"
+var TINKERFORGE_HOST= "192.168.0.172"
 var TINKERFORGE_PORT= 4223
-
 var UID_OUTDOORWEATHER = "ZPd"
-
 var STATION_ID = 143
 
 //publisher
 var PUB_TOPIC = "info"
 var PUB_RADIUS = 2.0
-var PUB_INTERVAL: Long = 300 //ms
+var PUB_INTERVAL: Long = 1000 //ms
+
 // locations for different publishers
 val SCHOENHAGEN_AIRPORT = Geofence.circle(Location(1.0, 1.0), PUB_RADIUS)
 val BER_AIRPORT = Geofence.circle(Location(10.0,20.0), PUB_RADIUS)
 val FRANKFURT_AIRPORT = Geofence.circle(Location(30.0, 50.0), PUB_RADIUS)
-
 val WEATHER_STATION = Geofence.circle(Location(0.0, 0.0), PUB_RADIUS)
 
 var PUBLISH_GEOFENCE = SCHOENHAGEN_AIRPORT
@@ -83,7 +75,7 @@ class PubConfiguration{
                     PUBLISH_GEOFENCE = SCHOENHAGEN_AIRPORT
                 }
                 "Frankfurt" -> {
-                    PUBLISH_GEOFENCE = FRANKFURT_AIRPORT
+                    PUBLISH_GEOFENCE = BER_AIRPORT
                 }
             }
 
@@ -109,14 +101,6 @@ class PubConfiguration{
             logger.info("DEFAULT PUB_RADIUS {}", PUB_RADIUS)
         }
 
-        val addrWeather = System.getenv("ADDRESS_WEATHER")
-
-        if (addrWeather != null) {
-            logger.info("ADDRESS_WEATHER: $addrWeather")
-            ADDRESS_WEATHER = addrWeather
-        } else {
-            logger.info("DEFAULT ADDRESS_WEATHER is: {}", ADDRESS_WEATHER)
-        }
 
         val addrAirport = System.getenv("ADDRESS_AIRPORT")
 
@@ -153,10 +137,10 @@ class PubConfiguration{
 fun main(){
     PubConfiguration()
     // normal publisher
-//    PublishingClient().startPublisherClient(ADDRESS)
+    PublishingClient().startPublisherClient(ADDRESS)
 
     //tinkerforge
-    OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS)
+//    OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS)
 }
 
 

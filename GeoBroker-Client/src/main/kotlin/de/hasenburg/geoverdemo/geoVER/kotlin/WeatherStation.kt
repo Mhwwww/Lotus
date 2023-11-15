@@ -25,7 +25,7 @@ private val logger = LogManager.getLogger()
 var weatherWarningArray = JSONArray()
 var weatherInfoArray = JSONArray()
 
-const val WEATHER_STATION_HOST = "localhost"
+const val WEATHER_STATION_HOST = "192.168.0.172"
 const val WEATHER_STATION_PORT = 5559
 
 const val WEATHER_INFO_TOPIC = "info"
@@ -33,6 +33,7 @@ const val WEATHER_WARNING_TOPIC = "weather"
 
 const val WEATHER_INFO_BUCKET = "allInfo"
 const val WEATHER_WARNING_BUCKET = "allWarning"
+
 
 class WeatherStation(private val loc: Location, private val topic: Topic, private val name: String) {
     private val logger = LogManager.getLogger()
@@ -76,14 +77,14 @@ class WeatherStation(private val loc: Location, private val topic: Topic, privat
 
                     reformatEvents1(message, weatherWarningArray)
                     //store warnings in Bucket_warning
-                    influxdb.writeMsgToInfluxDB(message, WEATHER_WARNING_BUCKET)
+//                    influxdb.writeMsgToInfluxDB(message, WEATHER_WARNING_BUCKET)
 //                    influxdb.writeToInfluxDB(reformatMsg, WARNING_BUCKET)
 
                 } else {
                     val info = reformatEvents1(message, weatherInfoArray)
 
                     //store info in Bucket_info
-                    influxdb.writeMsgToInfluxDB(message, WEATHER_INFO_BUCKET)
+//                    influxdb.writeMsgToInfluxDB(message, WEATHER_INFO_BUCKET)
 //                    influxdb.writeToInfluxDB(info, INFO_BUCKET)
                 }
             }
@@ -178,9 +179,7 @@ fun runRuleSubscriber1(rule: UserSpecifiedRule) = runBlocking {
 
     subscribers.forEach {
         thread {
-            runBlocking {
                 it.run()
-            }
         }
     }
 

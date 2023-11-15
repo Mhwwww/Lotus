@@ -12,7 +12,7 @@ import java.io.DataOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-const val GEOBROKER_HOST = "localhost"
+const val GEOBROKER_HOST = "192.168.0.172"
 const val GEOBROKER_PORT = 5559
 const val TINYFAAS_BASE_URL = "http://localhost:8000/"
 
@@ -32,10 +32,13 @@ fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: List<Geofence>, 
         identity = "TinyFaaSClient_$functionName"
         )
 
-//    val geofence = Geofence.circle(locations, 2.0)    //var geofence = Geofence.world() // if we don't care about geofence
-    val geofence = Geofence.circle(locations, radius)
+
+    val geofence = Geofence.circle(locations, radius) // locations and radius from Application.kt
+
+//    var geofence = Geofence.world()
+
     // 1. simple client(here is a subscriber) connect to broker at a specific location.
-    client.send(Payload.CONNECTPayload(geofence.center))    //geofence.center is Location
+    client.send(Payload.CONNECTPayload(geofence.center))
     logger.debug("ConnAck: {}", client.receive())
 
     // 2. subscriber send subscription to broker.
@@ -129,7 +132,7 @@ fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: List<Geofence>, 
 
     val responseCode = connection.responseCode
 
-//    logger.debug("Response code from TinyFaaS: {}", responseCode)
+    logger.warn("Response code from TinyFaaS: {}", responseCode)
 
     val inputStream = connection.inputStream
     val response = inputStream.bufferedReader().use { it.readText() }

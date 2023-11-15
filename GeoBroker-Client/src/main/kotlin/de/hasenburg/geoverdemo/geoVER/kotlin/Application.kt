@@ -64,7 +64,6 @@ fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
 
         locations = Location(lat,lon)
 
-//        locations = Location(inputEvent.lat.toDouble(), inputEvent.lon.toDouble())
         radius = inputEvent.rad.toDouble()
 
         logger.info(publishTopic)

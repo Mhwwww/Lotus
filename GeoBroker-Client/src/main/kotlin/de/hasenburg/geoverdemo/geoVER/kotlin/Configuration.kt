@@ -10,29 +10,29 @@ import java.io.File
 //configuration on raspis
 //var TINYFASS_PATH ="/home/pi/Documents/tinyFaaS/"
 //var FUNCTION_FILE_PATH="/home/pi/geover/Lotus/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
-
+//todo: Broker host & port configuration
 
 var TINYFASS_PATH = "/Users/minghe/geobroker/tinyFaaS/"
 var FUNCTION_FILE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
 var SAVE_RULES_JSON_PATH = FUNCTION_FILE_PATH+"/saverule.json/"
 
+//ktor
+var KTOR_PORT = 8082
+var KTOR_ADDRESS = "localhost"
 
-var PORT = 8082
-var IP_ADDRESS = "localhost"
+var INFO_URL = "http://"+ KTOR_ADDRESS+":"+ KTOR_PORT+"/infoMessage"
+var WARNING_URL = "http://"+ KTOR_ADDRESS+":"+ KTOR_PORT+"/warningMessage"
 
-var INFO_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/infoMessage"
-var WARNING_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/warningMessage"
+var SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ KTOR_ADDRESS+":"+ KTOR_PORT+"/subscriptionInput"
+var RULES_FRONTEND_INPUT_URL = "http://"+ KTOR_ADDRESS+":"+ KTOR_PORT+"/saveRules"
 
-var SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/subscriptionInput"
-var RULES_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/saveRules"
-
-
-val URL = "http://localhost:8086"
+//influx_db
+val URL = "http://192.168.0.172:8086"
 val ORGANIZATION = "geover"
 val WARNING_BUCKET = "warning"
 val INFO_BUCKET = "info"
 
-val TOKEN =
+var TOKEN =
     "cDcQwBEUylxWSIYO6t5R4Wx9Id2kbLw-Vs87Wozn649_6QTYcuQCnS5Hu0UBhCBWpmdzoAUH1B7h9ZDN2SxjKw==".toCharArray()
 
 private val logger = LogManager.getLogger()
@@ -47,6 +47,15 @@ data class ConfigData(
 class Configuration {
     init {
         logger.info("Hello from the Configuration init")
+
+        val influxdbToken = System.getenv("TOKEN")
+        if (influxdbToken!=null){
+            logger.info("TOKEN: $influxdbToken")
+            TOKEN = influxdbToken.toCharArray()
+        }else {
+            logger.info("DEFAULT InfluxDB Token is {}",TOKEN)
+        }
+
 
         val tinyFaasPath = System.getenv("TINYFAAS_PATH")
 
@@ -80,23 +89,23 @@ class Configuration {
 
         if (port != null) {
             logger.info("PORT: $port")
-            PORT = port.toIntOrNull()!!
+            KTOR_PORT = port.toIntOrNull()!!
 
         } else {
-            logger.info("DEFAULT PORT {}", PORT)
+            logger.info("DEFAULT PORT {}", KTOR_PORT)
         }
 
         val address = System.getenv("ADDRESS")
 
         if (address != null) {
             logger.info("ADDRESS: $address")
-            IP_ADDRESS = address
+            KTOR_ADDRESS = address
 
         } else {
-            logger.info("DEFAULT ADDRESS {}", IP_ADDRESS)
+            logger.info("DEFAULT ADDRESS {}", KTOR_ADDRESS)
         }
 
-        saveConfig()
+        //saveConfig()
     }
 }
 
@@ -106,11 +115,11 @@ fun saveConfig(){
     val configJsonFile = File("/Users/minghe/geobroker/GeoBroker-Client/src/main/resources/web/js/config.js")
 //    val configJsonFile = File("/home/pi/geover/Lotus/GeoBroker-Client/src/main/resources/web/js/config.js")
 
-    INFO_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/infoMessage"
-     WARNING_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/warningMessage"
+    INFO_URL = "http://"+ KTOR_ADDRESS+":"+ KTOR_PORT+"/infoMessage"
+     WARNING_URL = "http://"+ KTOR_ADDRESS+":"+ KTOR_PORT+"/warningMessage"
 
-     SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/subscriptionInput"
-     RULES_FRONTEND_INPUT_URL = "http://"+ IP_ADDRESS+":"+ PORT+"/saveRules"
+     SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ KTOR_ADDRESS+":"+ KTOR_PORT+"/subscriptionInput"
+     RULES_FRONTEND_INPUT_URL = "http://"+ KTOR_ADDRESS+":"+ KTOR_PORT+"/saveRules"
 
     val content = """
         let warningMsgUrl ='$WARNING_URL';
@@ -120,13 +129,15 @@ fun saveConfig(){
     """.trimIndent()
 
     println(content)
-    configJsonFile.writeText(content)
+   // configJsonFile.writeText(content)
 }
 
 fun main(){
     Configuration()
 
     val rule = geoBrokerPara(InputEvent(topic= "info", repubTopic = "weather", locationName = "Weather Station", rad = "80"))
+//    val rule =  UserSpecifiedRule(Geofence.circle(WEATHER_STATION.center, 80.0), Topic(WEATHER_INFO_TOPIC), File(FUNCTION_FILE_PATH), "nodejs", Topic(WEATHER_WARNING_TOPIC))
+
     runRuleSubscriber1(rule)
 }
 

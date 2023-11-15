@@ -148,7 +148,7 @@ class TalkToXR {
 fun main(args: Array<String>) {
     Configuration()
 
-    val server = embeddedServer(Netty, port = PORT) {
+    val server = embeddedServer(Netty, port = KTOR_PORT) {
         applyRouting()
         configureSerialization()
         configureHTTP()

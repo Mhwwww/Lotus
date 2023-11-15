@@ -29,7 +29,8 @@ class BridgeManager {
         uploadFileToTinyFaaS(rule.jsFile, rule.env, functionName)
         //send subscription and get new topic set to be subscribed to
         GlobalScope.launch {
-                buildBridgeBetweenTopicAndFunction(rule.topic, rule.geofences, functionName, rule.matchingTopic)
+            logger.info("-------------------Start to build bridge-------------------")
+            buildBridgeBetweenTopicAndFunction(rule.topic, rule.geofences, functionName, rule.matchingTopic)
         }
         rulesList.add(rule)
     }

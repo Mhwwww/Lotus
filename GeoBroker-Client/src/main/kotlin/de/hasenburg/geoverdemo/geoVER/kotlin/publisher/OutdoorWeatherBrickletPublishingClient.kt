@@ -115,7 +115,7 @@ class OutdoorWeatherBrickletPublishingClient(){
 
             logger.info("Publishing at {} topic {}", locations, publishTopic)
             logger.debug("PubAck: {}", client!!.receive())
-            sleep(100, 0)
+            sleep(PUB_INTERVAL, 0)
             logger.info("Sent message ${++i} to ${address}: ${newElem.toString()} from ${stationID}")
 
         }

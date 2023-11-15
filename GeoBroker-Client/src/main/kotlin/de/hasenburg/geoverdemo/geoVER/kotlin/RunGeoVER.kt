@@ -9,7 +9,10 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
-import de.hasenburg.geoverdemo.geoVER.kotlin.*
+import de.hasenburg.geoverdemo.geoVER.kotlin.INFO_URL
+import de.hasenburg.geoverdemo.geoVER.kotlin.InfluxDB
+import de.hasenburg.geoverdemo.geoVER.kotlin.TalkToXR
+import de.hasenburg.geoverdemo.geoVER.kotlin.WARNING_URL
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.BER_AIRPORT
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.FRANKFURT_AIRPORT
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.SCHOENHAGEN_AIRPORT
@@ -34,7 +37,7 @@ val matchingTopics = mutableListOf<Topic>()
 val talkToXR = TalkToXR()
 val influxdb = InfluxDB()
 
-const val CROSSWIND_HOST = "localhost"
+const val CROSSWIND_HOST = "192.168.0.172"
 const val CROSSWIND_PORT = 5559
 const val TINYFAAS_BASE_URL = "http://localhost:80/"
 
@@ -81,22 +84,22 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
                 if (processMessage(message)) { // warning messages
 
                     reformatEvents(message, warningArray)
-                    postEvents(warningUrl, message.content)
-                    //store warnings in Bucket_warning
-                    influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
+//                    postEvents(warningUrl, message.content)
+//                    //store warnings in Bucket_warning
+//                    influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
 //                    influxdb.writeToInfluxDB(reformatMsg, WARNING_BUCKET)
 
                     //send warning to DT
                     //sendMsgToDT(message.content)
                 } else {
                     val info = reformatEvents(message, infoArray)
-                    postEvents(infoUrl, message.content)
-                    //store info in Bucket_info
-                    influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
-//                    influxdb.writeToInfluxDB(info, INFO_BUCKET)
-                    //send info to DT
-                    //TODO: enable when finishing Influxdb
-                    sendMsgToDT(message.content)
+//                    postEvents(infoUrl, message.content)
+//                    //store info in Bucket_info
+//                    influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
+////                    influxdb.writeToInfluxDB(info, INFO_BUCKET)
+//                    //send info to DT
+//                    //TODO: enable when finishing Influxdb
+//                    sendMsgToDT(message.content)
                 }
             }
         }
@@ -222,3 +225,9 @@ fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
 
     bridgeManager.deleteRule(rule)
 }
+//fun main(){
+//    Configuration()
+//
+//    val rule = geoBrokerPara(InputEvent(topic= "info", repubTopic = "weather", locationName = " WeatherStation", rad = "80"))
+//    runRuleSubscriber(rule)
+//}
