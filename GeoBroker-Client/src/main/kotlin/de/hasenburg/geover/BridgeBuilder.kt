@@ -4,7 +4,9 @@ import de.hasenburg.geobroker.client.main.SimpleClient
 import de.hasenburg.geobroker.commons.model.message.Payload
 import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
+import de.hasenburg.geobroker.commons.setLogLevel
 import locations
+import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.json.JSONObject
 import radius
@@ -12,16 +14,22 @@ import java.io.DataOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-const val GEOBROKER_HOST = "192.168.0.172"
+val GEOBROKER_HOST = "localhost"
 const val GEOBROKER_PORT = 5559
 const val TINYFAAS_BASE_URL = "http://localhost:8000/"
 
 private val logger = LogManager.getLogger()
 
 fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence:Geofence, functionName: String, newTopicIfMatch: Topic) {//for single geofence
+    setLogLevel(logger, Level.WARN)
+
     return buildBridgeBetweenTopicAndFunction(topic, listOf(geofence), functionName, newTopicIfMatch)
 }
 fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: List<Geofence>, functionName: String, newTopicIfMatch: Topic) {
+
+
+    setLogLevel(logger, Level.WARN)
+
     var eventNum = 0
     val newTopicSet = ArrayList<String>()
 
@@ -32,10 +40,9 @@ fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: List<Geofence>, 
         identity = "TinyFaaSClient_$functionName"
         )
 
-
     val geofence = Geofence.circle(locations, radius) // locations and radius from Application.kt
 
-//    var geofence = Geofence.world()
+//    var geofence = Geofence.world() //for Weather Station
 
     // 1. simple client(here is a subscriber) connect to broker at a specific location.
     client.send(Payload.CONNECTPayload(geofence.center))
@@ -51,6 +58,7 @@ fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: List<Geofence>, 
     // Every time client.recieve gets something it should be a PublishPayload()
     // Send out a request to the function everytime this happens
     while (true) {
+
         logger.debug(
             "ZMQ Client FunctionName={} Topic={} Geofences={} is waiting for a message to send",
             functionName,
@@ -83,6 +91,8 @@ fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: List<Geofence>, 
          * topic: drones
          * location: {lat: 123, lon: 456}
          */
+
+        setLogLevel(logger, Level.WARN)
         logger.debug(
             "ZMQ Client{} received message and will forward json {} to function {}",
             client.identity,
@@ -117,6 +127,8 @@ fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: List<Geofence>, 
     async: Boolean = true,
     contentType: String = "application/json"
 ): String {
+    setLogLevel(logger, Level.WARN)
+
     val url = URL("$TINYFAAS_BASE_URL$functionName")
     val connection = url.openConnection() as HttpURLConnection
 
@@ -132,7 +144,7 @@ fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: List<Geofence>, 
 
     val responseCode = connection.responseCode
 
-    logger.warn("Response code from TinyFaaS: {}", responseCode)
+    logger.info("Response code from TinyFaaS: {}", responseCode)
 
     val inputStream = connection.inputStream
     val response = inputStream.bufferedReader().use { it.readText() }

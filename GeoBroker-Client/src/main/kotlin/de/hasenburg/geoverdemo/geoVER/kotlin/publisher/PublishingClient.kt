@@ -45,7 +45,7 @@ class PublishingClient(){
                 put(TEMPERATURE, randomDouble(0.0, 60.0))
                 put(HUMIDITY, randomDouble(0.0, 60.0))
 
-                put(WIND_VELOCITY, randomDouble(0.0, 64.0))
+                put(WIND_VELOCITY, randomDouble(220.0, 300.0))
                 put(WIND_DIRECTION, 14)
             }
 

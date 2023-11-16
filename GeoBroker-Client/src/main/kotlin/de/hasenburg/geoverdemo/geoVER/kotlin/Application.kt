@@ -2,6 +2,7 @@
 import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
+import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.UserSpecifiedRule
 import de.hasenburg.geoverdemo.geoVER.kotlin.FUNCTION_FILE_PATH
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.BER_AIRPORT
@@ -9,6 +10,7 @@ import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.FRANKFURT_AIRPORT
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.SCHOENHAGEN_AIRPORT
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.WEATHER_STATION
 import kotlinx.serialization.Serializable
+import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import java.io.File
 
@@ -37,6 +39,8 @@ data class InputRule(val topic: String, val operator: String, val constraints: S
 data class ErrorResponseRule(val message: String)
 
 fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
+        setLogLevel(logger, Level.ERROR)
+
         var lat = 0.0
         var lon = 0.0
 

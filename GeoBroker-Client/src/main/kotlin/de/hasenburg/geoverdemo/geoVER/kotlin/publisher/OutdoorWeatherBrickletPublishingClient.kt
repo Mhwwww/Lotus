@@ -7,7 +7,6 @@ import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
 import de.hasenburg.geobroker.commons.model.message.Payload
 import de.hasenburg.geobroker.commons.model.message.ReasonCode
 import de.hasenburg.geobroker.commons.model.message.Topic
-import de.hasenburg.geobroker.commons.randomDouble
 import de.hasenburg.geobroker.commons.sleep
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.*
 import org.apache.logging.log4j.LogManager
@@ -16,7 +15,6 @@ import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
 //TODO: enable listener(current doesn't work)
-
 class OutdoorWeatherBrickletPublishingClient(){
     fun getStationData(stationID:Int): StationData {
         // Create IP connection--> Create device object--> Connect to brick daemon
@@ -77,7 +75,9 @@ class OutdoorWeatherBrickletPublishingClient(){
 
             val temperature = outdoorWeatherBrickletStationData.temperature
             val humidity= outdoorWeatherBrickletStationData.humidity
-            val windSpeed = outdoorWeatherBrickletStationData.windSpeed //mps
+//            val windSpeed = outdoorWeatherBrickletStationData.windSpeed //mps
+            val windSpeed = outdoorWeatherBrickletStationData.gustSpeed
+
             val windDirection = outdoorWeatherBrickletStationData.windDirection
 
             //val windDirection = outdoorWeatherBrickletStationData.windDirection
@@ -95,13 +95,12 @@ class OutdoorWeatherBrickletPublishingClient(){
                 put(TIME_SENT, System.nanoTime())
                 put(TEMPERATURE, temperature/10.0)
                 put(HUMIDITY, humidity/1.0)
-                // todo: need to expand values of wind speed
-//                put(WIND_VELOCITY, windSpeed * 1.94)//sensor value --> 1 meter per second = 1.94384449 knot
 
+                // todo: need to expand values of wind speed
+                put(WIND_VELOCITY, windSpeed * 1.94)//sensor value --> 1 meter per second = 1.94384449 knot
                 put(WIND_DIRECTION, windDirection)
 
-                //TODO: delete later, here for crosswind function checking
-                put(WIND_VELOCITY, randomDouble(0.0, 64.0))
+//                put(WIND_VELOCITY, randomDouble(0.0, 64.0))
             }
 
             client.send(

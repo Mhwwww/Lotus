@@ -199,37 +199,14 @@
                 </configuration>
                 <executions>
 
-                    <execution>
-                        <id>GeoVER</id>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <archive>
-                                <manifest>
-                                    <!--<mainClass>de.hasenburg.geobroker.client.main.MultiFileClientKt</mainClass>-->
-                                    <mainClass>de.hasenburg.geoverdemo.geoVER.kotlin.TalkToXRKt</mainClass>
-                                </manifest>
-                                <manifestEntries>
-                                    <Multi-Release>true</Multi-Release>
-                                </manifestEntries>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <finalName>GeoVER</finalName>
-                        </configuration>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-
 <!--                    <execution>-->
-<!--                        <id>Publisher Client</id>-->
+<!--                        <id>GeoVER</id>-->
 <!--                        <configuration>-->
 <!--                            <appendAssemblyId>false</appendAssemblyId>-->
 <!--                            <archive>-->
 <!--                                <manifest>-->
-<!--                                    <mainClass>de.hasenburg.geoverdemo.geoVER.kotlin.publisher.PubConfigurationKt</mainClass>-->
+<!--                                    &lt;!&ndash;<mainClass>de.hasenburg.geobroker.client.main.MultiFileClientKt</mainClass>&ndash;&gt;-->
+<!--                                    <mainClass>de.hasenburg.geoverdemo.geoVER.kotlin.TalkToXRKt</mainClass>-->
 <!--                                </manifest>-->
 <!--                                <manifestEntries>-->
 <!--                                    <Multi-Release>true</Multi-Release>-->
@@ -238,7 +215,7 @@
 <!--                            <descriptorRefs>-->
 <!--                                <descriptorRef>jar-with-dependencies</descriptorRef>-->
 <!--                            </descriptorRefs>-->
-<!--                            <finalName>publisher</finalName>-->
+<!--                            <finalName>GeoVER</finalName>-->
 <!--                        </configuration>-->
 <!--                        <phase>package</phase>-->
 <!--                        <goals>-->
@@ -246,7 +223,30 @@
 <!--                        </goals>-->
 <!--                    </execution>-->
 
-<!--weather station jar file-->
+                    <execution>
+                        <id>Publisher Client</id>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <archive>
+                                <manifest>
+                                    <mainClass>de.hasenburg.geoverdemo.geoVER.kotlin.publisher.PubConfigurationKt</mainClass>
+                                </manifest>
+                                <manifestEntries>
+                                    <Multi-Release>true</Multi-Release>
+                                </manifestEntries>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>OutdoorWeatherPublisher</finalName>
+                        </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+
+
 <!--                    <execution>-->
 <!--                        <id>weather</id>-->
 <!--                        <configuration>-->
@@ -262,7 +262,7 @@
 <!--                            <descriptorRefs>-->
 <!--                                <descriptorRef>jar-with-dependencies</descriptorRef>-->
 <!--                            </descriptorRefs>-->
-<!--                            <finalName>weather</finalName>-->
+<!--                            <finalName>WeatherStation</finalName>-->
 <!--                        </configuration>-->
 <!--                        <phase>package</phase>-->
 <!--                        <goals>-->

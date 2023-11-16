@@ -69,6 +69,11 @@ module.exports = (req, res) => {
                 windVelocity = reponseJson[WIND_VELOCITY];
 
                 console.log(windVelocity, windAngle, windVelocity && windAngle);
+                console.log("Wind Velocity", windVelocity);
+                console.log( "windAngle", windAngle);
+
+
+
 
                 if (windVelocity && windAngle) {
                     console.log(windAngle, windVelocity);
@@ -93,7 +98,7 @@ module.exports = (req, res) => {
 
                     crosswind = resultFromCalculator[0];
                     headwind = resultFromCalculator[1];
-                    //console.log("The crosswind is " + crosswind + "\nThe headwind is " + headwind);
+                    console.log("The crosswind is " + crosswind + "\nThe headwind is " + headwind);
 
 
                     if (crosswind >= crosswindThreshold) {

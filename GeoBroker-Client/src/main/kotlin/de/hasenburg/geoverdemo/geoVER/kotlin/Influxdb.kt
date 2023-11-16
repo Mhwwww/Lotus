@@ -157,11 +157,6 @@ class InfluxDB{
 
 
 
-
-
-
-
-
 //            val humidity = jsonObject.get("Humidity").toString()
 //            val timeSent = jsonObject.get("timeSent").toString()
 //            val publisherID = jsonObject.get("Publisher ID").toString()
@@ -200,11 +195,6 @@ class InfluxDB{
             }
         }
     }
-
-
-//}
-
-
 }
 
 fun main(){

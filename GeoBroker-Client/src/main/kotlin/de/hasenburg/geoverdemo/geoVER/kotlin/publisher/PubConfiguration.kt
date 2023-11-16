@@ -1,8 +1,8 @@
 package de.hasenburg.geoverdemo.geoVER.kotlin.publisher
 
+import OutdoorWeatherBrickletPublishingClient
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
-import de.hasenburg.geoverdemo.multiRule.publisher.PublishingClient
 import kotlinx.coroutines.*
 import org.apache.logging.log4j.LogManager
 
@@ -17,19 +17,29 @@ val WIND_VELOCITY = "Wind Velocity"
 private val logger = LogManager.getLogger()
 //broker
 var PORT = 5559
-var ADDRESS = "192.168.0.172"
-var REPEAT_TIME = 20
+var ADDRESS = "localhost"
+var REPEAT_TIME = 10000000
 
 //tinkerforge
-var TINKERFORGE_HOST= "192.168.0.172"
+var TINKERFORGE_HOST= "localhost"
 var TINKERFORGE_PORT= 4223
+// outdoor weather bricklet
 var UID_OUTDOORWEATHER = "ZPd"
 var STATION_ID = 143
+// lcd bricklet todo: environment parameter
+var UID_LCD = "24Qa"
+var WIDTH: Short = 128
+var HEIGHT: Short = 64
+
+// segment bricklet
+var UID_SEGMENT = "TvZ"
+
+// todo: temperature bricklet
 
 //publisher
 var PUB_TOPIC = "info"
 var PUB_RADIUS = 2.0
-var PUB_INTERVAL: Long = 1000 //ms
+var PUB_INTERVAL: Long = 2000 //ms
 
 // locations for different publishers
 val SCHOENHAGEN_AIRPORT = Geofence.circle(Location(1.0, 1.0), PUB_RADIUS)
@@ -137,10 +147,10 @@ class PubConfiguration{
 fun main(){
     PubConfiguration()
     // normal publisher
-    PublishingClient().startPublisherClient(ADDRESS)
+    //PublishingClient().startPublisherClient(ADDRESS)
 
     //tinkerforge
-//    OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS)
+    OutdoorWeatherBrickletPublishingClient().startOutdoorBrickletPublisher(STATION_ID, ADDRESS)
 }
 
 

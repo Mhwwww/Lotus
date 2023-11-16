@@ -1,8 +1,10 @@
 package de.hasenburg.geoverdemo.geoVER.kotlin
 
 import InputEvent
+import de.hasenburg.geobroker.commons.setLogLevel
 import geoBrokerPara
 import kotlinx.serialization.Serializable
+import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import runRuleSubscriber1
 import java.io.File
@@ -11,7 +13,10 @@ import java.io.File
 //var TINYFASS_PATH ="/home/pi/Documents/tinyFaaS/"
 //var FUNCTION_FILE_PATH="/home/pi/geover/Lotus/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
 //todo: Broker host & port configuration
+var BROKER_HOST = "localhost"
 
+
+//tinyFaas
 var TINYFASS_PATH = "/Users/minghe/geobroker/tinyFaaS/"
 var FUNCTION_FILE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
 var SAVE_RULES_JSON_PATH = FUNCTION_FILE_PATH+"/saverule.json/"
@@ -27,7 +32,7 @@ var SUBSCRIPTION_FRONTEND_INPUT_URL = "http://"+ KTOR_ADDRESS+":"+ KTOR_PORT+"/s
 var RULES_FRONTEND_INPUT_URL = "http://"+ KTOR_ADDRESS+":"+ KTOR_PORT+"/saveRules"
 
 //influx_db
-val URL = "http://192.168.0.172:8086"
+val URL = "http://"+BROKER_HOST+":8086"
 val ORGANIZATION = "geover"
 val WARNING_BUCKET = "warning"
 val INFO_BUCKET = "info"
@@ -36,6 +41,7 @@ var TOKEN =
     "cDcQwBEUylxWSIYO6t5R4Wx9Id2kbLw-Vs87Wozn649_6QTYcuQCnS5Hu0UBhCBWpmdzoAUH1B7h9ZDN2SxjKw==".toCharArray()
 
 private val logger = LogManager.getLogger()
+
 @Serializable
 data class ConfigData(
     val infoUrl: String? = null,
@@ -45,7 +51,11 @@ data class ConfigData(
 )
 
 class Configuration {
+
     init {
+
+        setLogLevel(logger, Level.ERROR)
+
         logger.info("Hello from the Configuration init")
 
         val influxdbToken = System.getenv("TOKEN")
@@ -111,7 +121,6 @@ class Configuration {
 
 
 fun saveConfig(){
-
     val configJsonFile = File("/Users/minghe/geobroker/GeoBroker-Client/src/main/resources/web/js/config.js")
 //    val configJsonFile = File("/home/pi/geover/Lotus/GeoBroker-Client/src/main/resources/web/js/config.js")
 
@@ -133,7 +142,10 @@ fun saveConfig(){
 }
 
 fun main(){
+    setLogLevel(logger, Level.ERROR)
     Configuration()
+
+
 
     val rule = geoBrokerPara(InputEvent(topic= "info", repubTopic = "weather", locationName = "Weather Station", rad = "80"))
 //    val rule =  UserSpecifiedRule(Geofence.circle(WEATHER_STATION.center, 80.0), Topic(WEATHER_INFO_TOPIC), File(FUNCTION_FILE_PATH), "nodejs", Topic(WEATHER_WARNING_TOPIC))

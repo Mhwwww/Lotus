@@ -1,26 +1,13 @@
 
 import com.tinkerforge.BrickletLCD128x64
 import com.tinkerforge.IPConnection
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.*
 import org.apache.logging.log4j.LogManager
-import java.awt.Color
-import java.awt.Graphics
 import java.awt.image.BufferedImage
 
-
-
-
-
-private const val HOST = "localhost"
-private const val PORT = 4223
-
-private const val UID_LCD = "24Qa"
-private const val SCREEN_WIDTH: Short = 128
-private const val SCREEN_HEIGHT: Short = 64
-
-private const val WIDTH: Short = 128
-private const val HEIGHT: Short = 64
-
 private val logger = LogManager.getLogger()
+private var i = 0
+private val MSG_NUM = 5
 
 @Throws(Exception::class)
 fun drawImage(lcd: BrickletLCD128x64, image: BufferedImage) {
@@ -39,17 +26,89 @@ fun drawImage(lcd: BrickletLCD128x64, image: BufferedImage) {
     lcd.writePixels(0, 0, WIDTH - 1, HEIGHT - 1, pixels)
 }
 
-fun lcd() {
+fun lcdConnection(): Pair<BrickletLCD128x64,IPConnection>{
     // Create IP connection--> Create device object--> Connect to brick daemon
     val ipcon = IPConnection()
     val lcd = BrickletLCD128x64(UID_LCD, ipcon)
 
-    ipcon.connect(HOST, PORT)
+    ipcon.connect(TINKERFORGE_HOST, TINKERFORGE_PORT)
+    return Pair(lcd,ipcon)
+}
 
-    lcd.clearDisplay()
+fun lcdDisconnect(ipcon:IPConnection){
+    ipcon.disconnect();
+}
+fun sendTextToLCD(lcd:BrickletLCD128x64, msg: String) {
+    //TODO: display the msg properly
+    if(i < MSG_NUM){
+        lcd.writeLine(i, 0, msg)
+        logger.warn("LCD Message {}: {}", i, msg)
+        i++
+    }else{
+        logger.warn("Going to Clear Screen")
+        lcd.clearDisplay()
 
-    lcd.writeLine(0, 0, "Hello World")
-    lcd.drawText(0, 12, BrickletLCD128x64.FONT_24X32, BrickletLCD128x64.COLOR_BLACK, "hello")
+        i = 0
+        lcd.writeLine(i, 0, msg)
+        i++
+    }
+
+
+
+
+    //lcd.drawText(0, 12, BrickletLCD128x64.FONT_24X32, BrickletLCD128x64.COLOR_BLACK, "hello")
+//todo: only keep latest 5 warning messages on the screen--> call clearDisplay() every 5 messages
+
+}
+
+//todo: show the received warning in LCD?-->!
+fun main() {
+    val lcdBrickletInfo = lcdConnection()
+    val lcdBricklet = lcdBrickletInfo.first
+    val lcdIpConfig = lcdBrickletInfo.second
+
+    sendTextToLCD(lcdBricklet, "hello world")
+
+    println("Press key to exit")
+    System.`in`.read()
+
+
+}
+
+
+
+//val ipcon = IPConnection()
+//val lcd = BrickletLCD128x64(UID_LCD, ipcon)
+//
+//ipcon.connect(TINKERFORGE_HOST, TINKERFORGE_PORT)
+//
+//// Clear display
+//lcd.clearDisplay()
+//
+//val image = BufferedImage(WIDTH.toInt(), HEIGHT.toInt(), BufferedImage.TYPE_INT_ARGB)
+//val originX = WIDTH / 2
+//val originY = HEIGHT / 2
+//val length = HEIGHT / 2 - 2
+//var angle = 0
+//
+//println("Press ctrl+c to exit")
+//
+//while (true) {
+//    val radians = Math.toRadians(angle.toDouble())
+//    val x = (originX + length * Math.cos(radians)).toInt()
+//    val y = (originY + length * Math.sin(radians)).toInt()
+//    val g: Graphics = image.createGraphics()
+//    g.color = Color.black
+//    g.fillRect(0, 0, WIDTH.toInt(), HEIGHT.toInt())
+//    g.color = Color.white
+//    g.drawLine(originX, originY, x, y)
+//    g.dispose()
+//    drawImage(lcd, image)
+//    Thread.sleep(25)
+//    angle++
+//}
+
+
 
 //    lcd.addTouchPositionListener { pressure, x, y, age ->
 //        println("Pressure: $pressure")
@@ -59,7 +118,7 @@ fun lcd() {
 //        println("")
 //    }
 //
-    // Add touch gesture listener
+// Add touch gesture listener
 //    lcd.addTouchGestureListener { gesture, duration, pressureMax, xStart, xEnd, yStart, yEnd, age ->
 //        if (gesture == BrickletLCD128x64.GESTURE_LEFT_TO_RIGHT) {
 //            println("Gesture: Left To Right")
@@ -149,45 +208,3 @@ fun lcd() {
 //
 //    // Set period for GUI tab selected callback to 0.1s (100ms)
 //    lcd.setGUITabSelectedCallbackConfiguration(100, true)
-
-    println("Press key to exit")
-    System.`in`.read()
-
-    ipcon.disconnect();
-
-}
-
-//todo: show the received warning in LCD?
-
-fun main() {
-    val ipcon = IPConnection()
-    val lcd = BrickletLCD128x64(UID_LCD, ipcon)
-
-    ipcon.connect(HOST, PORT)
-
-    // Clear display
-    lcd.clearDisplay()
-
-    val image = BufferedImage(WIDTH.toInt(), HEIGHT.toInt(), BufferedImage.TYPE_INT_ARGB)
-    val originX = WIDTH / 2
-    val originY = HEIGHT / 2
-    val length = HEIGHT / 2 - 2
-    var angle = 0
-
-    println("Press ctrl+c to exit")
-
-    while (true) {
-        val radians = Math.toRadians(angle.toDouble())
-        val x = (originX + length * Math.cos(radians)).toInt()
-        val y = (originY + length * Math.sin(radians)).toInt()
-        val g: Graphics = image.createGraphics()
-        g.color = Color.black
-        g.fillRect(0, 0, WIDTH.toInt(), HEIGHT.toInt())
-        g.color = Color.white
-        g.drawLine(originX, originY, x, y)
-        g.dispose()
-        drawImage(lcd, image)
-        Thread.sleep(25)
-        angle++
-    }
-}

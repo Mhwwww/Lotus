@@ -9,10 +9,7 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
-import de.hasenburg.geoverdemo.geoVER.kotlin.INFO_URL
-import de.hasenburg.geoverdemo.geoVER.kotlin.InfluxDB
-import de.hasenburg.geoverdemo.geoVER.kotlin.TalkToXR
-import de.hasenburg.geoverdemo.geoVER.kotlin.WARNING_URL
+import de.hasenburg.geoverdemo.geoVER.kotlin.*
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.BER_AIRPORT
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.FRANKFURT_AIRPORT
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.SCHOENHAGEN_AIRPORT
@@ -32,14 +29,23 @@ var warningArray = JSONArray()
 var infoArray = JSONArray()
 
 val matchingTopics = mutableListOf<Topic>()
-
-
 val talkToXR = TalkToXR()
 val influxdb = InfluxDB()
 
 const val CROSSWIND_HOST = "192.168.0.172"
 const val CROSSWIND_PORT = 5559
-const val TINYFAAS_BASE_URL = "http://localhost:80/"
+
+
+//TODO: check if Tinkerforge is connected--> if not, do not run the related code
+//
+////TODO: LCD related
+//val lcdBrickletInfo = lcdConnection()
+//val lcdBricklet = lcdBrickletInfo.first
+//val lcdIpConfig = lcdBrickletInfo.second
+////TODO: segment display
+//val segmentDisplay = segmentConnection()
+//val segmentBricklet = segmentDisplay.first
+//val segmentIPConnection = segmentDisplay.second
 
 class RunGeoVER(private val loc: Location, private val topic: Topic, private val name: String) {
     private val logger = LogManager.getLogger()
@@ -50,6 +56,9 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
 
     private var warningUrl = URL(WARNING_URL)
     private var infoUrl = URL(INFO_URL)
+
+
+
     fun prepare() {
         setLogLevel(this.logger, Level.DEBUG)
         logger.debug("{}: Subscribing to {} at {}", name, topic, loc)
@@ -82,20 +91,26 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
                 // add priority to message content, and set it to Boolean
                 // if it is "info", set to be 'false', if it is warning, then true
                 if (processMessage(message)) { // warning messages
-
                     reformatEvents(message, warningArray)
-//                    postEvents(warningUrl, message.content)
-//                    //store warnings in Bucket_warning
-//                    influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
-//                    influxdb.writeToInfluxDB(reformatMsg, WARNING_BUCKET)
+                    postEvents(warningUrl, message.content)
+                    //todo: show warnig msg on LCD
+//                    sendTextToLCD(lcdBricklet, message.content)
+//
+//                    segDisplayMsg(segmentBricklet, JSONObject(message.content).get(WIND_VELOCITY).toString().toDouble())
 
+
+//                    //store warnings in Bucket_warning
+                    influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
+
+
+                    //show warning on b
                     //send warning to DT
                     //sendMsgToDT(message.content)
                 } else {
                     val info = reformatEvents(message, infoArray)
-//                    postEvents(infoUrl, message.content)
+                    postEvents(infoUrl, message.content)
 //                    //store info in Bucket_info
-//                    influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
+                    influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
 ////                    influxdb.writeToInfluxDB(info, INFO_BUCKET)
 //                    //send info to DT
 //                    //TODO: enable when finishing Influxdb
@@ -189,6 +204,9 @@ suspend fun sendMsgToDT(msg:String){
 fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
     setLogLevel(logger, Level.DEBUG)
 
+    //TODO: everytime start a subscriber, clear the LCD DISPLAY
+//    lcdBricklet.clearDisplay()
+
     val bridgeManager = BridgeManager()
     bridgeManager.createNewRule(rule)
 
@@ -224,7 +242,13 @@ fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {
     }
 
     bridgeManager.deleteRule(rule)
+
+    //disconnect tinkerforge bricklet
+//    lcdIpConfig.disconnect()
+//    segmentIPConnection.disconnect()
+
 }
+
 //fun main(){
 //    Configuration()
 //
