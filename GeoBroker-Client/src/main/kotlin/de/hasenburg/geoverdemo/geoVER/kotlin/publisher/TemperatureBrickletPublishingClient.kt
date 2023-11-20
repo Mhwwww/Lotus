@@ -1,29 +1,23 @@
-package de.hasenburg.geoverdemo.multiRule.publisher
-
+import com.tinkerforge.BrickletTemperature
+import com.tinkerforge.IPConnection
 import de.hasenburg.geobroker.client.main.SimpleClient
 import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
 import de.hasenburg.geobroker.commons.model.message.Payload
 import de.hasenburg.geobroker.commons.model.message.ReasonCode
 import de.hasenburg.geobroker.commons.model.message.Topic
-import de.hasenburg.geobroker.commons.randomDouble
-import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geobroker.commons.sleep
+import de.hasenburg.geoverdemo.geoVER.kotlin.BROKER_HOST
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.*
-import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.json.JSONObject
 import kotlin.system.exitProcess
 
+
 private val logger = LogManager.getLogger()
 
-class PublishingClient(){
-    fun startPublisherClient(address: String) {
-        setLogLevel(logger, Level.DEBUG)
-
+    fun temperaturePublisher(address: String){
         val publishTopic = Topic(PUB_TOPIC)
-//        var locations = Location(0.0, 0.0)
-        val locations = PUBLISH_GEOFENCE.center
-
+        var locations = PUBLISH_GEOFENCE.center
 
         logger.info("the input subscription's topic is: {}", publishTopic)
 
@@ -31,28 +25,30 @@ class PublishingClient(){
 
         val client = SimpleClient(address, PORT)
         client.send(Payload.CONNECTPayload(locations))
+
         logger.info("Received server answer: {}", client.receive())
 
         var i = 0
+
         repeat(REPEAT_TIME) {
-            //locations = Location(Random.nextDouble(0.0, 2.0), Random.nextDouble(0.0, 2.0))
-            //locations = PUBLISHER_LOCATION
+
+            val ipcon = IPConnection()
+            val temperatureBricklet = BrickletTemperature("EKx", ipcon)
+
+            ipcon.connect(TINKERFORGE_HOST, TINKERFORGE_PORT)
+
+            val currentTemperature = temperatureBricklet.temperature/100.0
+            println("Current Temperature is $currentTemperature")
 
             val newElem = JSONObject().apply {
+                //put("Publisher ID", client.identity)
                 put(TIME_SENT, System.nanoTime())
-//                put(PUBLISHER_ID, client.identity)
-
-                put(TEMPERATURE, randomDouble(0.0, 45.0))
-                put(HUMIDITY, randomDouble(0.0, 60.0))
-
-                put(WIND_VELOCITY, randomDouble(220.0, 300.0))
-                put(WIND_DIRECTION, 0)
+                put(TEMPERATURE, currentTemperature)
             }
 
             client.send(
                 Payload.PUBLISHPayload(
                     publishTopic,
-//                    Geofence.circle(locations, PUB_RADIUS),
                     PUBLISH_GEOFENCE,
                     newElem.toString()
                 )
@@ -60,25 +56,25 @@ class PublishingClient(){
 
             logger.info("Publishing at {} topic {}", locations, publishTopic)
             logger.debug("PubAck: {}", client!!.receive())
-
             sleep(PUB_INTERVAL, 0)
-            logger.info("Sent message ${++i} to ${address}: ${newElem.toString()} ")
+            logger.info("Sent message ${++i} to ${address}: ${newElem.toString()}")
+
         }
 
-        sleep(2000, 0)
+//        sleep(2000, 0)
 
         client!!.send(Payload.DISCONNECTPayload(ReasonCode.NormalDisconnection))
         client!!.tearDownClient()
 
         processManager.tearDown(3000)
         exitProcess(0)
+
     }
-}
+
 
 fun main(){
-    val publishClient = PublishingClient()
-    publishClient.startPublisherClient(ADDRESS)
-}
+    temperaturePublisher(BROKER_HOST)
 
+}
 
 

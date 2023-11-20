@@ -1,0 +1,1 @@
+{"Temperature":35,"speed":20,"wind":20,"humidity":13}

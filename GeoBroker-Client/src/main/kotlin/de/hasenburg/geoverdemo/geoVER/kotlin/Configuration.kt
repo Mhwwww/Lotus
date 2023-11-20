@@ -19,6 +19,8 @@ var BROKER_HOST = "localhost"
 //tinyFaas
 var TINYFASS_PATH = "/Users/minghe/geobroker/tinyFaaS/"
 var FUNCTION_FILE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
+
+//var FUNCTION_FILE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"
 var SAVE_RULES_JSON_PATH = FUNCTION_FILE_PATH+"/saverule.json/"
 
 //ktor
@@ -142,10 +144,7 @@ fun saveConfig(){
 }
 
 fun main(){
-    setLogLevel(logger, Level.ERROR)
     Configuration()
-
-
 
     val rule = geoBrokerPara(InputEvent(topic= "info", repubTopic = "weather", locationName = "Weather Station", rad = "80"))
 //    val rule =  UserSpecifiedRule(Geofence.circle(WEATHER_STATION.center, 80.0), Topic(WEATHER_INFO_TOPIC), File(FUNCTION_FILE_PATH), "nodejs", Topic(WEATHER_WARNING_TOPIC))

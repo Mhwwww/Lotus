@@ -1,16 +1,14 @@
 //the function that returns the highest N recent temperatures.
+
 const localState = [""]; // an array to store state
 let priority = false; // true is Warning, false is messages.
 
 const constrainsForState =30.0
 const topNum = 10
 
-
-
 module.exports = (req, res) => {
     let inJson = req.body["message"];
     inJson["priority"] = priority;
-
 
     if (inJson["temperature"] > constrainsForState) {
         localState.push(inJson["temperature"]);

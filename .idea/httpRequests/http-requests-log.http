@@ -1,3 +1,453 @@
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":5.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet":8.0
+  }
+}
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":25.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet":80.0
+  }
+}
+
+<> 2023-11-17T123252.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":25.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet":80.0
+  }
+}
+
+<> 2023-11-17T123225.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":25.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet":8.0
+  }
+}
+
+<> 2023-11-17T123219.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":5.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet":8.0
+  }
+}
+
+<> 2023-11-17T123207.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":5.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet":80.0
+  }
+}
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet":13.0
+  }
+}
+
+<> 2023-11-17T123115.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet":13.0
+  }
+}
+
+<> 2023-11-17T123046.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "humidity":13.0
+  }
+}
+
+<> 2023-11-17T123017.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet":3.0
+  }
+}
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet":3.0
+  }
+}
+
+<> 2023-11-17T122722.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 3.0
+  }
+}
+
+<> 2023-11-17T122654.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 3.0
+  }
+}
+
+<> 2023-11-17T122432.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 3.0
+  }
+}
+
+<> 2023-11-17T122301.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 3.0
+  }
+}
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 3.0
+  }
+}
+
+<> 2023-11-17T121930.200.txt
+
+###
+
+POST http://localhost:8000/3b092a14d65f1e8d08da682eb835529c
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 3.0
+  }
+}
+
+<> 2023-11-17T121832.200.txt
+
+###
+
+POST http://localhost:8000/3b092a14d65f1e8d08da682eb835529c
+Content-Type: application/json
+
+{
+  "topic":"info",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+<> 2023-11-17T121758.200.txt
+
+###
+
+POST http://localhost:8000/3b092a14d65f1e8d08da682eb835529c
+Content-Type: application/json
+
+{
+  "topic":"read",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":35.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+<> 2023-11-17T121741.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"read",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":15.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"read",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":55.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+<> 2023-11-17T121444.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"read",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":55.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"read",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "Temperature":55.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"read",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "temperature":55.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+<> 2023-11-17T120857.200.txt
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"read",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "temperature":55.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+###
+
+POST http://localhost:8000/multi
+Content-Type: application/json
+
+{
+  "topic":"read",
+  "location":{"lon":0.0,"lat":0.0},
+  "message":{
+    "temperature":55.0,
+    "speed":20.0,
+    "wind":20.0,
+    "wet": 30.0
+  }
+}
+
+###
+
 POST http://192.168.0.125:8000/read
 Content-Type: application/json
 
@@ -424,449 +874,6 @@ Content-Type: application/json
     "Time Sent":281721188491680,
     "Temperature":51.56915443045522,
     "Wind Velocity":46.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":46.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":66.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":66.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":66.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":66.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":66.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":66.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":66.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://192.168.0.125:8000/read
-Content-Type: application/json
-
-{
-  "topic":"info",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":66.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-}
-
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
-    "Humidity":30.287551320931577,
-    "Wind Direction":14
-  }
-}
-
-###
-
-POST http://localhost:8000/read
-Content-Type: application/json
-
-{
-  "topic":"read",
-  "location":{"lon":0.0,"lat":0.0},
-  "message": {
-    "Time Sent":281721188491680,
-    "Temperature":51.56915443045522,
-    "Wind Velocity":6.40571387840946,
     "Humidity":30.287551320931577,
     "Wind Direction":14
   }

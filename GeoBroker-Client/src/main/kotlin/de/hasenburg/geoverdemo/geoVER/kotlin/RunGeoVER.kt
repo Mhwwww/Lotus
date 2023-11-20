@@ -32,7 +32,7 @@ val matchingTopics = mutableListOf<Topic>()
 val talkToXR = TalkToXR()
 val influxdb = InfluxDB()
 
-const val CROSSWIND_HOST = "192.168.0.172"
+val CROSSWIND_HOST = BROKER_HOST
 const val CROSSWIND_PORT = 5559
 
 
@@ -100,7 +100,7 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
 
 
 //                    //store warnings in Bucket_warning
-                    influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
+//                    influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
 
 
                     //show warning on b
@@ -110,7 +110,7 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
                     val info = reformatEvents(message, infoArray)
                     postEvents(infoUrl, message.content)
 //                    //store info in Bucket_info
-                    influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
+//                    influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
 ////                    influxdb.writeToInfluxDB(info, INFO_BUCKET)
 //                    //send info to DT
 //                    //TODO: enable when finishing Influxdb

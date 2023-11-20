@@ -71,19 +71,34 @@ Vue.component('warning-list', {
     methods: {
         async fetchWarnings() {
             try {
-                //todo: configure in config.js
-                console.log("THE WARNING URL FROM CONFIG FILE IS ",warningMsgUrl)
-                const response = await fetch(warningMsgUrl);
+                console.log("THE WARNING URL FROM CONFIG FILE IS ", warningMsgUrl);
 
-                // const response = await fetch(warningMsgUrl);
-                const data = await response.json();
+                // Use a function to recursively fetch data
+                const fetchData = async () => {
+                    const response = await fetch(warningMsgUrl);
+                    const data = await response.json()
 
+                    if (data.length !== 0) {
+                        console.log("THERE IS SOME DATA")
 
-                this.warnings = data.map(warning => {
-                    return {...warning, collapsed: true};
-                });
-                // Get keys of the first warning object as table headers
-                this.warningKeys = Object.keys(data[0]);
+                        this.warnings = data.map((warning) => {
+                            return { ...warning, collapsed: true };
+                        });
+
+                        // Get keys of the first warning object as table headers
+                        console.log(data)
+                        console.log(data[0].toString())
+                        console.log(typeof data[0])
+
+                        this.warningKeys = Object.keys(data[0]);
+                    }
+                    // Continue fetching data
+                    setTimeout(fetchData, 5000);
+                };
+
+                // Start the initial fetch
+                fetchData();
+
             } catch (error) {
                 console.error(error);
             }
@@ -99,7 +114,6 @@ Vue.component('warning-list', {
             try {
                 const warningMsgUrlWithTimeSent = `${warningMsgUrl}/${timeSent}`;
                 const response = await fetch(warningMsgUrlWithTimeSent, {
-
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -108,6 +122,7 @@ Vue.component('warning-list', {
                 });
                 if (response.ok) {
                     // Deletion successful
+                    this.fetchWarnings()
                 } else {
                     console.error('Failed to delete warning');
                 }

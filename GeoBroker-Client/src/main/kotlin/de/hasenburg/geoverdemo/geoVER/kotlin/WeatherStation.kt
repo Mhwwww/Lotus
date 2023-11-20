@@ -8,6 +8,7 @@ import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
+import de.hasenburg.geoverdemo.geoVER.kotlin.BROKER_HOST
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.*
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.Level
@@ -22,7 +23,7 @@ private val logger = LogManager.getLogger()
 var weatherWarningArray = JSONArray()
 var weatherInfoArray = JSONArray()
 
-const val WEATHER_STATION_HOST = "192.168.0.172"
+val WEATHER_STATION_HOST = BROKER_HOST
 const val WEATHER_STATION_PORT = 5559
 
 const val WEATHER_INFO_TOPIC = "info"
@@ -132,9 +133,7 @@ fun reformatEvents1(message: Payload.PUBLISHPayload, array: JSONArray): String {
     }
 
     sentJson.put("topic", message.topic.topic)
-//    sentJson.put("location", locJson)
-    //sentJson.put("message", JSONObject(message.content))
-    // modify the wind direction to people could read, e.g., South, North.....
+
     val originMsgContent = JSONObject(message.content)
     val windDirec = originMsgContent.get(WIND_DIRECTION)
 
@@ -162,16 +161,6 @@ fun reformatEvents1(message: Payload.PUBLISHPayload, array: JSONArray): String {
     sentJson.put("message", originMsgContent)
     array.put(sentJson)
 
-//    logger.error(array)
-
-//    when(message.topic.topic){
-//        "info"->
-//            logger.warn("INFO Message: {}", array.length())
-//        "weather"->
-//            logger.error("WARNING Message: {}", array.length())
-//    }
-
-
     return sentJson.toString()
 
 }
@@ -188,7 +177,7 @@ fun addPriority1(message: Payload.PUBLISHPayload, priority: Boolean): String {
 fun processMessage1(message: Payload.PUBLISHPayload): Boolean {
     if (message.topic.topic == WEATHER_WARNING_TOPIC) {
         addPriority1(message, true)
-        logger.info(JSONObject(message.content).get("Priority") is Boolean)
+        //logger.info(JSONObject(message.content).get("Priority") is Boolean)
         return true
     } else if (message.topic.topic == WEATHER_INFO_TOPIC) {
         addPriority1(message, false)
@@ -251,34 +240,35 @@ fun logFormat(msg: String) {
             }}
     */
     val jsonMsg = JSONObject(msg)
-
     val msgTopic = jsonMsg.get("topic")
     val airportLoc = jsonMsg.get("location")
-
     val msgContent = JSONObject(jsonMsg.get("message").toString())
 
-    val logWindSpeed = msgContent.get(WIND_VELOCITY)
+    var logWindSpeed = msgContent.get(WIND_VELOCITY)
+    logWindSpeed = String.format("%.2f", logWindSpeed).toDouble()
     val logWindDirection = msgContent.get(WIND_DIRECTION)
-    val logTemperature = msgContent.get(TEMPERATURE)
+    var logTemperature = msgContent.get(TEMPERATURE)
+    logTemperature = String.format("%.2f", logTemperature).toDouble()
+
 
     when (msgTopic) {
         "info" -> {
             println("------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-            logger.warn("INFO Message Amount: {}", weatherInfoArray.length())
-            logger.warn("Location: {}", airportLoc)
-            logger.warn("Wind Speed: {}", logWindSpeed)
-            logger.warn("Wind Direction: {}", logWindDirection)
-            logger.warn("Temperature: {}", logTemperature)
+            println("INFO Message Number #${weatherInfoArray.length()}")
+            println("Location: $airportLoc")
+            println("Wind Speed: $logWindSpeed")
+            println("Wind Direction: $logWindDirection")
+            println("Temperature: $logTemperature")
             //println("------------------------------------------------------------------------------------------------------------------------------------------------------------------")
         }
 
         "weather" -> {
             println("------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-            logger.error("WARNING Message Amount: {}", weatherWarningArray.length())
-            logger.error("Message Location: {}", airportLoc)
-            logger.error("Wind Speed: {}", logWindSpeed)
-            logger.error("Wind Direction: {}", logWindDirection)
-            logger.error("Temperature: {}", logTemperature)
+            System.err.println("WARNING Message Number #${weatherInfoArray.length()}")
+            System.err.println("Location: $airportLoc")
+            System.err.println("Wind Speed: $logWindSpeed")
+            System.err.println("Wind Direction: $logWindDirection")
+            System.err.println("Temperature: $logTemperature")
             //println("------------------------------------------------------------------------------------------------------------------------------------------------------------------")
 
         }

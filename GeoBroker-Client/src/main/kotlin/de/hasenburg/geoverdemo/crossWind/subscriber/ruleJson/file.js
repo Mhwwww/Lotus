@@ -75,7 +75,7 @@ module.exports = (req, res) => {
 
 
 
-                if (windVelocity && windAngle) {
+                if (windVelocity!=null && windAngle!=null) {
                     console.log(windAngle, windVelocity);
                     console.log(crosswind, crosswindThreshold);
 

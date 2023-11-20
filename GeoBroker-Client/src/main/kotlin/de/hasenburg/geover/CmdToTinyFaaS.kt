@@ -19,19 +19,21 @@ var TINYFAAS_LOGS_PATH = "${TINYFAAS_BASE_PATH}scripts/logs.sh\t"
 var TINYFAAS_START_PATH = "${TINYFAAS_BASE_PATH}\t"
 
 private val logger = LogManager.getLogger()
-fun cmdUploadToTinyFaaS(path:String, functionName:String, fnEnv:String, thread: Int) {
+fun cmdUploadToTinyFaaS(path:String, functionName:String, fnEnv:String, thread: Int) :String {
 
     logger.debug("isUnix: {}", isUnix())
     if (isUnix()) {
-        val upload: String = TINYFAAS_UPLOAD_PATH + path + "\t" + functionName + "\t" + fnEnv+ "\t" + thread
-        runOnUnixAsync(upload)
-
+        val upload: String = TINYFAAS_UPLOAD_PATH + path + "\t" + functionName + "\t" + fnEnv + "\t" + thread
         logger.info("going to upload function")
+
+        return runOnUnixAsync(upload)
 
     } else {
         //TODO: cmd on windows and linux
         runOnWindows("dir")
         runOnWindows("git log")
+
+        return ""
     }
 }
 
@@ -92,12 +94,11 @@ fun runOnWindows(cmd: String): String {
 fun runOnUnixAsync(cmd: String) :String{
     var result = ""
     GlobalScope.launch {
-
         try {
-
             val process = withContext(Dispatchers.IO) {
                 ProcessBuilder("/bin/sh", "-c", cmd).start()
             }
+
             val reader = BufferedReader(InputStreamReader(process.inputStream))
             var line: String?
             while (withContext(Dispatchers.IO) {
@@ -120,12 +121,8 @@ fun runOnUnixAsync(cmd: String) :String{
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
-
     }
     return result
-    //logger.error(line)
-
 }
 
 fun main(){

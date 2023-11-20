@@ -8,6 +8,7 @@ import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geobroker.commons.setLogLevel
+import de.hasenburg.geobroker.commons.sleep
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -27,6 +28,8 @@ class BridgeManager {
         val functionName = rule.getFunctionName()
 
         uploadFileToTinyFaaS(rule.jsFile, rule.env, functionName)
+        sleep(3000,0)
+
         //send subscription and get new topic set to be subscribed to
         GlobalScope.launch {
             logger.info("-------------------Start to build bridge-------------------")

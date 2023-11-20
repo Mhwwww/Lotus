@@ -1,19 +1,15 @@
-POST http://localhost:8081/warningMessage/15200065465416
-Content-Type: application/json
-
-
 ###
-POST http://localhost:80/read
+POST http://localhost:8000/multi
 Content-Type: application/json
 
 {
-  "topic":"read",
+  "topic":"info",
   "location":{"lon":0.0,"lat":0.0},
   "message":{
-    "temperature":55.0,
+    "Temperature":5.0,
     "speed":20.0,
     "wind":20.0,
-    "wet": 30.0
+    "wet":8.0
   }
 }
 

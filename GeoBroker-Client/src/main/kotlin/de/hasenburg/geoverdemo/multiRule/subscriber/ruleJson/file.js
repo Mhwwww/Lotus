@@ -2,7 +2,6 @@ module.exports = (req, res) => {
     const fs = require("fs");
     const fileName = "saverule.json"
 
-
     fs.readFile(fileName, function (err, data) {
         if (!err) {
             let rules = JSON.parse(data)
@@ -14,13 +13,19 @@ module.exports = (req, res) => {
             let trueValueTable = true
 
             let resultFromGeoBroker = JSON.parse(JSON.stringify(req.body));
-            let inJson = req.body["message"]
+            // let inJson = req.body["message"]
+            resultFromGeoBroker = JSON.parse(resultFromGeoBroker)
+            let inJson = resultFromGeoBroker["message"]
+
 
             for (let i = 0; i < rules.length; i++) {
                 topicSet[i] = rules[i]["topic"]
                 operatorSet[i] = rules[i]["operator"]
                 constraintsSet[i] = rules[i]["constraints"]
                 trueValue[i] = true
+
+                console.log(topicSet[i])
+                console.log(resultFromGeoBroker["message"][topicSet[i]])
 
                 if (!resultFromGeoBroker["message"][topicSet[i]]) {
                     console.log("no matching event for the given rules topic")
@@ -126,7 +131,6 @@ module.exports = (req, res) => {
             res.end();
 
         } else {
-
             res.end();
             return;
         }

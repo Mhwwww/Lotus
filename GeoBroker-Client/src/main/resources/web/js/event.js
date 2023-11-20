@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const showWarningButton = document.querySelector('.event .Connection #show-warnings');
 
-
     let events = [];
     let inputEvent = {
         topic: "",
@@ -36,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
         // fetch('http://localhost:8081/show', {
+
         fetch(subscriptionInputUrl, {
 
             method: 'POST',
