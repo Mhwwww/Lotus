@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // const eventLongitudeInput = document.getElementById('event-lon');
     const eventLocationNameInput = document.getElementById('event-location-name');
     const eventRadiusInput = document.getElementById('event-rad');
+    const eventFunctionNameInput = document.getElementById('function-name');
+
     //const showWarningButton = document.getElementById('show-warning');
 
     const showWarningButton = document.querySelector('.event .Connection #show-warnings');
@@ -16,7 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
         locationName: "",
         // lat: "",
         // lon: "",
-        rad: ""
+        rad: "",
+        functionName: ""
     };
 
     console.log('showWarningButton:', showWarningButton);
@@ -30,12 +33,11 @@ document.addEventListener('DOMContentLoaded', function () {
             locationName: eventLocationNameInput.value,
             // lat: eventLatitudeInput.value,
             // lon: eventLongitudeInput.value,
-            rad: eventRadiusInput.value
+            rad: eventRadiusInput.value,
+            functionName: eventFunctionNameInput.value,
+
         };
-
-
         // fetch('http://localhost:8081/show', {
-
         fetch(subscriptionInputUrl, {
 
             method: 'POST',
@@ -58,15 +60,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 //return data.json(inputEvent);
+
                 location.assign(`../warning.html?subscription=${JSON.stringify(inputEvent)}&ruleinput=${JSON.stringify(rules)}`);
+                // location.assign(`../warning.html?${inputEvent.repubTopic}&${inputEvent.functionName}`);
                 return data.json();
             })
             .catch(error => {
                 console.error('Error occurred:', error);
             });
     });
-
-
 });
 
 

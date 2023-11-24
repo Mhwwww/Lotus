@@ -1,6 +1,5 @@
 
 
-import de.hasenburg.geoverdemo.geoVER.kotlin.SAVE_RULES_JSON_PATH
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -14,6 +13,12 @@ import kotlinx.serialization.json.Json
 import org.json.JSONObject
 import java.io.File
 
+var RULE_JSON = ""
+var INPUT_FUNCTION_PATH = ""
+
+const val CROSSWIND_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/crossWind/subscriber/ruleJson/"
+const val TEMPERATURE_PATH = "/Users/minghe/geobroker/GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"
+
 fun Application.applyRouting(){
     routing {
         //static page for localhost:8081/index.html
@@ -26,6 +31,21 @@ fun Application.applyRouting(){
                 val inputEvent = call.receive<InputEvent>()
                 println("Received inputEvent: $inputEvent")
                 call.respond("post show successfully")
+
+                //todo: write rules into file
+                when(inputEvent.functionName){
+                    "Crosswind"->{
+                        INPUT_FUNCTION_PATH = CROSSWIND_PATH
+                    }
+                    "Snow Clearing"->{
+                        INPUT_FUNCTION_PATH = TEMPERATURE_PATH
+                    }
+                }
+                val file = File(INPUT_FUNCTION_PATH+"/saverule.json/")
+
+                // clear file
+                file.writeText("")
+                file.writeText("$RULE_JSON\n")
 
                 GlobalScope.launch {
                     runRuleSubscriber(geoBrokerPara(inputEvent))
@@ -41,15 +61,19 @@ fun Application.applyRouting(){
                 //receive the frontend input rule set
                 val rules: List<InputRule> = call.receive()
                 val json = Json.encodeToString(rules)
+                RULE_JSON = json
 
                 // the file to save use input rules
 //                val file = File("./GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/saverule.json")
-                val file = File(SAVE_RULES_JSON_PATH)
-                println(json)
+                //var SAVE_RULES_JSON_PATH = FUNCTION_FILE_PATH+"/saverule.json/"
 
-                // clear file
-                file.writeText("")
-                file.writeText("$json\n")
+
+//                val file = File(INPUT_FUNCTION_PATH+"/saverule.json/")
+//                println(json)
+//
+//                // clear file
+//                file.writeText("")
+//                file.writeText("$json\n")
 
             } catch (e: Exception) {
                 val errorMessage = e.message ?: "Unknown error"
@@ -60,6 +84,7 @@ fun Application.applyRouting(){
         // messages in 'info' topic
         get("/infoMessage"){
             call.respond(infoArray.toString())
+
         }
 
         //get the events from 'warnings' topic
@@ -95,6 +120,8 @@ fun Application.applyRouting(){
             }
             // number of remaining warnings
             val remainingCount = warningArray.length()
+            println("warning Length ${remainingCount}")
+
             val responseMessage = "Remaining: $remainingCount warnings"
 
             call.respond(responseMessage)

@@ -1,10 +1,10 @@
-import com.tinkerforge.BrickletTemperature
-import com.tinkerforge.IPConnection
+
 import de.hasenburg.geobroker.client.main.SimpleClient
 import de.hasenburg.geobroker.commons.communication.ZMQProcessManager
 import de.hasenburg.geobroker.commons.model.message.Payload
 import de.hasenburg.geobroker.commons.model.message.ReasonCode
 import de.hasenburg.geobroker.commons.model.message.Topic
+import de.hasenburg.geobroker.commons.randomDouble
 import de.hasenburg.geobroker.commons.sleep
 import de.hasenburg.geoverdemo.geoVER.kotlin.BROKER_HOST
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.*
@@ -16,7 +16,7 @@ import kotlin.system.exitProcess
 private val logger = LogManager.getLogger()
 
     fun temperaturePublisher(address: String){
-        val publishTopic = Topic(PUB_TOPIC)
+        val publishTopic = Topic(TEMPERATURE_PUB_TOPIC)
         var locations = PUBLISH_GEOFENCE.center
 
         logger.info("the input subscription's topic is: {}", publishTopic)
@@ -32,18 +32,19 @@ private val logger = LogManager.getLogger()
 
         repeat(REPEAT_TIME) {
 
-            val ipcon = IPConnection()
-            val temperatureBricklet = BrickletTemperature("EKx", ipcon)
-
-            ipcon.connect(TINKERFORGE_HOST, TINKERFORGE_PORT)
-
-            val currentTemperature = temperatureBricklet.temperature/100.0
-            println("Current Temperature is $currentTemperature")
+//            val ipcon = IPConnection()
+//            val temperatureBricklet = BrickletTemperature("EKx", ipcon)
+//
+//            ipcon.connect(TINKERFORGE_HOST, TINKERFORGE_PORT)
+//
+//            val currentTemperature = temperatureBricklet.temperature/100.0
+//            println("Current Temperature is $currentTemperature")
 
             val newElem = JSONObject().apply {
                 //put("Publisher ID", client.identity)
                 put(TIME_SENT, System.nanoTime())
-                put(TEMPERATURE, currentTemperature)
+//                put(TEMPERATURE, currentTemperature)
+                put(TEMPERATURE, randomDouble(0.0, 30.0))
             }
 
             client.send(

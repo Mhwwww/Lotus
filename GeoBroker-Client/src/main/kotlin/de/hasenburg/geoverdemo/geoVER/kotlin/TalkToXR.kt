@@ -112,14 +112,14 @@ class TalkToXR {
         }
     }
 
-    suspend fun sendWarning(warning: String) {
+    suspend fun sendWarning(warning: String, sensor:String) {
         if (!isClientRunning) {
             startClient()
         }
         val jsonObject = JSONObject(warning)
 
         //val sensor = jsonObject.get("publisher ID").toString()
-        val sensor = "live_demo_1"
+        //val sensor = "live_demo_1"
         val direction = jsonObject.get(WIND_DIRECTION).toString()
 
         var speed = (jsonObject.get(WIND_VELOCITY)).toString().toDouble()

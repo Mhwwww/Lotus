@@ -16,12 +16,12 @@
     "constraints": 15.0
   },
   {
-    "type": "Boring767",
+    "type": "Boeing767",
     "topic": "crosswind",
     "constraints": 40.0
   },
   {
-    "type": "Boring757",
+    "type": "Boeing757",
     "topic": "crosswind",
     "constraints": 40.0
   },

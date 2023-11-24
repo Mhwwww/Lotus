@@ -24,96 +24,96 @@ data class Temperature(
 @Measurement(name = "wind")
 data class Wind(
     //    @Column val location: String,
-    @Column val windDirection: Int,
+    @Column val windDirection: String,
     @Column val value: Double,//wind speed
     @Column(timestamp = true) val time: Instant,
 
 )
 
 class InfluxDB{
-    fun writeToInfluxDB(msg: String, bucket: String) {
-        runBlocking {
-            //publisher data
-            val jsonObject = JSONObject(msg)
-//            {
-        //            "topic":"warning",
-        //            "location":"Frankfurt Airport",
-        //            "message":{
-        //                  "Time Sent":9205281982041,
-        //                  "Temperature":24.451258330866057,
-        //                  "Wind Velocity":60.1580425198826,
-        //                  "Priority":true,
-        //                  "Humidity":59.22916413142805,
-        //                  "Wind Direction":14
-        //                  }
-        //     }
-//            val location = jsonObject.get("location").toString()
-
-            val message = JSONObject(jsonObject.get("message").toString())
-
-            var windSpeed = message.get("Wind Velocity") as Double
-            windSpeed = String.format("%.2f", windSpeed).toDouble()
-            val windDirection = message.get("Wind Direction") as Int
-            val temperature = message.get("Temperature") as Double
-
-
-            val client = InfluxDBClientKotlinFactory.create( url = URL, token = TOKEN, org = ORGANIZATION, bucket = bucket)
-
-            client.use {
-                val writeApi = client.getWriteKotlinApi()
-                val tempe = Temperature(temperature, Instant.now())// Write by DataClass
-
-                writeApi.writeMeasurement(tempe, WritePrecision.MS)//nano-second
-
-                val wind = Wind(windDirection , windSpeed, Instant.now())// Write by DataClass
-                writeApi.writeMeasurement(wind, WritePrecision.MS)//nano-second
-
-                /* Query results */
-                //TODO: leave here for testing, delete later.
-                val fluxQuery_wind =
-                    """
-                    from(bucket: "$INFO_BUCKET")
-                        ||> range(start: -5m)
-                        |> filter(fn: (r) => (r["_measurement"] == "wind"))
-                        |
-                        """.trimMargin()
-                val fluxQuery_temperature=
-                    """from(bucket: "$INFO_BUCKET")
-                        ||> range(start: -5m)
-                        |> filter(fn: (r) => (r["_measurement"] == "temperature"))""".trimMargin()
-
-                val fluxQuery_all=
-                    """from(bucket: "$INFO_BUCKET")
-                        ||> range(start: -5m)
-                        """.trimMargin()
-
-
-                //Result is returned as a stream
-
-
-
-//                client
-//                    .getQueryKotlinApi()
-//                    .query(fluxQuery_all)
-//                    .consumeAsFlow()
-//                    .collect { println("Measurement: ${it.table}") }
-//                client
-//                    .getQueryKotlinApi()
-//                    .query(fluxQuery_wind)
-//                    .consumeAsFlow()
-//                    .collect { println("Measurement: ${it.measurement}, value: ${it.value}, wind direction: ${it.getValueByKey("windDirection")}, time: ${it.time}") }
-//                /* Query results */
+//    fun writeToInfluxDB(msg: String, bucket: String) {
+//        runBlocking {
+//            //publisher data
+//            val jsonObject = JSONObject(msg)
+////            {
+//        //            "topic":"warning",
+//        //            "location":"Frankfurt Airport",
+//        //            "message":{
+//        //                  "Time Sent":9205281982041,
+//        //                  "Temperature":24.451258330866057,
+//        //                  "Wind Velocity":60.1580425198826,
+//        //                  "Priority":true,
+//        //                  "Humidity":59.22916413142805,
+//        //                  "Wind Direction":14
+//        //                  }
+//        //     }
+////            val location = jsonObject.get("location").toString()
 //
-//                client
-//                    .getQueryKotlinApi()
-//                    .query(fluxQuery_temperature)
-//                    .consumeAsFlow()
-//                    .collect { println("Measurement: ${it.measurement}, value: ${it.value},  time: ${it.time}") }
-
-                //client.close()
-            }
-        }
-    }
+//            val message = JSONObject(jsonObject.get("message").toString())
+//
+//            var windSpeed = message.get("Wind Velocity") as Double
+//            windSpeed = String.format("%.2f", windSpeed).toDouble()
+//            val windDirection = message.get("Wind Direction") as Int
+//            val temperature = message.get("Temperature") as Double
+//
+//
+//            val client = InfluxDBClientKotlinFactory.create( url = URL, token = TOKEN, org = ORGANIZATION, bucket = bucket)
+//
+//            client.use {
+//                val writeApi = client.getWriteKotlinApi()
+//                val tempe = Temperature(temperature, Instant.now())// Write by DataClass
+//
+//                writeApi.writeMeasurement(tempe, WritePrecision.MS)//nano-second
+//
+//                val wind = Wind(windDirection , windSpeed, Instant.now())// Write by DataClass
+//                writeApi.writeMeasurement(wind, WritePrecision.MS)//nano-second
+//
+//                /* Query results */
+//                //TODO: leave here for testing, delete later.
+//                val fluxQuery_wind =
+//                    """
+//                    from(bucket: "$INFO_BUCKET")
+//                        ||> range(start: -5m)
+//                        |> filter(fn: (r) => (r["_measurement"] == "wind"))
+//                        |
+//                        """.trimMargin()
+//                val fluxQuery_temperature=
+//                    """from(bucket: "$INFO_BUCKET")
+//                        ||> range(start: -5m)
+//                        |> filter(fn: (r) => (r["_measurement"] == "temperature"))""".trimMargin()
+//
+//                val fluxQuery_all=
+//                    """from(bucket: "$INFO_BUCKET")
+//                        ||> range(start: -5m)
+//                        """.trimMargin()
+//
+//
+//                //Result is returned as a stream
+//
+//
+//
+////                client
+////                    .getQueryKotlinApi()
+////                    .query(fluxQuery_all)
+////                    .consumeAsFlow()
+////                    .collect { println("Measurement: ${it.table}") }
+////                client
+////                    .getQueryKotlinApi()
+////                    .query(fluxQuery_wind)
+////                    .consumeAsFlow()
+////                    .collect { println("Measurement: ${it.measurement}, value: ${it.value}, wind direction: ${it.getValueByKey("windDirection")}, time: ${it.time}") }
+////                /* Query results */
+////
+////                client
+////                    .getQueryKotlinApi()
+////                    .query(fluxQuery_temperature)
+////                    .consumeAsFlow()
+////                    .collect { println("Measurement: ${it.measurement}, value: ${it.value},  time: ${it.time}") }
+//
+//                //client.close()
+//            }
+//        }
+//    }
     fun queryFromInfluxDBwithKey(fluxQuery: String, key:String, bucket: String) {
         runBlocking {
             val client = InfluxDBClientKotlinFactory.create( url = URL, token = TOKEN, org = ORGANIZATION)
@@ -148,14 +148,34 @@ class InfluxDB{
 
             val jsonObject = JSONObject(messageContent)
 
-            val direction = jsonObject.get(WIND_DIRECTION) as Int
+            val msgDirection = jsonObject.get(WIND_DIRECTION) as Int
+            var direction = ""
+
+            when (msgDirection) {
+                0 -> direction = "North"
+                1 -> direction = "North to Northeast"
+                2 -> direction = "Northeast"
+                3 -> direction ="East to Northeast"
+                4 -> direction = "East"
+                5 -> direction = "East to Southeast"
+                6 -> direction ="Southeast"
+                7 -> direction = "South to Southeast"
+                8 -> direction ="South"
+                9 -> direction ="South to Southwest"
+                10 -> direction = "Southwest"
+                11 -> direction = "West to Southwest"
+                12 -> direction = "West"
+                13 -> direction =  "West to Northwest"
+                14 -> direction =  "NorthWest"
+                15 -> direction = "North to NorthWest"
+
+                225 -> direction =  "ERROR"
+            }
 
             var speed = (jsonObject.get(WIND_VELOCITY)).toString().toDouble()
             speed = String.format("%.2f", speed).toDouble()
 
             val temp = (jsonObject.get(TEMPERATURE)).toString().toDouble()
-
-
 
 //            val humidity = jsonObject.get("Humidity").toString()
 //            val timeSent = jsonObject.get("timeSent").toString()

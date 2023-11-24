@@ -3,9 +3,8 @@ import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.model.spatial.Geofence
 import de.hasenburg.geobroker.commons.model.spatial.Location
 import de.hasenburg.geover.UserSpecifiedRule
-import de.hasenburg.geoverdemo.geoVER.kotlin.FUNCTION_FILE_PATH
-import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.BER_AIRPORT
-import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.FRANKFURT_AIRPORT
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.DRESDEN_AIRPORT
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.HAMBURG_AIRPORT
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.SCHOENHAGEN_AIRPORT
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.WEATHER_STATION
 import kotlinx.serialization.Serializable
@@ -23,7 +22,7 @@ var constraints = 0.0
 
 @Serializable
 //data class InputEvent(val topic: String, val repubTopic: String, val lat: String, val lon: String, val rad: String)
-data class InputEvent(val topic: String, val repubTopic: String, val locationName: String, val rad: String)
+data class InputEvent(val topic: String, val repubTopic: String, val locationName: String, val rad: String, val functionName: String)
 
 
 @Serializable
@@ -44,17 +43,17 @@ fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
         matchingTopic = Topic(inputEvent.repubTopic)
 
         when(inputEvent.locationName){
-                "Berlin Airport" -> {
-                        lat = BER_AIRPORT.center.lat
-                        lon = BER_AIRPORT.center.lon
+                "Hamburg" -> {
+                        lat = HAMBURG_AIRPORT.center.lat
+                        lon = HAMBURG_AIRPORT.center.lon
                 }
-                "Schönhagen Airport" -> {
+                "Schönhagen" -> {
                         lat = SCHOENHAGEN_AIRPORT.center.lat
                         lon = SCHOENHAGEN_AIRPORT.center.lon
                 }
-                "Frankfurt Airport" -> {
-                        lat = FRANKFURT_AIRPORT.center.lat
-                        lon = FRANKFURT_AIRPORT.center.lon
+                "Dresden" -> {
+                        lat = DRESDEN_AIRPORT.center.lat
+                        lon = DRESDEN_AIRPORT.center.lon
                 }
                 "Weather Station" -> {
                         lat = WEATHER_STATION.center.lat
@@ -62,19 +61,28 @@ fun geoBrokerPara(inputEvent: InputEvent) : UserSpecifiedRule {
                 }
         }
 
-        locations = Location(lat,lon)
+        when(inputEvent.functionName){
+                "Crosswind"->{
+                        INPUT_FUNCTION_PATH = CROSSWIND_PATH
+                }
+                "Snow Clearing"->{
+                        INPUT_FUNCTION_PATH = TEMPERATURE_PATH
+                }
+        }
 
+        locations = Location(lat,lon)
         radius = inputEvent.rad.toDouble()
 
         logger.info(publishTopic)
         logger.info(matchingTopic)
         logger.info(locations)
         logger.info(radius)
-
         logger.info("location name: {}", inputEvent.locationName)
 
 
     //Using the rule-based filtering function
 //    return UserSpecifiedRule(Geofence.circle(locations, inputEvent.rad.toDouble()), publishTopic, File("GeoBroker-Client/src/main/kotlin/de/hasenburg/geoverdemo/multiRule/subscriber/ruleJson/"), "nodejs", matchingTopic)
-    return UserSpecifiedRule(Geofence.circle(locations, radius), publishTopic, File(FUNCTION_FILE_PATH), "nodejs", matchingTopic)
+
+        return UserSpecifiedRule(Geofence.circle(locations, radius), publishTopic, File(INPUT_FUNCTION_PATH), "nodejs", matchingTopic)
 }
+

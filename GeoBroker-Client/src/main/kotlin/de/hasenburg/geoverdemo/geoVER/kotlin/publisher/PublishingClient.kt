@@ -15,7 +15,6 @@ import org.json.JSONObject
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
-
 class PublishingClient(){
     fun startPublisherClient(address: String) {
         setLogLevel(logger, Level.DEBUG)
@@ -38,16 +37,16 @@ class PublishingClient(){
             //locations = Location(Random.nextDouble(0.0, 2.0), Random.nextDouble(0.0, 2.0))
             //locations = PUBLISHER_LOCATION
 
-            val newElem = JSONObject().apply {
-                put(TIME_SENT, System.nanoTime())
-//                put(PUBLISHER_ID, client.identity)
 
+            val newElem = JSONObject().apply {
+                put(WIND_VELOCITY, randomDouble(235.0, 264.0))
+                put(WIND_DIRECTION, 14)
+//                put(PUBLISHER_ID, client.identity)
                 put(TEMPERATURE, randomDouble(0.0, 45.0))
                 put(HUMIDITY, randomDouble(0.0, 60.0))
-
-                put(WIND_VELOCITY, randomDouble(220.0, 300.0))
-                put(WIND_DIRECTION, 0)
+                put(TIME_SENT, System.nanoTime())
             }
+
 
             client.send(
                 Payload.PUBLISHPayload(
@@ -63,6 +62,7 @@ class PublishingClient(){
 
             sleep(PUB_INTERVAL, 0)
             logger.info("Sent message ${++i} to ${address}: ${newElem.toString()} ")
+
         }
 
         sleep(2000, 0)

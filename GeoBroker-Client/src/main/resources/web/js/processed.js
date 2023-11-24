@@ -1,7 +1,8 @@
 Vue.component('warning-list', {
     template: `
     <div>
-    <h2> Warnings: </h2>
+<!--    <h2> Warnings: </h2>-->
+<h2> Warnings: (#{{ warnings.length }})</h2>
     <table>
       <thead>
         <tr>
@@ -11,11 +12,13 @@ Vue.component('warning-list', {
         </tr>
       </thead>
       <tbody>
+      
         <tr v-for="warning in warnings" :key="warning.id" class="warning-row">
           <td>{{ warning.id }}</td>
           <td v-for="key in warningKeys" :key="key" class="warning-data" >
             <template v-if="key === 'message' || key === 'location'">
               <div v-if="typeof warning[key] === 'object'">
+
                 <div v-for="(subValue, subKey, index) in warning[key]" :key="subKey">
                   <div v-if="index < 2">{{ subKey }}: {{ subValue }}</div>
                   <div v-else v-show="!warning.collapsed">{{ subKey }}:
@@ -28,7 +31,6 @@ Vue.component('warning-list', {
                             <button class="priority-button">Warning</button>
                           </template> 
                         </a> 
-
                     </template>
                     <template v-else>{{ subValue }}</template>
                   </div>
@@ -56,7 +58,6 @@ Vue.component('warning-list', {
       </tbody>
     </table>
   </div>
-
   `,
     data() {
         return {
@@ -66,7 +67,6 @@ Vue.component('warning-list', {
     },
     mounted() {
         this.fetchWarnings();
-
     },
     methods: {
         async fetchWarnings() {
@@ -81,6 +81,7 @@ Vue.component('warning-list', {
                     if (data.length !== 0) {
                         console.log("THERE IS SOME DATA")
 
+                        //TODO: sort received data--> Wind Speed, wind direction, and priority....
                         this.warnings = data.map((warning) => {
                             return { ...warning, collapsed: true };
                         });
@@ -95,7 +96,6 @@ Vue.component('warning-list', {
                     // Continue fetching data
                     setTimeout(fetchData, 5000);
                 };
-
                 // Start the initial fetch
                 fetchData();
 
@@ -121,8 +121,8 @@ Vue.component('warning-list', {
                     body: JSON.stringify({action: 'delete'})
                 });
                 if (response.ok) {
+                    // this.fetchWarnings();
                     // Deletion successful
-                    this.fetchWarnings()
                 } else {
                     console.error('Failed to delete warning');
                 }
@@ -139,7 +139,7 @@ Vue.component('warning-list', {
 Vue.component('info-list', {
     template: `
     <div>
-        <h2> Information: </h2>
+        <h2> Information: (#{{ infoSet.length }}) </h2>
         <table>
             <thead>
                 <tr>

@@ -67,7 +67,8 @@ Vue.component('subscription-info', {
                 // lat: 'Latitude',
                 // lon: 'Longitude',
                 locationName: 'Location',
-                rad: 'Radius'
+                rad: 'Radius',
+                functionName: 'Function Name'
             };
             return fieldLabels[key] || key;
         },

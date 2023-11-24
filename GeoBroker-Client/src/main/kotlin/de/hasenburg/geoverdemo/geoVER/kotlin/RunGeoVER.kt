@@ -10,8 +10,8 @@ import de.hasenburg.geobroker.commons.setLogLevel
 import de.hasenburg.geover.BridgeManager
 import de.hasenburg.geover.UserSpecifiedRule
 import de.hasenburg.geoverdemo.geoVER.kotlin.*
-import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.BER_AIRPORT
-import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.FRANKFURT_AIRPORT
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.DRESDEN_AIRPORT
+import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.HAMBURG_AIRPORT
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.SCHOENHAGEN_AIRPORT
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.Level
@@ -35,7 +35,6 @@ val influxdb = InfluxDB()
 val CROSSWIND_HOST = BROKER_HOST
 const val CROSSWIND_PORT = 5559
 
-
 //TODO: check if Tinkerforge is connected--> if not, do not run the related code
 //
 ////TODO: LCD related
@@ -56,8 +55,6 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
 
     private var warningUrl = URL(WARNING_URL)
     private var infoUrl = URL(INFO_URL)
-
-
 
     fun prepare() {
         setLogLevel(this.logger, Level.DEBUG)
@@ -93,28 +90,27 @@ class RunGeoVER(private val loc: Location, private val topic: Topic, private val
                 if (processMessage(message)) { // warning messages
                     reformatEvents(message, warningArray)
                     postEvents(warningUrl, message.content)
+
                     //todo: show warnig msg on LCD
 //                    sendTextToLCD(lcdBricklet, message.content)
-//
 //                    segDisplayMsg(segmentBricklet, JSONObject(message.content).get(WIND_VELOCITY).toString().toDouble())
 
-
 //                    //store warnings in Bucket_warning
-//                    influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
+                    if (message.topic.topic == "warning"){
+                        influxdb.writeMsgToInfluxDB(message, WARNING_BUCKET)
+                    }else{
+                        println("Should be Snow Clearing")
+                    }
 
-
-                    //show warning on b
-                    //send warning to DT
-                    //sendMsgToDT(message.content)
                 } else {
                     val info = reformatEvents(message, infoArray)
                     postEvents(infoUrl, message.content)
-//                    //store info in Bucket_info
-//                    influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
-////                    influxdb.writeToInfluxDB(info, INFO_BUCKET)
-//                    //send info to DT
-//                    //TODO: enable when finishing Influxdb
-//                    sendMsgToDT(message.content)
+
+                    if (message.topic.topic =="crosswind" || message.topic.topic=="info"){
+                        //                    //store info in Bucket_info
+                        influxdb.writeMsgToInfluxDB(message, INFO_BUCKET)
+//                        sendMsgToDT(message.content)
+                    }
                 }
             }
         }
@@ -137,14 +133,14 @@ fun reformatEvents(message: Payload.PUBLISHPayload, array: JSONArray): String {
 
     // if the location is the known location, then send the 'name', else send the concreate location.
     if (msgLocation == SCHOENHAGEN_AIRPORT){
-        locationName = "Schönhagen Airport"
+        locationName = "Schoenhagen Airport"
         sentJson.put("location", locationName)
 
-    } else if (msgLocation == BER_AIRPORT){
+    } else if (msgLocation == HAMBURG_AIRPORT){
         locationName = "Berlin Airport"
         sentJson.put("location", locationName)
 
-    } else if (msgLocation == FRANKFURT_AIRPORT){
+    } else if (msgLocation == DRESDEN_AIRPORT){
         locationName = "Frankfurt Airport"
         sentJson.put("location", locationName)
     }  else{
@@ -159,7 +155,7 @@ fun reformatEvents(message: Payload.PUBLISHPayload, array: JSONArray): String {
     array.put(sentJson)
     logger.debug("The Number of {} Event is: {}", message.topic.topic, array.length())
 
-    return array.toString()
+  return array.toString()
 }
 fun postEvents(url: URL, inputJsonArray: String) {
     val connection = url.openConnection() as HttpURLConnection
@@ -178,8 +174,10 @@ fun postEvents(url: URL, inputJsonArray: String) {
 fun addPriority(message: Payload.PUBLISHPayload, priority: Boolean): String {
     val msgContent = message.content
     val contentWithPriority = JSONObject(msgContent).put("Priority", priority)
+
     message.content = contentWithPriority.toString()
     logger.debug("Add Priority Successfully, and the current message is {}", message.content)
+
     return message.content
 }
 
@@ -198,7 +196,7 @@ fun processMessage(message: Payload.PUBLISHPayload): Boolean {
 }
 suspend fun sendMsgToDT(msg:String){
     //todo: modify direction later
-    talkToXR.sendWarning(msg)
+    talkToXR.sendWarning(msg,"live_demo_1")
     logger.debug("The Message Send To DT is: {}", msg)
 }
 fun runRuleSubscriber(rule: UserSpecifiedRule) = runBlocking {

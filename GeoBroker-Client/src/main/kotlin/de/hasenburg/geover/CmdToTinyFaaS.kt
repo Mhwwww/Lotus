@@ -20,7 +20,6 @@ var TINYFAAS_START_PATH = "${TINYFAAS_BASE_PATH}\t"
 
 private val logger = LogManager.getLogger()
 fun cmdUploadToTinyFaaS(path:String, functionName:String, fnEnv:String, thread: Int) :String {
-
     logger.debug("isUnix: {}", isUnix())
     if (isUnix()) {
         val upload: String = TINYFAAS_UPLOAD_PATH + path + "\t" + functionName + "\t" + fnEnv + "\t" + thread

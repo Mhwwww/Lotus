@@ -15,7 +15,7 @@ import java.net.URL
 
 val GEOBROKER_HOST = BROKER_HOST
 const val GEOBROKER_PORT = 5559
-const val TINYFAAS_BASE_URL = "http://localhost:8000/"
+val TINYFAAS_BASE_URL = "http://localhost:8000/"
 
 private val logger = LogManager.getLogger()
 
@@ -25,8 +25,6 @@ fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofence:Geofence, function
     return buildBridgeBetweenTopicAndFunction(topic, listOf(geofence), functionName, newTopicIfMatch)
 }
 fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: List<Geofence>, functionName: String, newTopicIfMatch: Topic) {
-
-
     //setLogLevel(logger, Level.WARN)
 
     var eventNum = 0
@@ -83,6 +81,7 @@ fun buildBridgeBetweenTopicAndFunction(topic: Topic, geofences: List<Geofence>, 
         jsonToSendToTinyFaaS.put("topic", message.topic.topic)
         jsonToSendToTinyFaaS.put("location", locJson)
         jsonToSendToTinyFaaS.put("message", JSONObject(message.content))
+
 
         /**
          * message: "Whatever from Clients, we don't care, probably JSON"

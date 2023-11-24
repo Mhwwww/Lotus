@@ -9,21 +9,28 @@ import de.hasenburg.geobroker.commons.model.message.ReasonCode
 import de.hasenburg.geobroker.commons.model.message.Topic
 import de.hasenburg.geobroker.commons.sleep
 import de.hasenburg.geoverdemo.geoVER.kotlin.publisher.*
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.apache.logging.log4j.LogManager
 import org.json.JSONObject
 import kotlin.system.exitProcess
 
 private val logger = LogManager.getLogger()
+
+var receiveWindSpeed = 0.0
 //TODO: enable listener(current doesn't work)
-class OutdoorWeatherBrickletPublishingClient(){
+class RealTimeOutdoorPublisher(){
     fun getStationData(stationID:Int): StationData {
         // Create IP connection--> Create device object--> Connect to brick daemon
         val ipcon = IPConnection()
-
         val outdoorWeather = BrickletOutdoorWeather(UID_OUTDOORWEATHER, ipcon)
-
         ipcon.connect(TINKERFORGE_HOST, TINKERFORGE_PORT)
-
 
         println(outdoorWeather.readUID())
         val stationData = outdoorWeather.getStationData(stationID)
@@ -31,15 +38,8 @@ class OutdoorWeatherBrickletPublishingClient(){
         logger.info(stationData)
 
         // Get station data--> [temperature = 216, humidity = 44, windSpeed = 0, gustSpeed = 0, rain = 48, windDirection = 2, batteryLow = false, lastChange = 41]
-
         return stationData
     }
-
-//    fun getTemperatureData(){
-//        val ipcon = IPConnection()
-//        val temperatureBricklet = BrickletTemperature("EKx", ipcon)
-//
-//    }
 
     fun startOutdoorBrickletPublisher(stationID: Int, address: String) {
         val publishTopic = Topic(PUB_TOPIC)
@@ -82,7 +82,6 @@ class OutdoorWeatherBrickletPublishingClient(){
             val temperature = outdoorWeatherBrickletStationData.temperature
             val humidity= outdoorWeatherBrickletStationData.humidity
 //            val windSpeed = outdoorWeatherBrickletStationData.windSpeed //mps
-            val windSpeed = outdoorWeatherBrickletStationData.gustSpeed
 
             val windDirection = outdoorWeatherBrickletStationData.windDirection
 
@@ -96,14 +95,19 @@ class OutdoorWeatherBrickletPublishingClient(){
 //            locations = PUBLISHER_LOCATION
 //            locations = PUBLISH_GEOFENCE.center
 
+
+
             val newElem = JSONObject().apply {
                 //put("Publisher ID", client.identity)
                 put(TIME_SENT, System.nanoTime())
                 put(TEMPERATURE, temperature/10.0)
                 put(HUMIDITY, humidity/1.0)
 
+                put(WIND_VELOCITY, receiveWindSpeed * 8.7)
+                logger.error("Real time wind speed is: {}", receiveWindSpeed)
+
                 // todo: need to expand values of wind speed
-                put(WIND_VELOCITY, windSpeed * 1.47)//sensor value --> 1 meter per second = 1.94384449 knot
+//                put(WIND_VELOCITY, windSpeed * 1.47)//sensor value --> 1 meter per second = 1.94384449 knot
                 put(WIND_DIRECTION, windDirection)
 
 //                put(WIND_VELOCITY, randomDouble(200.0, 264.0))
@@ -136,12 +140,34 @@ class OutdoorWeatherBrickletPublishingClient(){
     }
 }
 
+fun getWindSpeed(windSpeed: String): Double{
+    receiveWindSpeed = windSpeed.toDouble()
+
+    return receiveWindSpeed
+}
 
 
+suspend fun realTimeWindSpeed(){
+    val job1 = GlobalScope.async {
+        RealTimeOutdoorPublisher().startOutdoorBrickletPublisher(STATION_ID, ADDRESS)
+    }
 
-fun main(){
+    logger.info("Starting Netty now...")
+    embeddedServer(Netty, 9999) {
+        routing {
+            post("/") {
+                val text = call.receiveText()
+                receiveWindSpeed = text.toDouble()
+                call.respond("Thanks!")
+            }
+        }
+    }.start(wait = true)
 
+    job1.await()
+}
 
+suspend fun main(){
+    realTimeWindSpeed()
 }
 
 

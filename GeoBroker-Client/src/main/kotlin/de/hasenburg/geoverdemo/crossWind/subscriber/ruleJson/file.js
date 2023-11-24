@@ -29,13 +29,13 @@ module.exports = (req, res) => {
 
 
             for (let i = 0; i < rules.length; i++) {
-                if (rules[i]["topic"] == "aircraft type") {
+                if (rules[i]["topic"] == "aircraft") {
                     aircraftType = rules[i]["constraints"];
                     console.log(aircraftType);
                 } else if (rules[i]["topic"] == "crosswind") {
                     crosswindThreshold = rules[i]["constraints"];
                     console.log(crosswindThreshold);
-                } else if (rules[i]["topic"] == "runway direction") {
+                } else if (rules[i]["topic"] == "runway") {
                     runwayDirection = rules[i]["constraints"];
                     console.log(runwayDirection);
                 }

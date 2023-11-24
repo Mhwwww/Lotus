@@ -26,12 +26,8 @@ var weatherInfoArray = JSONArray()
 val WEATHER_STATION_HOST = BROKER_HOST
 const val WEATHER_STATION_PORT = 5559
 
-const val WEATHER_INFO_TOPIC = "info"
+const val WEATHER_INFO_TOPIC = "crosswind"
 const val WEATHER_WARNING_TOPIC = "weather"
-
-const val WEATHER_INFO_BUCKET = "allInfo"
-const val WEATHER_WARNING_BUCKET = "allWarning"
-
 
 class WeatherStation(private val loc: Location, private val topic: Topic, private val name: String) {
     private val logger = LogManager.getLogger()
@@ -76,22 +72,11 @@ class WeatherStation(private val loc: Location, private val topic: Topic, privat
                 // add priority to message content, and set it to Boolean
                 // if it is "info", set to be 'false', if it is warning, then true
                 if (processMessage1(message)) { // warning messages
-
                     val msg = reformatEvents1(message, weatherWarningArray)
-
-                    //logger.error(msg)
                     logFormat(msg)
-
-                    //store warnings in Bucket_warning
-//                    influxdb.writeMsgToInfluxDB(message, WEATHER_WARNING_BUCKET)
-//                    influxdb.writeToInfluxDB(reformatMsg, WARNING_BUCKET)
-
                 } else {
                     val info = reformatEvents1(message, weatherInfoArray)
                     logFormat(info)
-                    //store info in Bucket_info
-//                    influxdb.writeMsgToInfluxDB(message, WEATHER_INFO_BUCKET)
-//                    influxdb.writeToInfluxDB(info, INFO_BUCKET)
                 }
             }
         }
@@ -117,15 +102,15 @@ fun reformatEvents1(message: Payload.PUBLISHPayload, array: JSONArray): String {
 
     // if the location is the known location, then send the 'name', else send the concreate location.
     if (msgLocation == SCHOENHAGEN_AIRPORT) {
-        locationName = "Schönhagen Airport"
+        locationName = "Schoenhagen Airport"
         sentJson.put("location", locationName)
 
-    } else if (msgLocation == BER_AIRPORT) {
-        locationName = "Berlin Airport"
+    } else if (msgLocation == HAMBURG_AIRPORT) {
+        locationName = "Hamburg Airport"
         sentJson.put("location", locationName)
 
-    } else if (msgLocation == FRANKFURT_AIRPORT) {
-        locationName = "Frankfurt Airport"
+    } else if (msgLocation == DRESDEN_AIRPORT) {
+        locationName = "Dresden Airport"
         sentJson.put("location", locationName)
     } else {
         locJson.put("lat", msgLocation.center.lat)
@@ -244,15 +229,19 @@ fun logFormat(msg: String) {
     val airportLoc = jsonMsg.get("location")
     val msgContent = JSONObject(jsonMsg.get("message").toString())
 
+
     var logWindSpeed = msgContent.get(WIND_VELOCITY)
-    logWindSpeed = String.format("%.2f", logWindSpeed).toDouble()
+    if (logWindSpeed != 0){
+        logWindSpeed = String.format("%.2f", logWindSpeed).toDouble()
+    }
+
     val logWindDirection = msgContent.get(WIND_DIRECTION)
+
     var logTemperature = msgContent.get(TEMPERATURE)
     logTemperature = String.format("%.2f", logTemperature).toDouble()
 
-
     when (msgTopic) {
-        "info" -> {
+        PUB_TOPIC -> {
             println("------------------------------------------------------------------------------------------------------------------------------------------------------------------")
             println("INFO Message Number #${weatherInfoArray.length()}")
             println("Location: $airportLoc")
@@ -264,7 +253,7 @@ fun logFormat(msg: String) {
 
         "weather" -> {
             println("------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-            System.err.println("WARNING Message Number #${weatherInfoArray.length()}")
+            System.err.println("WARNING Message Number #${weatherWarningArray.length()}")
             System.err.println("Location: $airportLoc")
             System.err.println("Wind Speed: $logWindSpeed")
             System.err.println("Wind Direction: $logWindDirection")
@@ -274,12 +263,3 @@ fun logFormat(msg: String) {
         }
     }
 }
-
-
-//fun main () = runBlocking {
-//
-//    val rule = geoBrokerPara(InputEvent(topic= "info", repubTopic = "weather", locationName = "Weather Station", rad = "80"))
-//
-//    runRuleSubscriber1(rule)
-//
-//}
