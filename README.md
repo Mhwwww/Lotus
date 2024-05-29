@@ -1,121 +1,73 @@
-# (Distributed) GeoBroker
-
-[![CodeFactor](https://www.codefactor.io/repository/github/moewex/geobroker/badge)](https://www.codefactor.io/repository/github/moewex/geobroker)
-
-In the Internet of Things, the relevance of data often depends on the geographic context of data producers and consumers. Today’s data distribution services, however, mostly focus on data content and not on geo-context, which could help to reduce the dissemination of excess data in many IoT scenarios. We propose to use the geo-context information associated with devices to control data distribution.
-For this, we designed GeoBroker, a data distribution service that uses the location of things, as well as geofences for messages and subscriptions, to control data distribution. This way, we enable new IoT application scenarios while also increasing overall system efficiency for scenarios where geo-contexts matter by delivering only relevant messages.
-
-GeoBroker can also be used for message routing in distributed environments. Here, DisGB (distributed GeoBroker) uses geo-context information to improve inter-broker routing by selecting rendezvous points close to the publishers or subscribers of an event.
-
-If you use this software in a publication, please cite it as:
+# Lotus: Serverless In-Transit Data Processing for Edge-based Pub/Sub
+Lotus adds in-transit data processing to an edge publish-subscribe middleware in order to offload basic message processing from edge devices to brokers. 
+It integrates Function-as-a-Service to support efficient multi-tenancy, scale-to-zero, and real-time data processing.
 
 ### Text
-Jonathan Hasenburg, David Bermbach. **DisGB: Using Geo-Context Information for Efficient Routing in Geo-Distributed Pub/Sub Systems**. In: Proceedings of the 7th IEEE/ACM International Conference on Utility and Cloud Computing 2020 (UCC 2020). IEEE 2020.
+Minghe Wang, Trever Schirmer, Tobias Pfandzelter, and David Bermbach. 2023. Lotus: Serverless In-Transit Data Processing for Edge-based Pub/Sub. In Proceedings of the 6th International Workshop on Edge Systems, Analytics and Networking (EdgeSys '23). Association for Computing Machinery, New York, NY, USA, 31–35. https://doi.org/10.1145/3578354.3592869
 
-Jonathan Hasenburg, David Bermbach. **GeoBroker: Leveraging Geo-Contexts for IoT Data Distribution**. In: Computer Communications. Elsevier 2020.
-
-Jonathan Hasenburg, David Bermbach. **GeoBroker: A Pub/Sub Broker Considering Geo-Context Information**. In: Software Impacts, 6. Elsevier 2020.
-
-Jonathan Hasenburg, David Bermbach. **Towards Geo-Context Aware IoT Data Distribution.** In: Proceedings of the 4th Workshop on IoT Systems Provisioning and Management for Context-Aware Smart Cities (ISYCC 2019). Springer 2019.
 
 ### BibTeX
 ```
-@inproceedings{hasenburg_disgb:_2020,
-	title = {{DisGB}: Using Geo-Context Information for Efficient Routing in Geo-Distributed Pub/Sub Systems},
-	booktitle = {2020 {IEEE}/{ACM} International Conference on Utility and Cloud Computing},
-	publisher = {{IEEE}},
-	author = {Hasenburg, Jonathan and Bermbach, David},
-	year = {2020}
-}
-
-@article{hasenburg_geobroker:_2020,
-	title = {{GeoBroker}: Leveraging geo-contexts for {IoT} data distribution},
-	author = {Hasenburg, Jonathan and Bermbach, David},
-	journal = {Computer Communications},
-	volume = {151},
-	doi = {10.1016/j.comcom.2020.01.015},
-	year = {2020}
-}
-
-@article{hasenburg_geobroker:_2020,
-	title = {{GeoBroker}: A pub/sub broker considering geo-context information},
-	author = {Hasenburg, Jonathan and Bermbach, David},
-	journal = {Software Impacts},
-	volume = {6},
-	doi = {10.1016/j.simpa.2020.100029},
-	year = {2020}
-}
-
-@inproceedings{hasenburg_towards_2018,
-	title = {Towards Geo-Context Aware {IoT} Data Distribution},
-	booktitle = {4th Workshop on {IoT} Systems Provisioning \& Management for Context-Aware Smart Cities ({ISYCC})},
-	publisher = {Springer},
-	author = {Hasenburg, Jonathan and Bermbach, David},
-	year = {2018}
+@inproceedings{wang2023lotus,
+  title={Lotus: Serverless in-transit data processing for edge-based pub/sub},
+  author={Wang, Minghe and Schirmer, Trever and Pfandzelter, Tobias and Bermbach, David},
+  booktitle={Proceedings of the 6th International Workshop on Edge Systems, Analytics and Networking},
+  pages={31--35},
+  year={2023}
 }
 ```
 
-## Compiling and running the project from source
 
-As this project contains multiple git submodules, one needs to run the following after cloning/downloading the sources:
+## Prerequisites
+
+Before getting started, make sure that tinyFaaS is running, and here is the [tinyFaaS git repository](https://github.com/OpenFogStack/tinyFaaS).
+
+Run the following commands in tinyFaas to start the Management Service and Reverse Proxy.
+
+```bash
+make
 ```
-git submodule init
-git submodule update
+
+OR
+
+```bash
+docker build -t tinyfaas-mgmt ./src/
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 --name tinyfaas-mgmt -d tinyfaas-mgmt tinyfaas-mgmt
 ```
 
-### Using IntelliJ
+## Getting Started
+You could follow these steps to simply get started:
 
-- Import the project, choose Maven as the external model
-- IntelliJ will automatically resolve all dependencies
-- To start GeoBroker, run the main method of *de.hasenburg.geobroker.server.main.Server.kt* (you can find this class
- in the GeoBroker-Server directory)
-    - This will start the server with a default configuration
-    - You can provide your own configuration by providing the path to the configuration file as program argument
-- A very simple client can be started by running *de.hasenburg.geobroker.client.main.SimpleClient.kt* (you can find
- this class in the GeoBroker-Client directory)
-    - This client connects to GeoBroker and executes a set of simple actions
+1. Start GeoBroker Server by run the main method of *de.hasenburg.geobroker.server.main.Server.kt*.
+2. Start the Rule Manager main method in *de.hasenburg.geover.rulemanager.kt*, and input the subscription and function path.
+3. Using the Simple Publishing Client in *de.hasenburg.geobroker.client.main.simplepublishclinet.kt* to publish events to the geobroker server.
+4. The matching events will be sent to tinyFaaS and the user-defined function will process the rules for these matching events.
 
-### Using docker
 
-- Docker specific instructions can be found in *GeoBroker-Server/Docker.md* and *GeoBroker-Client/Docker.md*.
+## Introduction
+Here are 4 main files: BridgeBuilder, CmdToTinyFaaS, RuleManager, UserSpecifiedRule
 
-## Usage of Code in Publications
+### Bridge Builder
+The GeoBroker Configuration could be defined here with *GeoBroker host, GeoBroker port, and tinyFaaS base url*. Default configuration is: *GEOBROKER_HOST = "localhost", GEOBROKER_PORT = 5559, TINYFAAS_BASE_URL = "http://localhost:80/"*.
+- For every subscription, a Simple Client is created with the unique id in *TinyFaaSClient, functionName, subscription topic, geofence, and the system nanotime*.
+- Send connect payload and subscribe payload is sent afterward, if there is/are publish payload received then the matching events would be sent to tinyFaaS in JSON format.
 
-The code found in this repository has been used for the experiments of the GeoBroker paper.
-- The original code for GEO experiments (geo-context information is used) is accessible in the GEO branch or release 
-[v1.0](https://github.com/MoeweX/geobroker/releases/tag/v1.0).
-- The original code for NoGEO experiments (geo-context information is not used) is accessible in the NoGEO branch or 
-release [v1.0-noContext](https://github.com/MoeweX/geobroker/releases/tag/v1.0-noContext).
+### UserSpecificRule
+Give an entry for users to send the subscription and function, and for GeoVER the functions are mainly about rules.
 
-The [fork](https://github.com/SoftwareImpacts/SIMPAC-2020-30) of the Software Impacts paper is identical with the contents of the [single](https://github.com/MoeweX/geobroker/tree/single) branch.
+### Rule Manager
+Create/Delete rules here, and upload/delete the user function to tinyFaaS.
 
-The master branch contains the most up to date version of the distributed GeoBroker source code.
- 
-## Maybe update the root pom.xml with the following, then don't need to git submodule init/update
+#### Define Subscription
+You need to input the Topic and Location(latitude, longitude, and radius for the circle area) to define the subscription.
+Subscription topics should be defined in the format like */a/b/c*, and the lat/lon/radius should be in double.
 
-```
-    <plugin>
-      <groupId>org.codehaus.mojo</groupId>
-      <artifactId>exec-maven-plugin</artifactId>
-      <version>3.0.0</version>
-      <executions>
-        <execution>
-          <id>init-git-submodules</id>
-          <phase>initialize</phase>
-          <goals>
-            <goal>exec</goal>
-          </goals>
-          <configuration>
-            <executable>git</executable>
-            <arguments>
-              <argument>submodule</argument>
-              <argument>update</argument>
-              <argument>--init</argument>
-              <argument>--recursive</argument>
-            </arguments>
-          </configuration>
-        </execution>
-      </executions>
-    </plugin>
-```
+#### Function operation
+To upload the user-defined function to tinyFaaS, the absolute file path is needed. 
+To delete the function, the function name is needed. The function name is a topic without slash, for example, if the topic is */berlin/1/test*, then the function name would be *"berlin1test"*.
+
+
+### CmdToTinyFaas
+The cmd commands that needed to send to tinyFaaS are defined in this file and the absolute path of tinyFaaS scripts needs to be defined first.
+
 
